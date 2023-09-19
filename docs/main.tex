@@ -2,7 +2,10 @@
 
 % Package imports
 \usepackage{titlesec}
+\usepackage{geometry}
 \usepackage{fancyhdr}
+
+\geometry{a4paper, includeheadfoot, portrait, total={}, top=12.5mm, bottom=12.5mm, left=25.4mm, right=25.4mm}
 
 % Variables
 \def\projectname{Computer Science NEA}
@@ -11,16 +14,19 @@
 \author{James Cahill}
 \date{Sepetember 2023}
 
+% Configure fancyHDR page style
+% https://tex.stackexchange.com/questions/266911/get-fancyhdr-and-geometry-to-work-nicely
+\fancypagestyle{style}{
+    \fancyhead{} % clear all header fields
+    \fancyhead[HL]{\projectname}
+    \fancyhead[HR]{James Cahill}
+    \renewcommand{\headrulewidth}{0pt} % Remove header line
+}
+\pagestyle{style}
+
+
 \begin{document}
 
-% Set pagestyle to fancy
-\pagestyle{fancy}
-% ...and configure it
-\fancyhead{} % clear all header fields
-\fancyhead[HL]{\projectname}
-\fancyhead[HR]{James Cahill}
-
-\renewcommand{\headrulewidth}{0pt} % Remove header line
 
 \tableofcontents
 
