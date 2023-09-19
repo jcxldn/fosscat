@@ -4,8 +4,12 @@
 \usepackage{titlesec}
 \usepackage{geometry}
 \usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{hyperref} % \url, https://www.overleaf.com/learn/latex/Hyperlinks
 
 \geometry{a4paper, includeheadfoot, portrait, total={}, top=12.5mm, bottom=12.5mm, left=25.4mm, right=25.4mm}
+
+\graphicspath{ {./images/} }
 
 % Variables
 \def\projectname{Computer Science NEA}
@@ -39,9 +43,60 @@
 
 \subsubsection{Problem Description}
 
+Popular inventory management solutions are relatively expensive, and may be out
+of reach for individuals or small schools.
+Inventory systems have numerous benefits for businesses and individuals alike; a business
+may choose to track their supply levels where an individual may wish to catelogue their DVD collection. \\
+
+\noindent My goal is to create a web-based application aimed at both businesses and individuals to manage
+inventory, with additional modern features such as automatic item re-ordering when stocks are running low.\\
+
+\noindent Traditional inventory management solutions are typically single-user at best, whereas I am to create
+a multi-user, collaborative environment.
+
 \subsubsection{Interview}
 
 \subsubsection{Existing similar solutions}
+
+% do 4-5 alternatives
+
+\paragraph{\\InvenTree}
+\url{https://inventree.org/}
+
+\subparagraph{\\Overview\\}
+
+InvenTree is an \textbf{open-source} inventory management system, providing \textit{low level stock control and part tracking}.
+It uses a Python/Django database backend and provides both a \textbf{web-based interface} as well as a REST API for interacting with other services.
+InvenTree also has a powerful plugin system for custom applications and other extensions. \\
+
+\noindent Below is a screenshot of the InvenTree homepage.\\
+\includegraphics[width=15cm]{inventree_demo_homepage.png}
+
+\subparagraph{Parts applicable to my solution\\}
+
+- concept is similar (web-based), but I'm doing a different approach.\\
+\noindent - not indented for stock control
+
+\pagebreak % temp
+
+\paragraph{\\PartKeepr}
+\url{https://partkeepr.org/}\\
+
+\includegraphics[width=15cm]{partkeepr_demo_homepage.png}
+
+\subparagraph{\\Overview\\}
+
+PartKeepr is an open-source inventory management system with a focus on electronic components.
+It is designed around four main principles:
+
+\begin{itemize}
+    \item Fast Part Searching
+    \item Ability to add complete part database
+    \item Keeping track of stock
+    \item Ease of use
+\end{itemize}
+
+
 
 \subsubsection{Features to be incorporated into solution}
 
