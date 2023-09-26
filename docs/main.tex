@@ -14,6 +14,15 @@
 % Variables
 \def\projectname{Computer Science NEA}
 
+% Override subparagraph with a variant that has no indentation
+% https://tex.stackexchange.com/a/392014
+\makeatletter
+\renewcommand\subparagraph{%
+\@startsection{subparagraph}{5}{0pt}%
+{3.25ex \@plus 1ex \@minus .2ex}{-1em}%
+{\normalfont\normalsize\bfseries}}
+\makeatother
+
 \title{\projectname}
 \author{James Cahill}
 \date{Sepetember 2023}
