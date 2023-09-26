@@ -9,6 +9,13 @@
 \usepackage{outlines} % better itemize
 \usepackage{comment}
 
+\usepackage[british]{datetime2} % load before gitinfo2 to customize
+\usepackage[mark=true,grumpy=true]{gitinfo2}
+
+% Redefine \gitMark to customize it
+% https://mirror.apps.cam.ac.uk/pub/tex-archive/macros/latex/contrib/gitinfo2/gitinfo2.pdf
+\renewcommand{\gitMark}{Branch: \gitBranch\,@\,\gitAbbrevHash{}\,\textbullet{}\,\DTMusedate{gitdate}}
+
 \geometry{a4paper, includeheadfoot, portrait, total={}, top=12.5mm, bottom=12.5mm, left=25.4mm, right=25.4mm}
 
 \graphicspath{ {./images/} }
