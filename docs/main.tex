@@ -6,13 +6,15 @@
 \usepackage{fancyhdr}
 \usepackage{graphicx}
 \usepackage{hyperref} % \url, https://www.overleaf.com/learn/latex/Hyperlinks
+\usepackage{outlines} % better itemize
+\usepackage{comment}
 
 \geometry{a4paper, includeheadfoot, portrait, total={}, top=12.5mm, bottom=12.5mm, left=25.4mm, right=25.4mm}
 
 \graphicspath{ {./images/} }
 
 % Variables
-\def\projectname{Computer Science NEA}
+\def\projectname{Inventory Project}
 
 % Override subparagraph with a variant that has no indentation
 % https://tex.stackexchange.com/a/392014
@@ -55,23 +57,37 @@
 Popular inventory management solutions are relatively expensive, and may be out
 of reach for individuals or small schools.
 Inventory systems have numerous benefits for businesses and individuals alike; a business
-may choose to track their supply levels where an individual may wish to catelogue their DVD collection. \\
+may choose to track their supply levels where an individual may wish to catalogue their DVD collection. \\
 
 \noindent My goal is to create a web-based application aimed at both businesses and individuals to manage
 inventory, with additional modern features such as automatic item re-ordering when stocks are running low.\\
 
-\noindent Traditional inventory management solutions are typically single-user at best, whereas I am to create
-a multi-user, collaborative environment.
+\noindent Traditional inventory management solutions are typically single-user at best, whereas I intend to create
+a multi-user, collaborative environment.\\
+
+\noindent In my view, an inventory system should be:
+
+\begin{outline}
+    \1 Easy for end users to use.
+    \1 Cross platform
+    \1 Performant interface
+    \1 Efficient in terms of adding data
+    \1 Allow for easy cataloguing of inventory
+    \1 Allow for item scanning using QR codes / barcodes
+    \1 Be able to source data from external sources
+    \1 Support both consumable and non-consumable goods.
+
+    
+\end{outline}
 
 
+\begin{comment}
 An inventory system should be able to:
 
 time consuming to add data
 not user friendly
 
-- be easy to use (intuitive)
 - catalogue of inventory, re-order for you
-- be cross-platform, Fast
 - scan using a phone (no external hardware needed)
 - alert / re-order when stocks are running low.
 - purchase links
@@ -81,36 +97,31 @@ not user friendly
 - button to re-order
     - smart device???????
 - predict when stocks will run out.
-- support for consumable and non-consumable goods.
 - source data from external sources
 - like monzo projection of when it will run out
 - how much you are spending each month on goods
-- nfc support to easily scan / etc items (migght be too hard on iOS)
-
-
-
+- nfc support to easily scan / etc items (might be too hard on iOS)
 \textbf{Barcode check in / out}
-
 - monzo integration
-
 - budgeting - figure projections  as well 
-
 clearly define what the APP will feature.
-
 Think about
-
-- potenttial users
+- potential users
     - how does the app cater to their needs - different features etc
 
 
+\end{comment}
 
 
 \subsubsection{Interview}
+
+\pagebreak
 
 \subsubsection{Existing similar solutions}
 
 % do 4-5 alternatives
 
+% 1. InvenTree
 \paragraph{\\InvenTree}
 \url{https://inventree.org/}
 
@@ -128,6 +139,9 @@ InvenTree also has a powerful plugin system for custom applications and other ex
 - concept is similar (web-based), but I'm doing a different approach.\\
 \noindent - not indented for stock control
 
+\pagebreak
+
+% 2. PartKeepr
 \paragraph{\\PartKeepr}
 \url{https://partkeepr.org/}\\
 
@@ -138,19 +152,21 @@ InvenTree also has a powerful plugin system for custom applications and other ex
 PartKeepr is an open-source inventory management system with a focus on electronic components.
 It is designed around four main principles:
 
-\begin{itemize}
-    \item Fast Part Searching
-    \item Ability to add complete part database
-    \item Keeping track of stock
-    \item Ease of use
-\end{itemize}
+\begin{outline}
+    \1 Fast Part Searching
+    \1 Ability to add complete part database
+    \1 Keeping track of stock
+    \1 Ease of use
+\end{outline}
 
 \subparagraph{Parts applicable to my solution\\\\}
 
-Like PartKeepr, I hope to implement a web-based interface.\\
-However, I am using a different approach as my solution will not be tailored specifically to
-electronic components.
+\noindent Like PartKeepr, I hope to implement a web-based interface.
+However, I am using a different approach as my solution will not be tailored specifically to electronic components.
 
+\pagebreak
+
+% 3. Sortly
 \paragraph{\\Sortly}
 \url{https://www.sortly.com/solutions/inventory-management-software/}\\
 
@@ -165,17 +181,18 @@ It has two plans available, an always free plan with limited functionality and a
 
 I hope to implement the following features from Sortly:
 
-\begin{itemize}
-    \item Web based interface
-    \subitem Allows for easy access.
+\begin{outline}
+    \1 Web based interface
+    \2 Allows for easy access.
 
-    \item Ability to create QR codes to stick on items/containers
-    \subitem Allows for easily unit selection in the interface.
+    \1 Barcode support
+    \2 Allows end users to print off QR codes to stick to items
+    \2 Which can be scanned in-app to easily perform actions on the item.
 
-    \item Real-time reporting insights
-    \subitem \includegraphics[width=10cm]{sortly_homepage_mockup_2.png}
-    \subitem Allows for added insight into usage patterns for particular units.
-\end{itemize}
+    \1 Real-time reporting insights
+    %\subitem \includegraphics[width=10cm]{sortly_homepage_mockup_2.png}
+    \2 Allows for added insight into usage patterns for particular units.
+\end{outline}
 
 \subsubsection{Features to be incorporated into solution}
 
