@@ -8,6 +8,7 @@
 \usepackage{hyperref} % \url, https://www.overleaf.com/learn/latex/Hyperlinks
 \usepackage{outlines} % better itemize
 \usepackage{comment}
+\usepackage{multirow} % tables
 
 \usepackage[british]{datetime2} % load before gitinfo2 to customize
 \usepackage[mark=true,grumpy=true]{gitinfo2}
@@ -118,6 +119,31 @@ Think about
 
 
 \end{comment}
+
+\subsubsection{Stakeholders}
+
+\newcommand{\stakeholderEntry}[4]{{#1} & {#2} & {#3} & {#4}\\\hline}
+
+\begin{tabular}{ |c|p{0.2\textwidth}|c|c| }
+    \hline
+    \textbf{Stakeholder} & \textbf{Description} & \textbf{Current Use} & \textbf{Requirements}\\
+    \hline
+
+    \stakeholderEntry
+        {Claire Foley}
+        {
+            \begin{outline}
+                \1 SENCo
+                \1 Library Lead
+            \end{outline}
+        }
+        {
+            No system. Library books are not tracked.
+        }
+        {TBD}
+
+    \hline
+\end{tabular}
 
 
 \subsubsection{Interview}
