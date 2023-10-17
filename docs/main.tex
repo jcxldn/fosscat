@@ -10,6 +10,7 @@
 \usepackage{comment}
 \usepackage{multirow} % tables
 \usepackage{noto} % Google Noto Fonts
+\usepackage{hyperref} % Hyperlinks to sectiosn
 
 \usepackage[british]{datetime2} % load before gitinfo2 to customize
 \usepackage[mark=true,grumpy=true]{gitinfo2}
@@ -154,21 +155,32 @@ Think about
 
 \subsubsection{Stakeholders}
 
+Stakeholder requirements are further discussed for each stakeholder in the \underline{\hyperref[sec:stakeholderRequirements]{Stakeholder Requirements}} section.\\
+
 \newcommand{\stakeholderEntry}[4]{{#1} & {#2} & {#3} & {#4}\\\hline}
 
-\begin{tabular}{ |c|p{0.3\textwidth}|c|c| }
+\begin{tabular}{ |p{0.15\textwidth}|p{0.26\textwidth}|p{0.26\textwidth}|p{0.26\textwidth}| }
     \hline
-    \textbf{Stakeholder} & \textbf{Description} & \textbf{Current Use} & \textbf{Requirements}\\
+    \textbf{Stakeholder} & \textbf{Description} & \textbf{Requirements} & \textbf{Capability}\\
     \hline
 
     \stakeholderEntry
         {Claire Foley}
         {Senior Leadership Team at The Village Prep School}
-        {Library books; currently tracked on paper}
-        {TBD}
+        {Ability to manage library books. Admin and supervision of other users carrying out librarian tasks}
+        {Well-versed in computer use, at least when it comes to intuitive and well designed interfaces. Would struggle with a non-intuitive interface design.}
     
     \stakeholderEntry
-        {TBD}{Freelance photographer}{Excel Spreadsheet}{TBD}
+        {Ella}
+        {"Head Librarian" (Pupil) at the Village Prep School}
+        {Ability to check in and out library books. User of the system; requires interface that is appropriate for her age.}
+        {Beginner user of technology, proficient in mobile applications on phones and tablets only. Rarely uses a laptop or desktop computer.}
+    
+    \stakeholderEntry
+        {Generic Gear \newline Rental Shop}
+        {Photography gear for hire business}
+        {Ability to manage business inventory in a fast and efficient manner.}
+        {Proficient with computers.}
     \hline
 \end{tabular}
 
@@ -333,6 +345,7 @@ I hope to implement the following features from Sortly:
 \subsection{Requirements}
 
 \subsubsection{Stakeholder requirements}
+\label{sec:stakeholderRequirements}
 
 \pagebreak
 
@@ -340,24 +353,52 @@ I hope to implement the following features from Sortly:
 
 \paragraph{System Requirements\\\\}
 
-\begin{tabular}{ |c|p{0.5\textwidth}| }
+\begin{tabular}{ |p{0.45\textwidth}|p{0.5\textwidth}| }
     \hline
     \textbf{Hardware} & \textbf{Justification}\\
     \hline
-    Input Device \textit{(Touchscreen or Keyboard+Mouse)} & An input device will help users navigate through the program as it will have a graphical user interface (GUI). This will allow the user to interact with buttons, menus and icons. \\
+    \textit{Laptop/Desktop}\newline
+    Keyboard and Pointing Device (eg. Mouse) &
+    For desktop or laptop computer users, a suitable input device is required in order to interact with the software.\newline
+    A pointing device (a mouse) is necessary in order to interact with the user interface, to perform actions such as clicking buttons, icons, and opening menus.\newline
+    A keyboard will be used to manually input data into the system.\\
+    \hline
+    \textit{Tablet Device}\newline
+    Touchscreen & For tablet users, it would be impractical to expect the user to have access to a keyboard and or pointing device. Therefore, we must design the system to accept inputs from a touchscreen.\newline
+    This will be easier to use and more intuitive for tablet users. \newline
+    The touchscreen will be used to input data into the system and to interact with the user interface. \\
+    \hline
+    Dual-Core Processor
+    \newline(x86, ARM, RISCV architectures) &
+    A modern processor with sufficient resources to run an up-to-date web browser such as Chrome, Edge or Firefox is required in order to access the web-based interface.\\
+    \hline
+    2GB of RAM & Sufficient RAM is required to run the web browser, which can be a memory intensive task.\\
+    \hline
+    Monitor & To display the user interface. \\
+    \hline
+    Network Interface Card (NIC) & A Network Interface Card, or NIC, is required for the computer to be connected to a network, such as the Internet. This is required as the web interface will be hosted on a domain and server that is external to the user, that is to say, not on their local network. \\
+    \hline
+    \textit{\textbf{Optional}: Wireless Network Adapter} & \textit{A Wireless Network Adapter is an optional requirement, it will allow the user to connect to a wireless network in order to access the network or Internet so that they can access the external user interface.} \\
+    \hline
+    \textit{\textbf{Optional}: Camera} & \textit{A Camera is an optional requirement; devices with cameras will be able to scan barcodes or QR codes corresponding to inventory items and easily perform actions on them.} \\
     \hline
 \end{tabular}
 
 \paragraph{Software Requirements\\\\}
 
+Talk about why I don't need much software since dependencies hosted on the server.\\
+
 \begin{tabular}{ |p{0.45\textwidth}|p{0.5\textwidth}| }
     \hline
     \textbf{Software} & \textbf{Justification}\\
     \hline
-    Operating System \textit{(Windows, MacOS, Linux, ChromeOS, iOS, iPadOS, Android)} &
-    An operating system is required to... TBD\\
+    Operating System \newline
+    \textit{(Windows, MacOS, Linux, ChromeOS, iOS, iPadOS, Android)} &
+    An operating system is required in order to run the web browser necessary to access the interface. \\
     \hline
-    A web browser \textit{(eg. Chrome, Firefox, Microsoft Edge, Safari)} & TBD\\
+    A web browser \newline
+    \textit{(eg. Chrome, Firefox, Microsoft Edge, Safari)} &
+    A web browser is necessary to access the interface as it will be primarily a web application.\\
     \hline
 \end{tabular}
 
