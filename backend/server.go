@@ -39,6 +39,9 @@ func pingHandler(c *gin.Context) {
 
 // Main function
 func main() {
+	// Connect to db
+	connect()
+
 	// Create a gin engine instance
 	r := gin.Default()
 
