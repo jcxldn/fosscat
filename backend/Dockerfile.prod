@@ -1,0 +1,21 @@
+FROM golang:1.21-alpine as builder
+
+WORKDIR /src
+
+# Copy current directory
+COPY . .
+
+RUN go get  
+
+# graphql generate
+RUN go run github.com/99designs/gqlgen generate
+
+RUN go build -ldflags "-s -w" -o /dist/backend
+
+FROM scratch
+
+COPY --from=builder /dist/backend /usr/bin/backend
+
+ENV GIN_MODE=release
+
+ENTRYPOINT ["/usr/bin/backend"]
