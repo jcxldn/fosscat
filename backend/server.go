@@ -1,28 +1,51 @@
 package main
 
 import (
-	"log"
-	"net/http"
-	"os"
+	"github.com/gin-gonic/gin"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/jcxldn/fosscat/backend/graph"
 )
 
-const defaultPort = "8080"
+// Definine the Graphql route handler
+// based on https://gqlgen.com/recipes/gin/
+func graphqlHandler() gin.HandlerFunc {
+	// NewExecutableSchema and Config are in the generated.go file
+	// Resolver is in the resolver.go file
+	h := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
 
-func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = defaultPort
+	return func(c *gin.Context) {
+		h.ServeHTTP(c.Writer, c.Request)
 	}
+}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+// Define the Playground route handler
+// based on https://gqlgen.com/recipes/gin/
+func playgroundHandler() gin.HandlerFunc {
+	h := playground.Handler("GraphQL", "/graphql")
 
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	return func(c *gin.Context) {
+		h.ServeHTTP(c.Writer, c.Request)
+	}
+}
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+// Define the Ping route handler
+func pingHandler(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"message": "pong",
+	})
+}
+
+// Main function
+func main() {
+	// Create a gin engine instance
+	r := gin.Default()
+
+	// Define routes
+	r.POST("/graphql", graphqlHandler())              // GraphQL query endpoint
+	r.GET("/graphql/playground", playgroundHandler()) // GraphiQL playground
+	r.GET("/ping", pingHandler)                       // Ping/pong endpoint (for healthcheck)
+
+	r.Run() // Run on 0.0.0.0:8080
 }
