@@ -8,12 +8,17 @@ import (
 	"github.com/jcxldn/fosscat/backend/graph"
 )
 
-// Definine the Graphql route handler
+// Define the Graphql route handler
 // based on https://gqlgen.com/recipes/gin/
 func graphqlHandler() gin.HandlerFunc {
+	// Connect to the database and place the handle in the graphql resolver
+	// So that is accessible when executing graphql requests in ctx.
+	resolver := &graph.Resolver{}
+	resolver.UpdateDb(connect())
+
 	// NewExecutableSchema and Config are in the generated.go file
 	// Resolver is in the resolver.go file
-	h := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	h := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: resolver}))
 
 	return func(c *gin.Context) {
 		h.ServeHTTP(c.Writer, c.Request)
@@ -39,9 +44,6 @@ func pingHandler(c *gin.Context) {
 
 // Main function
 func main() {
-	// Connect to db
-	connect()
-
 	// Create a gin engine instance
 	r := gin.Default()
 

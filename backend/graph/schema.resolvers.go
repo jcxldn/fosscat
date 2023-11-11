@@ -7,18 +7,27 @@ package graph
 import (
 	"context"
 	"fmt"
+	"log"
 
+	"github.com/google/uuid"
+	"github.com/jcxldn/fosscat/backend/db/structs"
 	"github.com/jcxldn/fosscat/backend/graph/model"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
+	user := structs.User{FirstName: input.FirstName, LastName: input.LastName, Email: input.Email}
+	user.ID = uuid.New()
+	r.db.Create(&user)
+	log.Println(string(user.ID.String()))
+	log.Println(user.ID)
+
+	return &model.User{ID: user.ID.String(), FirstName: user.FirstName, LastName: user.LastName, Email: user.Email}, nil
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// Users is the resolver for the users field.
+func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
+	panic(fmt.Errorf("not implemented: Users - users"))
 }
 
 // Mutation returns MutationResolver implementation.

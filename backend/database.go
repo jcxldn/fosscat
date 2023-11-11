@@ -6,17 +6,8 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
-	"github.com/google/uuid"
+	"github.com/jcxldn/fosscat/backend/db/structs"
 )
-
-type User struct {
-	gorm.Model
-	ID             uuid.UUID
-	FirstName      string
-	LastName       string
-	email          string
-	hashedPassword string
-}
 
 func connect() *gorm.DB {
 	// Attempt to connect to the db
@@ -31,7 +22,7 @@ func connect() *gorm.DB {
 	// This will create tables, keys, columns, etc. Everything really.
 	// See https://gorm.io/docs/migration.html
 	// Note that we need to pass each struct in our schema.
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&structs.User{})
 
 	log.Println("[database] migrated, done.")
 
