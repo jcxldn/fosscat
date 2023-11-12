@@ -6,28 +6,35 @@ package graph
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/google/uuid"
-	"github.com/jcxldn/fosscat/backend/db/structs"
 	"github.com/jcxldn/fosscat/backend/graph/model"
+	"github.com/jcxldn/fosscat/backend/structs"
 )
 
 // CreateUser is the resolver for the createUser field.
-func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*structs.User, error) {
 	user := structs.User{FirstName: input.FirstName, LastName: input.LastName, Email: input.Email}
 	user.ID = uuid.New()
 	r.db.Create(&user)
 	log.Println(string(user.ID.String()))
 	log.Println(user.ID)
 
-	return &model.User{ID: user.ID.String(), FirstName: user.FirstName, LastName: user.LastName, Email: user.Email}, nil
+	return &structs.User{ID: user.ID, FirstName: user.FirstName, LastName: user.LastName, Email: user.Email}, nil
 }
 
 // Users is the resolver for the users field.
-func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
-	panic(fmt.Errorf("not implemented: Users - users"))
+func (r *queryResolver) Users(ctx context.Context) ([]*structs.User, error) {
+	// Get all users. POC only, returns everything!
+	users := []*structs.User{}
+	result := r.db.Find(&users)
+	return users, result.Error
+}
+
+// ID is the resolver for the id field.
+func (r *userResolver) ID(ctx context.Context, obj *structs.User) (string, error) {
+	return obj.ID.String(), nil
 }
 
 // Mutation returns MutationResolver implementation.
@@ -36,5 +43,9 @@ func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// User returns UserResolver implementation.
+func (r *Resolver) User() UserResolver { return &userResolver{r} }
+
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type userResolver struct{ *Resolver }

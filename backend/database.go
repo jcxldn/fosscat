@@ -6,7 +6,7 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
-	"github.com/jcxldn/fosscat/backend/db/structs"
+	"github.com/jcxldn/fosscat/backend/structs"
 )
 
 func connect() *gorm.DB {
