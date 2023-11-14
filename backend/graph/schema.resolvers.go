@@ -11,16 +11,45 @@ import (
 	"github.com/google/uuid"
 	"github.com/jcxldn/fosscat/backend/graph/model"
 	"github.com/jcxldn/fosscat/backend/structs"
+
+	emailverifier "github.com/AfterShip/email-verifier" // Email verifier library
+)
+
+var (
+	verifier = emailverifier.NewVerifier()
 )
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*structs.User, error) {
-	user := structs.User{FirstName: input.FirstName, LastName: input.LastName, Email: input.Email}
-	user.ID = uuid.New()
-	r.db.Create(&user)
-	log.Println(string(user.ID.String()))
-	log.Println(user.ID)
+	// Create a User struct from the input model
+	// Set fields that do not need further validation (name only)
+	user := structs.User{FirstName: input.FirstName, LastName: input.LastName}
 
+	// Attempt to validate the user email.
+	res, err := verifier.Verify(input.Email)
+	//res.
+	if err != nil {
+		// Email address failed to verify
+		// TODO: make errors more readable, custom errors.
+		log.Fatalln("[createUser] email address failed to verify")
+		return nil, err
+	}
+
+	if !res.Syntax.Valid {
+		// Email address is not valid
+		// TODO: make errors more readable, custom errors.
+		return nil, err
+	}
+
+	// Email passed validation, set in the user struct.
+	user.Email = res.Email
+
+	// Generate a UUID for the user id.
+	user.ID = uuid.New()
+
+	// Salt and hash the provided password
+
+	r.db.Create(&user)
 	return &structs.User{ID: user.ID, FirstName: user.FirstName, LastName: user.LastName, Email: user.Email}, nil
 }
 
