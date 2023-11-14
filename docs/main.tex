@@ -206,9 +206,40 @@ sentance or two on what it does and why (justify it being there)
 
 \subsubsection{Test Plan}
 
+\pagebreak
+
 \section{Implementation}
 
-\subsection{First Iteration}
+\subsection{First Iteration | Initial Backend and Database}
+
+\subsubsection{Introduction}
+
+\noindent For my first iteration I decided to work on the backend and the databse.
+I am writing the backend in \underline{Go}.
+Go is a performant, statically typed high level language designed by Google.
+Is is frequently used for backend development thanks to it's performance and memory safety.
+I am going to use \underline{GraphQL} as the query language for the frontend to interact with the backend. GraphQL is an open-source query and manipulation language designed for use in APIs. (Application Programming Interface). The backend will serve as an API which will interface with my database.
+I choose to use GraphQL as it is better suited for larger, more complex data sources, and supports querying for multiple different types of data at once, unlike REST. It is also something I was interested in learning more about as I have not designed a system using it before.
+
+\noindent\\ The first thing I decided to work on was user account creation. This would involve using GraphQL to receive data about the new user, generating the user ID, and then placing that data in a database.
+After doing some research (should I talk about the different options?) I decided to use the following three libraries for my project:
+
+\begin{outline}
+    \1 \textbf{Gin}\\
+    Gin is a HTTP framework for Go. This allows me to expose my GraphQL endpoint over HTTP. After conducting some research, I choose to use gin as it is by far the fastest library available at the time of writing.
+    It offers performance up to 40 times faster than it's closest alternative, \textit{"Martini"}.
+    Gin is a very popular framework, with over 72 thousand stars on GitHub. Using this library benefits me as it has been battle-tested by other users and includes end to end testing, making it more than suitable for my project. (wording isn't great, trying to say it has been tested already)
+
+    \1 \textbf{Gqlgen}\\
+    Gqlgen is a Go library designed to make building GraphQL servers easy and hassle-free. It is designed with a schema-first approach, meaning the developer (me) can simply define their API using the standard GraphQL Schema Definition Language. It prioritizes type safety, and has rudimentary validation support built-in. However, I will not be relying on this validation feature, I will create my own validation system that better suits my needs.
+
+    \1 \textbf{GORM} (Go Object Relational Mapping library)\\
+    GORM is a fully-features ORM library for Go. (explain what an ORM does)
+\end{outline}
+
+(skip to 14.11.23, after voice memos)
+
+
 
 \section{Testing}
 
