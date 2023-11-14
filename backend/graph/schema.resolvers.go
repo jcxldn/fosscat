@@ -8,15 +8,11 @@ import (
 	"context"
 	"log"
 
+	emailverifier "github.com/AfterShip/email-verifier"
 	"github.com/google/uuid"
 	"github.com/jcxldn/fosscat/backend/graph/model"
 	"github.com/jcxldn/fosscat/backend/structs"
-
-	emailverifier "github.com/AfterShip/email-verifier" // Email verifier library
-)
-
-var (
-	verifier = emailverifier.NewVerifier()
+	"golang.org/x/crypto/bcrypt"
 )
 
 // CreateUser is the resolver for the createUser field.
@@ -48,9 +44,24 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 	user.ID = uuid.New()
 
 	// Salt and hash the provided password
+	// I am currently using bCrypt, which has the function GenerateFromPasswords.
+	// This generates a random salt for us and applies it to the hash.
+	// I believe the hash result and salt are stored side by side.
+	// Cost of '10' for now, seems like a good balance.
+	hash, err := bcrypt.GenerateFromPassword([]byte(input.Password), 10)
+
+	if err != nil {
+		// Hashing failed (password too long/short?)
+		// TODO: make errors more readable, custom errors
+		return nil, err
+	}
+
+	// Hashing completed successfully, set in the user struct
+	// For purposes of writeup use string for now so we can remove it later.
+	user.Hash = string(hash)
 
 	r.db.Create(&user)
-	return &structs.User{ID: user.ID, FirstName: user.FirstName, LastName: user.LastName, Email: user.Email}, nil
+	return &structs.User{ID: user.ID, FirstName: user.FirstName, LastName: user.LastName, Email: user.Email, Hash: user.Hash}, nil
 }
 
 // Users is the resolver for the users field.
@@ -78,3 +89,13 @@ func (r *Resolver) User() UserResolver { return &userResolver{r} }
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type userResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+var (
+	verifier = emailverifier.NewVerifier()
+)
