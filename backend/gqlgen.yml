@@ -21,7 +21,7 @@ model:
 resolver:
   layout: follow-schema
   dir: graph/resolver
-  package: graph
+  package: resolver
   filename_template: "{name}.go"
   # Optional: turn on to not generate template comments above resolvers
   # omit_template_comment: false
