@@ -12,6 +12,7 @@ import (
 	ev "github.com/jcxldn/fosscat/backend/emailVerifier"
 	"github.com/jcxldn/fosscat/backend/graph/model"
 	"github.com/jcxldn/fosscat/backend/structs"
+	"github.com/jcxldn/fosscat/backend/util"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -40,8 +41,14 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 	// Email passed validation, set in the user struct.
 	user.Email = res.Email
 
-	// Generate a UUID for the user id.
-	user.ID = uuid.New()
+	isFreeUuid := false
+	for !isFreeUuid {
+		// Generate a UUID for the user id.
+		user.ID = uuid.New()
+		// Check that the UUID has not been used already
+		// If true, it will break out of this for loop and continue.
+		isFreeUuid = util.IsUuidFree(r.db, user.ID)
+	}
 
 	// Salt and hash the provided password
 	// I am currently using bCrypt, which has the function GenerateFromPasswords.
