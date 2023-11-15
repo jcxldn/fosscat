@@ -1,4 +1,4 @@
-package graph
+package resolver
 
 // This file will be automatically regenerated based on the schema, any resolver implementations
 // will be copied through when generating and any unknown code will be moved to the end.
@@ -10,6 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	ev "github.com/jcxldn/fosscat/backend/emailVerifier"
+	"github.com/jcxldn/fosscat/backend/graph"
 	"github.com/jcxldn/fosscat/backend/graph/model"
 	"github.com/jcxldn/fosscat/backend/structs"
 	"github.com/jcxldn/fosscat/backend/util"
@@ -71,28 +72,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 	return &structs.User{ID: user.ID, FirstName: user.FirstName, LastName: user.LastName, Email: user.Email, Hash: user.Hash}, nil
 }
 
-// Users is the resolver for the users field.
-func (r *queryResolver) Users(ctx context.Context) ([]*structs.User, error) {
-	// Get all users. POC only, returns everything!
-	users := []*structs.User{}
-	result := r.db.Find(&users)
-	return users, result.Error
-}
-
-// ID is the resolver for the id field.
-func (r *userResolver) ID(ctx context.Context, obj *structs.User) (string, error) {
-	return obj.ID.String(), nil
-}
-
-// Mutation returns MutationResolver implementation.
-func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
-
-// Query returns QueryResolver implementation.
-func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
-
-// User returns UserResolver implementation.
-func (r *Resolver) User() UserResolver { return &userResolver{r} }
+// Mutation returns graph.MutationResolver implementation.
+func (r *Resolver) Mutation() graph.MutationResolver { return &mutationResolver{r} }
 
 type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
-type userResolver struct{ *Resolver }

@@ -6,17 +6,9 @@ type User {
   hash: String
 }
 
-type Query {
-  users: [User!]!
-}
-
 input NewUser {
   firstName: String!
   lastName: String!
   email: String!
   password: String!
-}
-
-type Mutation {
-  createUser(input: NewUser!): User!
 }

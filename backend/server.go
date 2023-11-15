@@ -6,6 +6,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/jcxldn/fosscat/backend/graph"
+	"github.com/jcxldn/fosscat/backend/graph/resolver"
 )
 
 // Define the Graphql route handler
@@ -13,7 +14,7 @@ import (
 func graphqlHandler() gin.HandlerFunc {
 	// Connect to the database and place the handle in the graphql resolver
 	// So that is accessible when executing graphql requests in ctx.
-	resolver := &graph.Resolver{}
+	resolver := &resolver.Resolver{}
 	resolver.UpdateDb(connect())
 
 	// NewExecutableSchema and Config are in the generated.go file
