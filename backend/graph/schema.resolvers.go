@@ -8,8 +8,8 @@ import (
 	"context"
 	"log"
 
-	emailverifier "github.com/AfterShip/email-verifier"
 	"github.com/google/uuid"
+	ev "github.com/jcxldn/fosscat/backend/emailVerifier"
 	"github.com/jcxldn/fosscat/backend/graph/model"
 	"github.com/jcxldn/fosscat/backend/structs"
 	"golang.org/x/crypto/bcrypt"
@@ -22,7 +22,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 	user := structs.User{FirstName: input.FirstName, LastName: input.LastName}
 
 	// Attempt to validate the user email.
-	res, err := verifier.Verify(input.Email)
+	res, err := ev.EmailVerifier.Verify(input.Email)
 	//res.
 	if err != nil {
 		// Email address failed to verify
@@ -89,13 +89,3 @@ func (r *Resolver) User() UserResolver { return &userResolver{r} }
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type userResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-var (
-	verifier = emailverifier.NewVerifier()
-)
