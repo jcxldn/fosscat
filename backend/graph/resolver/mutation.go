@@ -17,6 +17,25 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// CreateEntity is the resolver for the createEntity field.
+func (r *mutationResolver) CreateEntity(ctx context.Context) (*structs.Entity, error) {
+	// Create a Entity struct
+	entity := structs.Entity{}
+
+	isFreeUuid := false
+	for !isFreeUuid {
+		// Generate a UUID for the user id.
+		entity.ID = uuid.New()
+		// Check that the UUID has not been used already
+		// If true, it will break out of this for loop and continue.
+		isFreeUuid = util.IsUuidFree[structs.Entity](r.db, entity.ID, &structs.Entity{})
+	}
+
+	r.db.Create(&entity)
+
+	return &entity, nil
+}
+
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*structs.User, error) {
 	// Create a User struct from the input model
@@ -48,7 +67,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 		user.ID = uuid.New()
 		// Check that the UUID has not been used already
 		// If true, it will break out of this for loop and continue.
-		isFreeUuid = util.IsUuidFree(r.db, user.ID)
+		isFreeUuid = util.IsUuidFree[structs.User](r.db, user.ID, &structs.User{})
 	}
 
 	// Salt and hash the provided password

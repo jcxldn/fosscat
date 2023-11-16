@@ -1,3 +1,4 @@
 type Mutation {
+  createEntity: Entity!
   createUser(input: NewUser!): User!
 }
