@@ -1,0 +1,5 @@
+type Entity {
+    id: String
+    # Array not-null, may be empty.
+    checkouts: [Checkout]!   
+}

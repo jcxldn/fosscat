@@ -22,7 +22,7 @@ func connect() *gorm.DB {
 	// This will create tables, keys, columns, etc. Everything really.
 	// See https://gorm.io/docs/migration.html
 	// Note that we need to pass each struct in our schema.
-	db.AutoMigrate(&structs.User{})
+	db.AutoMigrate(&structs.Checkout{}, &structs.Entity{}, &structs.Item{}, &structs.User{})
 
 	log.Println("[database] migrated, done.")
 

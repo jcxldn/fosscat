@@ -1,0 +1,6 @@
+type Item {
+    id: String
+    title: String
+    # Array not-null, may be empty.
+    entities: [Entity]!   
+}

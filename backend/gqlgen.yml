@@ -86,5 +86,11 @@ models:
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
   # Custom models
+  Checkout:
+    model: github.com/jcxldn/fosscat/backend/structs.Checkout
+  Entity:
+    model: github.com/jcxldn/fosscat/backend/structs.Entity
+  Item:
+    model: github.com/jcxldn/fosscat/backend/structs.Item
   User:
     model: github.com/jcxldn/fosscat/backend/structs.User
