@@ -9,13 +9,9 @@ import (
 )
 
 type Checkout struct {
-	ID         uuid.UUID `gorm:"primaryKey;type:uuid;column:checkoutId"`
-	User       User      `gorm:"foreignKey:userId"`
+	gorm.Model
+	ID         uuid.UUID
+	User       User `gorm:"foreignKey:ID"`
 	TakeDate   time.Time
 	ReturnDate time.Time
-
-	// gorm.Model (excluding ID)
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
