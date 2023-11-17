@@ -12,9 +12,8 @@ import (
 )
 
 // ID is the resolver for the id field.
-func (r *entityResolver) ID(ctx context.Context, obj *structs.Entity) (*string, error) {
-	str := obj.ID.String()
-	return &str, nil
+func (r *entityResolver) ID(ctx context.Context, obj *structs.Entity) (string, error) {
+	return obj.ID.String(), nil
 }
 
 // Entity returns graph.EntityResolver implementation.
