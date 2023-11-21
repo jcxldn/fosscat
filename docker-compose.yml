@@ -1,0 +1,34 @@
+version: "3.11"
+
+secrets:
+  db_password_file:
+    file: ./secrets/db_password_file.txt
+  pgadmin_password_file:
+    file: ./secrets/pgadmin_password_file.txt
+
+services:
+  postgres:
+    image: postgres
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=fosscat
+      - POSTGRES_USER=fosscat
+      - POSTGRES_PASSWORD_FILE=/var/run/secrets/db_password_file
+    secrets:
+     - db_password_file
+    ports:
+      - 5432:5432
+  
+  pgadmin:
+    image: dpage/pgadmin4
+    volumes: 
+      - ./data/pgadmin:/var/lib/pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@fosscat.example.com
+      - PGADMIN_DEFAULT_PASSWORD_FILE=/var/run/secrets/pgadmin_password_file
+      - PGADMIN_DISABLE_POSTFIX=1 # any value = true
+    secrets:
+      - pgadmin_password_file
+    ports:
+      - 80:80

@@ -3,3 +3,9 @@ backend/graph/model/models_gen.go
 
 start-*.sh
 progress.txt
+
+# Secrets directory for docker compose
+secrets
+
+# Docker compose data directory
+data
