@@ -12,6 +12,7 @@ import (
 type Checkout struct {
 	gorm.Model
 	ID         uuid.UUID
+	EntityID   uuid.UUID // Foreign key for Entity
 	User       User
 	UserID     uuid.UUID
 	TakeDate   time.Time

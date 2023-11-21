@@ -6,8 +6,10 @@ import (
 	"github.com/google/uuid"
 )
 
+// Entity has many Checkouts, Checkout.EntityID is the foreign key
 type Entity struct {
 	gorm.Model
 	ID        uuid.UUID
-	Checkouts []Checkout `gorm:"foreignKey:ID"`
+	ItemID    uuid.UUID // Foreign key for Item
+	Checkouts []Checkout
 }
