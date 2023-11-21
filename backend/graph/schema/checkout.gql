@@ -6,3 +6,9 @@ type Checkout {
     takeDate: Time
     returnDate: Time
 }
+
+input NewCheckout {
+    user: ExistingUser!
+    takeDate: Time
+    returnDate: Time
+}

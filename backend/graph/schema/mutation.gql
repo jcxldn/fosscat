@@ -1,4 +1,5 @@
 type Mutation {
+  createCheckout(input: NewCheckout!): Checkout!
   createEntity: Entity!
   createUser(input: NewUser!): User!
 }

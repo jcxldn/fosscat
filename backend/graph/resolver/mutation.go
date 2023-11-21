@@ -6,6 +6,7 @@ package resolver
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	"github.com/google/uuid"
@@ -16,6 +17,44 @@ import (
 	"github.com/jcxldn/fosscat/backend/util"
 	"golang.org/x/crypto/bcrypt"
 )
+
+// CreateCheckout is the resolver for the createCheckout field.
+func (r *mutationResolver) CreateCheckout(ctx context.Context, input model.NewCheckout) (*structs.Checkout, error) {
+	// Create a Checkout struct
+	checkout := structs.Checkout{}
+
+	isFreeUuid := false
+	for !isFreeUuid {
+		// Generate a UUID for the checkout id.
+		checkout.ID = uuid.New()
+		// Check that the UUID has not been used already
+		// If true, it will break out of this for loop and continue.
+		isFreeUuid = util.IsUuidFree[structs.Checkout](r.db, checkout.ID, &structs.Checkout{})
+	}
+
+	// When we get here, we have found a non-used UUID.
+
+	// Assign the checkout to a user.
+	id, parseErr := uuid.Parse(input.User.ID)
+
+	if parseErr == nil {
+
+		user, dbErr := util.GetObjectById[structs.User](r.db, id)
+
+		if dbErr == nil {
+			checkout.User = *user
+
+			// Create the database entry
+			r.db.Create(&checkout)
+
+			return &checkout, nil
+		} else {
+			return nil, errors.New("unable to create checkout: user does not exist")
+		}
+	} else {
+		return nil, errors.New("unable to create checkout: unable to parse user id")
+	}
+}
 
 // CreateEntity is the resolver for the createEntity field.
 func (r *mutationResolver) CreateEntity(ctx context.Context) (*structs.Entity, error) {

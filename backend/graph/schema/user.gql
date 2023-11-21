@@ -12,3 +12,7 @@ input NewUser {
   email: String!
   password: String!
 }
+
+input ExistingUser {
+  id: String!
+}
