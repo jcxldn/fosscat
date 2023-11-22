@@ -1,5 +1,6 @@
 type Mutation {
   createCheckout(input: NewCheckout!): Checkout!
   createEntity: Entity!
+  createItem(input: NewItem!): Item!
   createUser(input: NewUser!): User!
 }

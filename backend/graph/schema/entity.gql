@@ -3,3 +3,7 @@ type Entity {
     # Array not-null, may be empty.
     checkouts: [Checkout]!   
 }
+
+input ExistingEntity {
+  id: String!
+}

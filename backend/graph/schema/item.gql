@@ -4,3 +4,9 @@ type Item {
     # Array not-null, may be empty.
     entities: [Entity]!   
 }
+
+input NewItem  {
+    title: String
+    # Array not-null, may be empty.
+    entities: [ExistingEntity]!
+}
