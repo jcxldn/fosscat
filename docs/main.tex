@@ -1,3 +1,5 @@
+% Incorporates https://gist.github.com/FelipeCortez/10729134
+
 \documentclass{article}
 
 % Package imports
@@ -11,11 +13,17 @@
 \usepackage{multirow} % tables
 \usepackage{noto} % Google Noto Fonts
 \usepackage{hyperref} % Hyperlinks to sectiosn
+\usepackage{listings}
+\usepackage{lstautogobble} % listings: Fix relative indenting
+\usepackage{color} % listings: Code coloring
+\usepackage{zi4} % listings: Nice font
+
 
 \usepackage[british]{datetime2} % load before gitinfo2 to customize
 \usepackage[mark=true,grumpy=true]{gitinfo2}
 
 \usepackage{subfiles} % Best loaded last in the preamble
+
 
 % Redefine \gitMark to customize it
 % https://mirror.apps.cam.ac.uk/pub/tex-archive/macros/latex/contrib/gitinfo2/gitinfo2.pdf
@@ -51,6 +59,34 @@
     \renewcommand{\headrulewidth}{0pt} % Remove header line
 }
 \pagestyle{style}
+
+% Configure listings colours
+\definecolor{bluekeywords}{rgb}{0.13, 0.13, 1}
+\definecolor{greencomments}{rgb}{0, 0.5, 0}
+\definecolor{redstrings}{rgb}{0.9, 0, 0}
+\definecolor{graynumbers}{rgb}{0.5, 0.5, 0.5}
+
+% Configure listings style
+\lstset{
+    autogobble,
+    columns=fullflexible,
+    showspaces=false,
+    showtabs=false,
+    breaklines=true,
+    showstringspaces=false,
+    breakatwhitespace=true,
+    escapeinside={(*@}{@*)},
+    commentstyle=\color{greencomments},
+    keywordstyle=\color{bluekeywords},
+    stringstyle=\color{redstrings},
+    numberstyle=\color{graynumbers},
+    basicstyle=\ttfamily\footnotesize,
+    frame=l,
+    framesep=12pt,
+    xleftmargin=12pt,
+    tabsize=4,
+    captionpos=b
+}
 
 
 \begin{document}
@@ -212,14 +248,8 @@ sentance or two on what it does and why (justify it being there)
 
 \subsection{First Iteration | Initial Backend and Database}
 
-\subsubsection{Introduction}
-
-\noindent For my first iteration I decided to work on the backend and the databse.
-I am writing the backend in \underline{Go}.
-Go is a performant, statically typed high level language designed by Google.
-Is is frequently used for backend development thanks to it's performance and memory safety.
-I am going to use \underline{GraphQL} as the query language for the frontend to interact with the backend. GraphQL is an open-source query and manipulation language designed for use in APIs. (Application Programming Interface). The backend will serve as an API which will interface with my database.
-I choose to use GraphQL as it is better suited for larger, more complex data sources, and supports querying for multiple different types of data at once, unlike REST. It is also something I was interested in learning more about as I have not designed a system using it before.
+\begin{comment}
+\subsubsection{Introduction OLD}
 
 \noindent\\ The first thing I decided to work on was user account creation. This would involve using GraphQL to receive data about the new user, generating the user ID, and then placing that data in a database.
 After doing some research (should I talk about the different options?) I decided to use the following three libraries for my project:
@@ -237,9 +267,127 @@ After doing some research (should I talk about the different options?) I decided
     GORM is a fully-features ORM library for Go. (explain what an ORM does)
 \end{outline}
 
-(skip to 14.11.23, after voice memos)
+\end{comment}
+
+\subsubsection{Introduction}
+
+In this sprint I will work on the backend service. This service will provide an interface for the frontend to talk to the database via an API (Application Programming Interface). I am writing the backend in \textbf{Go}.
+Go is a performant, statically typed high level language designed by Google.
+Is is frequently used for backend development thanks to it's performance and memory safety.
+I am going to use \underline{GraphQL} as the query language for the frontend to interact with the backend.
+
+\noindent \\ GraphQL is an open-source query and manipulation language designed for use in APIs. (Application Programming Interface). The backend will serve as an API which will interface with my database.
+I choose to use GraphQL as it is better suited for larger, more complex data sources, and supports querying for multiple different types of data at once, unlike REST. It is also something I was interested in learning more about as I have not designed a system using it before. \\
 
 
+TODO: explain what a graphql mutation is (it's a function)
+
+\subsubsection{User account creation}
+
+The first feature I decided to work on was user account creation. This would involve asking the user for an email address, name and password, before validating it and inserting it into the database.
+In addition, at a later stage, validation must be performed in order to ensure that:
+
+\begin{itemize}
+    \item The user email is not already in use
+    \item The generated user ID is unique and not already in use
+\end{itemize}
+
+\noindent For this early stage of development, I decided to use an SQLite database to make things easier. I can easily switch this to PostgreSQL as specified in my design doc later.
+
+\noindent \\ When a GraphQL mutation is executed to create a new user, a function "CreateUser" is called, which is passed any input from the query and a connection to the database. \\
+
+\noindent My first version of this function was as follows:
+
+\begin{lstlisting}[language=Go]
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
+	// Create the user struct
+    user := structs.User{FirstName: input.FirstName, LastName: input.LastName, Email: input.Email}
+	
+    // Generate a user ID
+    user.ID = uuid.New()
+
+    // Create the database entry
+	r.db.Create(&user)
+
+	return &model.User{
+        ID: user.ID.String(),
+        FirstName: user.FirstName,
+        LastName: user.LastName,
+        Email: user.Email
+    }, nil
+\end{lstlisting}
+
+(NEXT UP: UUID GEN)
+
+\subparagraph{Unique ID generation}
+
+\noindent \\\\ I decided to use a \textbf{for loop }to continuously generate UUIDs (Universal Unique Identifier) to be used as a potential User ID. I then perform validation on the UUID to ensure that it is not already in use.
+This can be done with the following code:
+
+\begin{lstlisting}[language=Go]
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*structs.User, error) {
+
+[..]
+
+	isFreeUuid := false
+	for !isFreeUuid {
+		// Generate a UUID for the user id.
+		user.ID = uuid.New()
+		// Check that the UUID has not been used already
+		// If true, it will break out of this for loop and continue.
+		isFreeUuid = util.IsUuidFree[structs.User](r.db, user.ID, &structs.User{})
+	}
+
+\end{lstlisting}
+
+\noindent In order to achieve this and reduce code duplication across different functions, \\
+I created a "IsUuidFree" utility function. Here is the initial version of this function.
+
+\begin{lstlisting}[language=Go]
+
+func IsUuidFree[T any](db *gorm.DB, id uuid.UUID, obj *T) bool {
+        err := db.Model(obj).Select("id").Where("id == ?", id.String()).First(&obj).Error
+        if errors.Is(err, gorm.ErrRecordNotFound) {
+                // Record not found, so user id is free
+                return true
+            } else {
+                // Record was returned successfully, therefore the user exists
+                return false
+            }
+    }
+
+\end{lstlisting}
+
+\noindent This function makes use of \textbf{generics}. As per the Go docs:
+
+\begin{quotation}
+    \textit{
+        With generics, you can declare and use functions or types that are written to work with any of a set of types provided by calling code.
+    }
+\end{quotation}
+
+\noindent To simplify, generics mean that I can pass any struct (\textbf{T}) to the function and the function will use that type for the obj parameter.
+For example, if I call the function with:\\
+
+\begin{lstlisting}[language=Go]
+    util.IsUuidFree[structs.User](r.db, user.ID, &structs.User{})
+\end{lstlisting}
+
+\noindent \\Then T is set to the type \lstinline{structs.User}, allowing me to pass an object of type \lstinline{structs.User} as the third parameter.\\
+
+\noindent \textbf{GORM} works by defining a struct to query for (corresponding to a table in the database, in this case the \textit{"users"} table). We can then perform SQL actions on it, such as Select. \\
+
+\noindent Therefore, this gorm DB call is the equivalent of:\\
+
+\begin{lstlisting}[language=SQL]
+    SELECT id FROM users WHERE id == ? VALUES ("uuid-goes-here")
+\end{lstlisting}
+
+\noindent \\\\ TODO: this was modified, show where it was modified later on?
+
+
+\paragraph{para}
 
 \section{Testing}
 
