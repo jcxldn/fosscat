@@ -7,7 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
-func IsUuidFree[T any](db *gorm.DB, id uuid.UUID, obj *T) bool {
+func IsUuidFree[T any](db *gorm.DB, id uuid.UUID) bool {
+	obj := new(T)
 	// NOTE: == works in SQLite, not in Postgres
 	err := db.Model(obj).Select("id").Where("id = ?", id.String()).First(&obj).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {

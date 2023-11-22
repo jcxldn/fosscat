@@ -29,7 +29,7 @@ func (r *mutationResolver) CreateCheckout(ctx context.Context, input model.NewCh
 		checkout.ID = uuid.New()
 		// Check that the UUID has not been used already
 		// If true, it will break out of this for loop and continue.
-		isFreeUuid = util.IsUuidFree[structs.Checkout](r.db, checkout.ID, &structs.Checkout{})
+		isFreeUuid = util.IsUuidFree[structs.Checkout](r.db, checkout.ID)
 	}
 
 	// When we get here, we have found a non-used UUID.
@@ -67,7 +67,7 @@ func (r *mutationResolver) CreateEntity(ctx context.Context) (*structs.Entity, e
 		entity.ID = uuid.New()
 		// Check that the UUID has not been used already
 		// If true, it will break out of this for loop and continue.
-		isFreeUuid = util.IsUuidFree[structs.Entity](r.db, entity.ID, &structs.Entity{})
+		isFreeUuid = util.IsUuidFree[structs.Entity](r.db, entity.ID)
 	}
 
 	r.db.Create(&entity)
@@ -86,7 +86,7 @@ func (r *mutationResolver) CreateItem(ctx context.Context, input model.NewItem) 
 		item.ID = uuid.New()
 		// Check that the UUID has not been used already
 		// If true, will break out of this for loop and continue
-		isFreeUuid = util.IsUuidFree[structs.Item](r.db, item.ID, &structs.Item{})
+		isFreeUuid = util.IsUuidFree[structs.Item](r.db, item.ID)
 	}
 
 	// When we get here, we have found a non-used UUID.
@@ -161,7 +161,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 		user.ID = uuid.New()
 		// Check that the UUID has not been used already
 		// If true, it will break out of this for loop and continue.
-		isFreeUuid = util.IsUuidFree[structs.User](r.db, user.ID, &structs.User{})
+		isFreeUuid = util.IsUuidFree[structs.User](r.db, user.ID)
 	}
 
 	// Salt and hash the provided password
