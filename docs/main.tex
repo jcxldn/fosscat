@@ -271,14 +271,16 @@ After doing some research (should I talk about the different options?) I decided
 
 \subsubsection{Introduction}
 
-In this sprint I will work on the backend service. This service will provide an interface for the frontend to talk to the database via an API (Application Programming Interface). I am writing the backend in \textbf{Go}.
-Go is a performant, statically typed high level language designed by Google.
-Is is frequently used for backend development thanks to it's performance and memory safety.
-I am going to use \underline{GraphQL} as the query language for the frontend to interact with the backend.
+In this sprint I will work on the backend service.
+This service will provide an interface for the frontend to talk to the database via an API (Application Programming Interface).
+I am writing the backend in Go, which is a performant, statically typed high level language designed by Google.
+Go is frequently used for backend development thanks to it's excellent performance and built in memory safety.
+I am also going to use \underline{GraphQL} as the query language used by the frontend to interact with the backend.
 
-\noindent \\ GraphQL is an open-source query and manipulation language designed for use in APIs. (Application Programming Interface). The backend will serve as an API which will interface with my database.
+\noindent \\ GraphQL is an open-source query and manipulation language designed for use in APIs. The backend will serve as an API which will interface with my database.
 I choose to use GraphQL as it is better suited for larger, more complex data sources, and supports querying for multiple different types of data at once, unlike REST. It is also something I was interested in learning more about as I have not designed a system using it before. \\
 
+James: Should this intro be in the design area instead?
 
 TODO: explain what a graphql mutation is (it's a function)
 
@@ -292,9 +294,9 @@ In addition, at a later stage, validation must be performed in order to ensure t
     \item The generated user ID is unique and not already in use
 \end{itemize}
 
-\noindent For this early stage of development, I decided to use an SQLite database to make things easier. I can easily switch this to PostgreSQL as specified in my design doc later.
+\noindent For this early stage of development, I decided to use an SQLite database to make things easier. I can easily switch this to PostgreSQL (as specified in my design doc) later.
 
-\noindent \\ When a GraphQL mutation is executed to create a new user, a function "CreateUser" is called, which is passed any input from the query and a connection to the database. \\
+\noindent \\ When a GraphQL mutation is executed to create a new user, the GraphQL library calls the \lstinline{CreateUser} function, passing any input data from the query.\\ The database connection is available at "\lstinline{r.db}".\\
 
 \noindent My first version of this function was as follows:
 
@@ -310,19 +312,41 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
     // Create the database entry
 	r.db.Create(&user)
 
+    // Return the created user data, converting it to a GraphQL model.
 	return &model.User{
         ID: user.ID.String(),
         FirstName: user.FirstName,
         LastName: user.LastName,
         Email: user.Email
-    }, nil
+    }, nil // return nil in the error field
 \end{lstlisting}
 
-(NEXT UP: UUID GEN)
+\noindent \\ The first thing I noticed after implementing this function was that it was tedious to convert back and forth between \lstinline{structs.User} (the database object) and \lstinline{model.User} (the GraphQL object). I decided to merge these into a single object. This was done with the following lines in my GraphQL library's configuration file:
+
+\begin{lstlisting}[language=Python]
+models:
+
+[..]
+
+    # Custom models
+    Checkout:
+      model: github.com/jcxldn/fosscat/backend/structs.Checkout
+    Entity:
+      model: github.com/jcxldn/fosscat/backend/structs.Entity
+    Item:
+      model: github.com/jcxldn/fosscat/backend/structs.Item
+    User:
+      model: github.com/jcxldn/fosscat/backend/structs.User
+\end{lstlisting}
+
+This instructs the GraphQL library to use the structs I defined for the database as if they were GraphQL models.
 
 \subparagraph{Unique ID generation}
 
-\noindent \\\\ I decided to use a \textbf{for loop }to continuously generate UUIDs (Universal Unique Identifier) to be used as a potential User ID. I then perform validation on the UUID to ensure that it is not already in use.
+\noindent \\\\ I decided to use UUIDs (Universal Unique Identifiers) as IDs for all of the objects in my database. (eg. Users, Items) As seen above, I initially choose to simply call \lstinline{uuid.New()} to generate a new random UUID. However, I would soon realise that it would be beneficial to perform \textbf{validation} in order to ensure that the UUIDs were actually unique, ie. that they were not being used by another object of the same type. For example, I wouldn't want two users to have the same User ID.
+
+\noindent \\ I decided to use a \textbf{for loop} to continuously generate UUIDs to be used as a potential User ID. I then perform a database lookup to ensure that the UUID is not already in use.
+
 This can be done with the following code:
 
 \begin{lstlisting}[language=Go]
@@ -336,28 +360,31 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 		user.ID = uuid.New()
 		// Check that the UUID has not been used already
 		// If true, it will break out of this for loop and continue.
-		isFreeUuid = util.IsUuidFree[structs.User](r.db, user.ID, &structs.User{})
+		isFreeUuid = util.IsUuidFree[structs.User](r.db, user.ID)
 	}
 
 \end{lstlisting}
 
 \noindent In order to achieve this and reduce code duplication across different functions, \\
-I created a "IsUuidFree" utility function. Here is the initial version of this function.
+I created a "IsUuidFree" utility function. Here is the code:
 
 \begin{lstlisting}[language=Go]
 
-func IsUuidFree[T any](db *gorm.DB, id uuid.UUID, obj *T) bool {
-        err := db.Model(obj).Select("id").Where("id == ?", id.String()).First(&obj).Error
-        if errors.Is(err, gorm.ErrRecordNotFound) {
-                // Record not found, so user id is free
-                return true
-            } else {
-                // Record was returned successfully, therefore the user exists
-                return false
-            }
-    }
+func IsUuidFree[T any](db *gorm.DB, id uuid.UUID) bool {
+	obj := new(T)
+	err := db.Model(obj).Select("id").Where("id = ?", id.String()).First(&obj).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		// Record not found, so user id is free
+		return true
+	} else {
+		// Record was returned successfully, therefore the user exists
+		return false
+	}
+}
 
 \end{lstlisting}
+
+JAMES: this initially was different but I changed it to make it simpler. Should I include the old version as well?\\
 
 \noindent This function makes use of \textbf{generics}. As per the Go docs:
 
@@ -367,27 +394,28 @@ func IsUuidFree[T any](db *gorm.DB, id uuid.UUID, obj *T) bool {
     }
 \end{quotation}
 
-\noindent To simplify, generics mean that I can pass any struct (\textbf{T}) to the function and the function will use that type for the obj parameter.
+\noindent To simplify, generics mean that I can pass any struct (\textbf{T}) to the function.
 For example, if I call the function with:\\
 
 \begin{lstlisting}[language=Go]
-    util.IsUuidFree[structs.User](r.db, user.ID, &structs.User{})
+    util.IsUuidFree[structs.User](r.db, user.ID)
 \end{lstlisting}
 
-\noindent \\Then T is set to the type \lstinline{structs.User}, allowing me to pass an object of type \lstinline{structs.User} as the third parameter.\\
+\noindent \\Then T is set to the type \lstinline{structs.User}.\\
 
-\noindent \textbf{GORM} works by defining a struct to query for (corresponding to a table in the database, in this case the \textit{"users"} table). We can then perform SQL actions on it, such as Select. \\
+\noindent \textbf{GORM} (my database library) works by defining a struct to query for which corresponds to a table in the database (in this case the \lstinline{Users} struct corresponds to the \lstinline{users} table). We can then perform SQL actions on this table, such as Select. \\
 
-\noindent Therefore, this gorm DB call is the equivalent of:\\
+\noindent Therefore, the GORM db call from above:
+
+\begin{lstlisting}[language=Go]
+    db.Model(obj).Select("id").Where("id = ?", id.String()).First(&obj)
+\end{lstlisting}
+
+\noindent is the equivalent of:
 
 \begin{lstlisting}[language=SQL]
-    SELECT id FROM users WHERE id == ? VALUES ("uuid-goes-here")
+    SELECT id FROM users WHERE id == ? LIMIT 1 VALUES ("value of id.String()")
 \end{lstlisting}
-
-\noindent \\\\ TODO: this was modified, show where it was modified later on?
-
-
-\paragraph{para}
 
 \section{Testing}
 
