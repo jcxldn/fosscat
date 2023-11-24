@@ -296,7 +296,7 @@ In addition, at a later stage, validation must be performed in order to ensure t
 
 \noindent For this early stage of development, I decided to use an SQLite database to make things easier. I can easily switch this to PostgreSQL (as specified in my design doc) later.
 
-\noindent \\ When a GraphQL mutation is executed to create a new user, the GraphQL library calls the \lstinline{CreateUser} function, passing any input data from the query.\\ The database connection is available at "\lstinline{r.db}".\\
+\noindent I have created a GraphQL mutation called \lstinline{createUser}. When it is called, the GraphQL library calls the \lstinline{CreateUser} function, passing any input data from the query.\\ The database connection is available at "\lstinline{r.db}".\\
 
 \noindent My first version of this function was as follows:
 
@@ -416,6 +416,26 @@ For example, if I call the function with:\\
 \begin{lstlisting}[language=SQL]
     SELECT id FROM users WHERE id == ? LIMIT 1 VALUES ("value of id.String()")
 \end{lstlisting}
+
+\subparagraph{Testing the user account creation flow}
+
+\noindent \\ Now that I have implemented user account creation, I need to test it to verify that my solution works as expected. I have added a GraphQL query to list all users, which I will use in conjunction with the \lstinline{createUser} mutation.
+
+\noindent \\ I am using a piece of software called \textbf{Altair}, which is an interactive way to make GraphQL queries. I start by creating my GraphQL query which includes the \lstinline{createUser} mutation, making sure to set all required fields:\\
+
+\includegraphics[width=15cm]{implementation/first iteration/createUser altair.png}
+
+\noindent \\ Running the query results in the following response:\\
+
+\includegraphics[width=15cm]{implementation/first iteration/createUser altair ran.png}
+
+\noindent \\ Let's check the database for our new user to ensure it was added successfully:\\
+
+\includegraphics[width=15cm]{implementation/first iteration/createUser query db.png}
+
+\noindent \\ We can see that the user is created successfully, added to the database, and the specified fields (line 12 onwards in the query) are returned to the client.
+
+\pagebreak
 
 \section{Testing}
 
