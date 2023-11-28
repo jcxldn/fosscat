@@ -1,9 +1,26 @@
 package jwt
 
-import "github.com/golang-jwt/jwt/v5"
+import (
+	"fmt"
+	"time"
 
-func NewJwt() (str string, err error) {
-	token := jwt.New(jwt.SigningMethodES384)
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/jcxldn/fosscat/backend/structs"
+)
+
+func getExpiryTime() int64 {
+	time := time.Now()
+	time = time.AddDate(0, 0, 1) // one day
+	return time.Unix()
+}
+
+func NewJwt(user structs.User) (str string, err error) {
+	claims := jwt.MapClaims{
+		"iss": "fosscat",
+		"sub": fmt.Sprintf(user.FirstName + " " + user.LastName),
+		"exp": getExpiryTime(),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodES384, claims)
 
 	str, err = token.SignedString(key)
 

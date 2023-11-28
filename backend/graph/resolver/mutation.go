@@ -201,7 +201,7 @@ func (r *mutationResolver) Login(ctx context.Context, email string, password str
 	if res == nil {
 		// Password matches, generate and return a JWT
 		lr := model.LoginResponse{Success: true}
-		jwt, err := jwt.NewJwt()
+		jwt, err := jwt.NewJwt(user)
 		if err == nil {
 			lr.Jwt = &jwt
 			return &lr, nil
