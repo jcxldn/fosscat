@@ -294,7 +294,7 @@ In addition, at a later stage, validation must be performed in order to ensure t
     \item The generated user ID is unique and not already in use
 \end{itemize}
 
-\noindent For this early stage of development, I decided to use an SQLite database to make things easier. I can easily switch this to PostgreSQL (as specified in my design doc) later.
+\noindent For this early stage of development, I decided to use an SQLite database to make things easier. I hope that I can easily switch this to PostgreSQL (as specified in my design doc) later on in the development process.
 
 \noindent I have created a GraphQL mutation called \lstinline{createUser}. When it is called, the GraphQL library calls the \lstinline{CreateUser} function, passing any input data from the query.\\ The database connection is available at "\lstinline{r.db}".\\
 
@@ -372,7 +372,7 @@ I created a "IsUuidFree" utility function. Here is the code:
 
 func IsUuidFree[T any](db *gorm.DB, id uuid.UUID) bool {
 	obj := new(T)
-	err := db.Model(obj).Select("id").Where("id = ?", id.String()).First(&obj).Error
+	err := db.Model(obj).Select("id").Where("id == ?", id.String()).First(&obj).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		// Record not found, so user id is free
 		return true
@@ -434,6 +434,87 @@ For example, if I call the function with:\\
 \includegraphics[width=15cm]{implementation/first iteration/createUser query db.png}
 
 \noindent \\ We can see that the user is created successfully, added to the database, and the specified fields (line 12 onwards in the query) are returned to the client.
+
+\noindent \\ (everything past here is not super polished)
+
+\subsubsection{Problems encountered when moving to PostgreSQL}
+
+(JC: other non-interesting/problematic stuff happened in the meantime)
+
+\noindent At this stage, with most of the core functionality implemented(?), I decided to switch back to PostgreSQL. However, when doing this I encountered two problems:
+
+\subparagraph{How to switch to PostgreSQL? TBD}
+
+\subparagraph{Entity relation errors}
+
+\noindent \\ When creating the database in PostgreSQL, I encountered the following error, displayed in the backend logs.
+
+\begin{lstlisting}[language=SQL]
+/backend/database.go:35 ERROR: relation "entities" does not exist (SQLSTATE 42P01)
+
+[17.308ms] [rows:0] CREATE TABLE "checkouts" ("id" text,"created_at" timestamptz,"updated_at" timestamptz,"deleted_at" timestamptz,"take_date" timestamptz,"return_date" timestamptz,PRIMARY KEY ("id"),CONSTRAINT "fk_entities_checkouts" FOREIGN KEY ("id") REFERENCES "entities"("id"))
+\end{lstlisting}
+
+\noindent \\ This error could be traced to the following line in my code, where the database is "migrated" by GORM, which means that it attempts to create the necessary tables and columns to match the structs I have defined.
+
+\begin{lstlisting}[language=Go]
+    // "Migrate" the schema
+	// This will create tables, keys, columns, etc.
+	// See https://gorm.io/docs/migration.html
+	// Note that we need to pass each struct in our schema.
+	db.AutoMigrate(&structs.Checkout{}, &structs.Entity{}, &structs.Item{}, &structs.User{})
+\end{lstlisting}
+
+\noindent \\Could do: For example struct A creates this table? show it off?
+
+\noindent \\ This error prevented me from progressing with the backend, as it would error out before the tables were created.(rewrite me)
+
+\noindent \\ After some investigation, I found out that this error occurs when tables that have dependencies (what kind?) on each other are created at the same time (in the same \lstinline{AutoMigrate} call). The fix was to create the dependent table first followed by the table that depended on it, the code for which can be seen below:
+
+\begin{lstlisting}[language=Go]
+    // "Migrate" the schema
+    // [..]
+	db.AutoMigrate(&structs.Checkout{})
+	// Item has a dependency on Entity, so do them in the correct order
+	// to avoid "relation does not exist" error during table creation.
+	db.AutoMigrate(&structs.Entity{})
+	db.AutoMigrate(&structs.Item{})
+	db.AutoMigrate(&structs.User{})
+\end{lstlisting}
+
+\noindent \\ I \textbf{validated} this fix by deleting the database and having GORM recreate it on the next startup. All of the necessary tables and columns were created successfully, and no errors were produced in the console (should I show a successful startup / database table list here?)
+
+\subparagraph{Operator does not exist}
+
+\noindent \\ However, when attempting to create a new user in the database I encountered another error:
+
+\begin{lstlisting}[language=SQL]
+./backend/util/user.go:14 ERROR: operator does not exist: text == unknown (SQLSTATE 42883)
+
+[0.369ms] [rows:0] SELECT "id" FROM "users" WHERE id == '8596a222-930e-42f0-841e-9d95993668a4' AND "users"."deleted_at" IS NULL ORDER BY "users"."id" LIMIT 1
+\end{lstlisting}
+
+\noindent \\ This error states that it cannot compare \lstinline{id} with the given UUID (\lstinline{'8596a222-930e-42f0-841e-9d95993668a4'}) because the operator \lstinline{==} does not exist.
+This error points to my \lstinline{IsUuidFree} function, which I talked about in the \textbf{User account creation} section of this iteration.
+
+\noindent \\ After some research, I found that the error occurs because the operator \lstinline{==} does not exist in PostgreSQL. \lstinline{==} is commonly used in programming languages to perform a deep comparison of two objects, and I assumed that the same would be true for PostgreSQL.
+Interestingly, the issue did not manifest itself until after the switch to PostgreSQL, meaning that SQLite handles \lstinline{==} as I expected.
+The fix was simple; Change \lstinline{'=='} to \lstinline{'='}. (show the line here?)
+
+
+\subsubsection{Placeholder: next to write up}
+
+\begin{outline}
+    \1 Error with how I defined foreign keys due to not reading the docs and setting them up incorrectly
+    \2 Time-consuming to identify the problematic
+    \2 Found out that SQLite does not verify foreign key constraints
+    \1 Add foreign keys for lists (eg entities: Entity[])
+    \2 Documented the test process for that
+    \1 Empty structs/data when querying for nested elements (two tables worth of data in same query)
+    \2 Fix was to load the other table.
+\end{outline}
+
+Are all of these worth talking about? Last one is probably the weakest.
 
 \pagebreak
 
