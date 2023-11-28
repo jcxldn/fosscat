@@ -9,13 +9,16 @@ import (
 
 	"github.com/jcxldn/fosscat/backend/graph"
 	"github.com/jcxldn/fosscat/backend/structs"
+	"gorm.io/gorm/clause"
 )
 
 // Checkout is the resolver for the checkout field.
 func (r *queryResolver) Checkout(ctx context.Context) ([]*structs.Checkout, error) {
 	// Get all checkouts. Proof of concept only, returns all fields!
 	checkouts := []*structs.Checkout{}
-	result := r.db.Find(&checkouts)
+	// Preload all associations (https://gorm.io/docs/preload.html#Preload-All)
+	// TODO much later: don't preload private fields like hash unless user = logged in user.
+	result := r.db.Preload(clause.Associations).Find(&checkouts)
 	return checkouts, result.Error
 }
 
