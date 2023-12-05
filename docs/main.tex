@@ -435,17 +435,11 @@ For example, if I call the function with:\\
 
 \noindent \\ We can see that the user is created successfully, added to the database, and the specified fields (line 12 onwards in the query) are returned to the client.
 
-\noindent \\ (everything past here is not super polished)
-
 \subsubsection{Problems encountered when moving to PostgreSQL}
 
-(JC: other non-interesting/problematic stuff happened in the meantime)
+\noindent At this stage, with most of the core functionality implemented, I decided to switch back to PostgreSQL. However, when doing this I encountered two problems:
 
-\noindent At this stage, with most of the core functionality implemented(?), I decided to switch back to PostgreSQL. However, when doing this I encountered two problems:
-
-\subparagraph{How to switch to PostgreSQL? TBD}
-
-\subparagraph{Entity relation errors}
+\subparagraph{Problem 1 - Entity relation errors}
 
 \noindent \\ When creating the database in PostgreSQL, I encountered the following error, displayed in the backend logs.
 
@@ -467,9 +461,9 @@ For example, if I call the function with:\\
 
 \noindent \\Could do: For example struct A creates this table? show it off?
 
-\noindent \\ This error prevented me from progressing with the backend, as it would error out before the tables were created.(rewrite me)
+\noindent \\ This error prevented me from progressing with the backend implementation, as the program would error out during table creation (should I remove this line?)
 
-\noindent \\ After some investigation, I found out that this error occurs when tables that have dependencies (what kind?) on each other are created at the same time (in the same \lstinline{AutoMigrate} call). The fix was to create the dependent table first followed by the table that depended on it, the code for which can be seen below:
+\noindent \\ After some investigation, I found out that this error occurs when tables that have dependencies on each other are created at the same time (in the same \lstinline{AutoMigrate} call). The fix was to create the dependent table first followed by the table that depended on it, the code for which can be seen below:
 
 \begin{lstlisting}[language=Go]
     // "Migrate" the schema
@@ -482,9 +476,100 @@ For example, if I call the function with:\\
 	db.AutoMigrate(&structs.User{})
 \end{lstlisting}
 
-\noindent \\ I \textbf{validated} this fix by deleting the database and having GORM recreate it on the next startup. All of the necessary tables and columns were created successfully, and no errors were produced in the console (should I show a successful startup / database table list here?)
+\noindent \\ After making this change, I decided to validate and test it before moving on.
 
-\subparagraph{Operator does not exist}
+\noindent \\ I decided to test this change by first deleting all the database tables and then starting the backend, which should create (or "migrate") all of the tables.
+
+\noindent \\ Firstly I will connect to the database and delete the tables. I have attached the console output and have annotated what I am doing to make it easier to understand.
+
+% Define psql commented language for lstlistings
+\lstdefinelanguage{custom_psql_commented}{
+    alsoletter={\=,\#,\-},
+    keywords={fosscat\=\#, fosscat\-\#},
+    morecomment=[l]{//}
+}
+
+\begin{lstlisting}[language=custom_psql_commented]
+// Run 'psql' to connect to the database
+[james@linux cs-coursework]$ psql -h localhost -U fosscat -W
+// Enter the password (it is not displayed)
+Password: 
+psql (15.4, server 16.1 (Debian 16.1-1.pgdg120+1))
+WARNING: psql major version 15, server major version 16.
+         Some psql features might not work.
+Type "help" for help.
+
+// List all tables, we can see that they exist
+fosscat=# \dt
+          List of relations
+ Schema |   Name    | Type  |  Owner  
+--------+-----------+-------+---------
+ public | checkouts | table | fosscat
+ public | entities  | table | fosscat
+ public | items     | table | fosscat
+ public | users     | table | fosscat
+(4 rows)
+
+// Delete the schema containing all of the tables
+fosscat=# DROP SCHEMA public CASCADE;
+NOTICE:  drop cascades to 4 other objects
+DETAIL:  drop cascades to table users
+drop cascades to table checkouts
+drop cascades to table entities
+drop cascades to table items
+DROP SCHEMA
+// Re-create the schema
+fosscat=# CREATE SCHEMA public;
+CREATE SCHEMA
+// Set default permissions on schema
+fosscat=# GRANT ALL ON SCHEMA public TO public;
+GRANT
+// List all tables, we can see that there aren't any
+fosscat=# \dt
+Did not find any relations.
+// Quit
+fosscat-# \q
+\end{lstlisting}
+
+\noindent As can be seen above, the database now contains no tables. Next, let's start the backend, where GORM should recreate the database tables. Below is the startup log:
+
+\begin{lstlisting}
+[james@linux cs-coursework]$ GIN_MODE=release ./start-backend.sh
+2023/12/05 14:23:08 [database] connected. migrating...
+2023/12/05 14:23:08 [database] migrated, done.
+2023/12/05 14:23:08 [resolver] db not set, setting.
+\end{lstlisting}
+
+\noindent You can see that no errors were produced in the console, indicating that all of the necessary tables and columns were created successfully. To check this, let's connect to the database again and list the tables:
+
+\begin{lstlisting}[language=custom_psql_commented]
+// Run 'psql' to connect to the database
+[james@linux cs-coursework]$ psql -h localhost -U fosscat -W
+// Enter the password (it is not displayed)
+Password: 
+psql (15.4, server 16.1 (Debian 16.1-1.pgdg120+1))
+WARNING: psql major version 15, server major version 16.
+         Some psql features might not work.
+Type "help" for help.
+
+// List all tables, we can see that they exist
+fosscat=# \dt
+          List of relations
+ Schema |   Name    | Type  |  Owner  
+--------+-----------+-------+---------
+ public | checkouts | table | fosscat
+ public | entities  | table | fosscat
+ public | items     | table | fosscat
+ public | users     | table | fosscat
+(4 rows)
+
+// Quit
+fosscat=# \q
+\end{lstlisting}
+
+\noindent We can see that the tables were created successfully.
+
+\subparagraph{Problem 2 - Operator does not exist}
 
 \noindent \\ However, when attempting to create a new user in the database I encountered another error:
 
@@ -501,20 +586,6 @@ This error points to my \lstinline{IsUuidFree} function, which I talked about in
 Interestingly, the issue did not manifest itself until after the switch to PostgreSQL, meaning that SQLite handles \lstinline{==} as I expected.
 The fix was simple; Change \lstinline{'=='} to \lstinline{'='}. (show the line here?)
 
-
-\subsubsection{Placeholder: next to write up}
-
-\begin{outline}
-    \1 Error with how I defined foreign keys due to not reading the docs and setting them up incorrectly
-    \2 Time-consuming to identify the problematic
-    \2 Found out that SQLite does not verify foreign key constraints
-    \1 Add foreign keys for lists (eg entities: Entity[])
-    \2 Documented the test process for that
-    \1 Empty structs/data when querying for nested elements (two tables worth of data in same query)
-    \2 Fix was to load the other table.
-\end{outline}
-
-Are all of these worth talking about? Last one is probably the weakest.
 
 \pagebreak
 
