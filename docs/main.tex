@@ -584,7 +584,7 @@ This error points to my \lstinline{IsUuidFree} function, which I talked about in
 
 \noindent \\ After some research, I found that the error occurs because the operator \lstinline{==} does not exist in PostgreSQL. \lstinline{==} is commonly used in programming languages to perform a deep comparison of two objects, and I assumed that the same would be true for PostgreSQL.
 Interestingly, the issue did not manifest itself until after the switch to PostgreSQL, meaning that SQLite handles \lstinline{==} as I expected.
-The fix was simple; Change \lstinline{'=='} to \lstinline{'='}. (show the line here?)
+The fix was simple; Change \lstinline{'=='} to \lstinline{'='}.
 
 \noindent \\ This meant that the line
 
