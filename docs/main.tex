@@ -586,6 +586,17 @@ This error points to my \lstinline{IsUuidFree} function, which I talked about in
 Interestingly, the issue did not manifest itself until after the switch to PostgreSQL, meaning that SQLite handles \lstinline{==} as I expected.
 The fix was simple; Change \lstinline{'=='} to \lstinline{'='}. (show the line here?)
 
+\noindent \\ This meant that the line
+
+\begin{lstlisting}[language=Go]
+    err := db.Model(obj).Select("id").Where("id == ?", id.String()).First(&obj).Error
+\end{lstlisting}
+
+\noindent became
+
+\begin{lstlisting}[language=Go]
+    err := db.Model(obj).Select("id").Where("id = ?", id.String()).First(&obj).Error
+\end{lstlisting}
 
 \pagebreak
 
