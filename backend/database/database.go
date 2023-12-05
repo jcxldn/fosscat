@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"github.com/jcxldn/fosscat/backend/structs"
 )
 
-func connect() *gorm.DB {
+func Connect() *gorm.DB {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s",
 		os.Getenv("DB_HOST"),
