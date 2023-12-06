@@ -598,6 +598,79 @@ The fix was simple; Change \lstinline{'=='} to \lstinline{'='}.
     err := db.Model(obj).Select("id").Where("id = ?", id.String()).First(&obj).Error
 \end{lstlisting}
 
+\begin{comment}
+POLISH END
+\end{comment}
+
+\subparagraph{Problem 3 - "... violates foreign key constraint"}
+
+\noindent \\ When trying to create a new user, the following error message would appear:
+
+\begin{lstlisting}[language=SQL]
+/backend/graph/resolver/mutation.go:90 ERROR: insert or update on table "users" violates foreign key constraint "fk_checkouts_user" (SQLSTATE 23503)
+[2.691ms] [rows:0] INSERT INTO "users" ("id", "created_at", "updated_at", "deleted_at", "first_name", "last_name", "email", "hash") VALUES [..]
+\end{lstlisting}
+
+\noindent This error occurred when trying to create a user. Upon reading into it the error occurred because of how I defined my foreign keys for GORM. For example, I had the following struct definition for \lstinline{Checkout}:
+
+\begin{lstlisting}[language=Go]
+type Checkout struct {
+	gorm.Model
+	ID         uuid.UUID
+	User       User `gorm:"foreignKey:ID"`
+	TakeDate   time.Time
+	ReturnDate time.Time
+}
+\end{lstlisting}
+
+\noindent Upon reading the GORM documentation, I realised this should actually be:
+
+\begin{lstlisting}[language=Go]
+// Checkout belongs to a User, User.ID (UserID) is the foreign key
+type Checkout struct {
+    gorm.Model
+    ID         uuid.UUID
+    User       User
+    UserID     uuid.UUID
+    TakeDate   time.Time
+    ReturnDate time.Time
+}
+\end{lstlisting}
+
+\noindent After applying this change, the program worked as expected. I tested everything by attempting to create a new user in Altair:\\
+
+\includegraphics[width=15cm]{implementation/first iteration/postgreproblems altair working.png}
+
+\noindent \\ This query returned successfully and the user was created without any errors.
+
+\subsubsection{Adding foreign keys for lists}
+
+\subsubsection{Issues with nested queries (queries using multiple tables)}
+
+\subsubsection{Adding the remaining queries}
+
+CreateCheckout validation
+
+\subsubsection{Testing}
+
+\paragraph{Test Plan}
+
+\paragraph{Test Results}
+
+\paragraph{Errors encountered during testing}
+
+\subparagraph{Summary}
+
+\subparagraph{Fixing error XYZ}
+
+\subsubsection{Evaluation}
+
+\noindent In this iteration, I have successfully written code that can create a database, create the necessary tables to store data, and exposes functions to create and store data in the database.
+
+\noindent \\ Using GraphQL, user accounts can be created, where a unused unique identifier is found and used, as well as the creation of a salted password hash to securely store the user's password. In addition, checkouts, entities and items can be created each with their unique identifiers. Where necessary, such as with an checkout, we can use relationships to tie the checkout to a specified user object residing in the database.
+
+\noindent \\ The next iteration will focus on adding security to the backend. For example, I will need to add authenticated routes, where users can only view the contents of the route if they are logged in, as it will contain sensitive data.
+
 \pagebreak
 
 \section{Testing}
