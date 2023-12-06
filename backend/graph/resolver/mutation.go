@@ -6,183 +6,31 @@ package resolver
 
 import (
 	"context"
-	"errors"
-	"log"
 
-	"github.com/google/uuid"
-	ev "github.com/jcxldn/fosscat/backend/emailVerifier"
+	"github.com/jcxldn/fosscat/backend/database"
 	"github.com/jcxldn/fosscat/backend/graph"
 	"github.com/jcxldn/fosscat/backend/graph/model"
 	"github.com/jcxldn/fosscat/backend/structs"
-	"github.com/jcxldn/fosscat/backend/util"
-	"golang.org/x/crypto/bcrypt"
 )
 
 // CreateCheckout is the resolver for the createCheckout field.
 func (r *mutationResolver) CreateCheckout(ctx context.Context, input model.NewCheckout) (*structs.Checkout, error) {
-	// Create a Checkout struct
-	checkout := structs.Checkout{}
-
-	isFreeUuid := false
-	for !isFreeUuid {
-		// Generate a UUID for the checkout id.
-		checkout.ID = uuid.New()
-		// Check that the UUID has not been used already
-		// If true, it will break out of this for loop and continue.
-		isFreeUuid = util.IsUuidFree[structs.Checkout](r.db, checkout.ID)
-	}
-
-	// When we get here, we have found a non-used UUID.
-
-	// Assign the checkout to a user.
-	id, parseErr := uuid.Parse(input.User.ID)
-
-	if parseErr == nil {
-
-		user, dbErr := util.GetObjectById[structs.User](r.db, id)
-
-		if dbErr == nil {
-			checkout.User = *user
-
-			// Create the database entry
-			r.db.Create(&checkout)
-
-			return &checkout, nil
-		} else {
-			return nil, errors.New("unable to create checkout: user does not exist")
-		}
-	} else {
-		return nil, errors.New("unable to create checkout: unable to parse user id")
-	}
+	return database.CreateCheckout(r.db, input)
 }
 
 // CreateEntity is the resolver for the createEntity field.
 func (r *mutationResolver) CreateEntity(ctx context.Context) (*structs.Entity, error) {
-	// Create a Entity struct
-	entity := structs.Entity{}
-
-	isFreeUuid := false
-	for !isFreeUuid {
-		// Generate a UUID for the user id.
-		entity.ID = uuid.New()
-		// Check that the UUID has not been used already
-		// If true, it will break out of this for loop and continue.
-		isFreeUuid = util.IsUuidFree[structs.Entity](r.db, entity.ID)
-	}
-
-	r.db.Create(&entity)
-
-	return &entity, nil
+	return database.CreateEntity(r.db)
 }
 
 // CreateItem is the resolver for the createItem field.
 func (r *mutationResolver) CreateItem(ctx context.Context, input model.NewItem) (*structs.Item, error) {
-	// Create a Item struct
-	item := structs.Item{}
-
-	isFreeUuid := false
-	for !isFreeUuid {
-		// Generate a UUID for the item id
-		item.ID = uuid.New()
-		// Check that the UUID has not been used already
-		// If true, will break out of this for loop and continue
-		isFreeUuid = util.IsUuidFree[structs.Item](r.db, item.ID)
-	}
-
-	// When we get here, we have found a non-used UUID.
-
-	// MAJOR STEP: Assign any given entities to the item
-
-	// Check if we were given any entity IDs and iterate over them
-	// First variable is index, but we are not using it so put _. (standard practice)
-	for _, entityId := range input.Entities {
-		// Attempt to parse this uuid
-		id, parseErr := uuid.Parse(entityId.ID)
-
-		if parseErr == nil {
-			// UUID is valid, attempt to get a object by that ID
-			entity, dbErr := util.GetObjectById[structs.Entity](r.db, id)
-
-			if dbErr == nil {
-				// Object exists
-				item.Entities = append(item.Entities, *entity)
-			} else {
-				// Object does not exist
-				// Let's cancel the whole transaction.
-				// TODO: return problematic UUID
-				return nil, errors.New("unable to create item: entity does not exist")
-			}
-		} else {
-			// entityId is not a valid UUID
-			// Let's cancel the whole transaction.
-			// TODO: return problematic UUID
-			return nil, errors.New("unable to create item: unable to parse entity id")
-		}
-	}
-
-	// All entities have been parsed and added successfully
-	// If error, transaction would have been cancelled.
-
-	// Create the db entry.
-	r.db.Create(&item)
-
-	// Return the result
-	return &item, nil
+	return database.CreateItem(r.db, input)
 }
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*structs.User, error) {
-	// Create a User struct from the input model
-	// Set fields that do not need further validation (name only)
-	user := structs.User{FirstName: input.FirstName, LastName: input.LastName}
-
-	// Attempt to validate the user email.
-	res, err := ev.EmailVerifier.Verify(input.Email)
-	//res.
-	if err != nil {
-		// Email address failed to verify
-		// TODO: make errors more readable, custom errors.
-		log.Fatalln("[createUser] email address failed to verify")
-		return nil, err
-	}
-
-	if !res.Syntax.Valid {
-		// Email address is not valid
-		// TODO: make errors more readable, custom errors.
-		return nil, err
-	}
-
-	// Email passed validation, set in the user struct.
-	user.Email = res.Email
-
-	isFreeUuid := false
-	for !isFreeUuid {
-		// Generate a UUID for the user id.
-		user.ID = uuid.New()
-		// Check that the UUID has not been used already
-		// If true, it will break out of this for loop and continue.
-		isFreeUuid = util.IsUuidFree[structs.User](r.db, user.ID)
-	}
-
-	// Salt and hash the provided password
-	// I am currently using bCrypt, which has the function GenerateFromPasswords.
-	// This generates a random salt for us and applies it to the hash.
-	// I believe the hash result and salt are stored side by side.
-	// Cost of '10' for now, seems like a good balance.
-	hash, err := bcrypt.GenerateFromPassword([]byte(input.Password), 10)
-
-	if err != nil {
-		// Hashing failed (password too long/short?)
-		// TODO: make errors more readable, custom errors
-		return nil, err
-	}
-
-	// Hashing completed successfully, set in the user struct
-	// For purposes of writeup use string for now so we can remove it later.
-	user.Hash = string(hash)
-
-	r.db.Create(&user)
-	return &structs.User{ID: user.ID, FirstName: user.FirstName, LastName: user.LastName, Email: user.Email, Hash: user.Hash}, nil
+	return database.CreateUser(r.db, input)
 }
 
 // Mutation returns graph.MutationResolver implementation.
