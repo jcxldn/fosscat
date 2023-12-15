@@ -26,7 +26,13 @@ func Connect() *gorm.DB {
 		panic("failed to connect database")
 	}
 
-	log.Println("[database] connected. migrating...")
+	Migrate(db)
+
+	return db
+}
+
+func Migrate(db *gorm.DB) {
+	log.Println("[database] migrating...")
 
 	// "Migrate" the schema
 	// This will create tables, keys, columns, etc. Everything really.
@@ -41,6 +47,4 @@ func Connect() *gorm.DB {
 	db.AutoMigrate(&structs.User{})
 
 	log.Println("[database] migrated, done.")
-
-	return db
 }
