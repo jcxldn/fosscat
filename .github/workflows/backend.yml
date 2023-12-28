@@ -10,8 +10,13 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: 'stable'
+        
+      - name: Generate gqlgen files
+        run: go run github.com/99designs/gqlgen generate
+        working-directory: ./backend
       - name: Run coverage
-        run: cd backend && go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+        run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+        working-directory: ./backend
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4-beta
         env:
