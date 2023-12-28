@@ -15,7 +15,7 @@ jobs:
         run: go run github.com/99designs/gqlgen generate
         working-directory: ./backend
       - name: Run coverage
-        run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+        run: go test -coverpkg=./... -race -coverprofile=coverage.txt -covermode=atomic ./...
         working-directory: ./backend
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4-beta
