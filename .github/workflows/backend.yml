@@ -19,7 +19,5 @@ jobs:
         working-directory: ./backend
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4-beta
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           files: backend/coverage.txt
