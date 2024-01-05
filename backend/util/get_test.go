@@ -27,6 +27,21 @@ func (s *UtilGetTestSuite) TestCreateUser() {
 	s.user = user
 }
 
+func (s *UtilGetTestSuite) TestCreateUserInvalidEmail() {
+	newUser := model.NewUser{FirstName: "Example", LastName: "User", Email: "example*email"}
+	_, err := database.CreateUser(s.DB, newUser)
+
+	s.Assertions.EqualError(err, "email address not valid")
+}
+
+func (s *UtilGetTestSuite) TestCreateUserInvalidPasswordTooLong() {
+	// >72 byte password is too long (72 byte limit)
+	newUser := model.NewUser{Email: "example.user@example.com", Password: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tincidunt. "}
+	_, err := database.CreateUser(s.DB, newUser)
+
+	s.Assertions.EqualError(err, "password does not satisfy requirements")
+}
+
 func (s *UtilGetTestSuite) TestGetObjectByIdUser() {
 	user, err := util.GetObjectById[structs.User](s.DB, s.user.ID)
 

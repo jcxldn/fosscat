@@ -5,5 +5,12 @@ import (
 )
 
 var (
-	EmailVerifier = emailverifier.NewVerifier()
+	ev = emailverifier.NewVerifier()
 )
+
+func VerifyEmail(email string) bool {
+	// Check syntax
+	syntax := ev.ParseAddress(email)
+
+	return syntax.Valid
+}

@@ -1,7 +1,7 @@
 package database
 
 import (
-	"log"
+	"errors"
 
 	"github.com/google/uuid"
 	ev "github.com/jcxldn/fosscat/backend/emailVerifier"
@@ -18,23 +18,13 @@ func CreateUser(db *gorm.DB, input model.NewUser) (*structs.User, error) {
 	user := structs.User{FirstName: input.FirstName, LastName: input.LastName}
 
 	// Attempt to validate the user email.
-	res, err := ev.EmailVerifier.Verify(input.Email)
-	//res.
-	if err != nil {
-		// Email address failed to verify
-		// TODO: make errors more readable, custom errors.
-		log.Fatalln("[createUser] email address failed to verify")
-		return nil, err
-	}
-
-	if !res.Syntax.Valid {
-		// Email address is not valid
-		// TODO: make errors more readable, custom errors.
-		return nil, err
+	isValidEmail := ev.VerifyEmail(input.Email)
+	if !isValidEmail {
+		return nil, errors.New("email address not valid")
 	}
 
 	// Email passed validation, set in the user struct.
-	user.Email = res.Email
+	user.Email = input.Email
 
 	isFreeUuid := false
 	for !isFreeUuid {
@@ -55,7 +45,7 @@ func CreateUser(db *gorm.DB, input model.NewUser) (*structs.User, error) {
 	if err != nil {
 		// Hashing failed (password too long/short?)
 		// TODO: make errors more readable, custom errors
-		return nil, err
+		return nil, errors.New("password does not satisfy requirements")
 	}
 
 	// Hashing completed successfully, set in the user struct
