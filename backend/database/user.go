@@ -55,3 +55,10 @@ func CreateUser(db *gorm.DB, input model.NewUser) (*structs.User, error) {
 	db.Create(&user)
 	return &structs.User{ID: user.ID, FirstName: user.FirstName, LastName: user.LastName, Email: user.Email, Hash: user.Hash}, nil
 }
+
+func GetAllUsers(db *gorm.DB) ([]*structs.User, error) {
+	// Get all users. Proof of concept only, returns all fields!
+	users := []*structs.User{}
+	result := db.Find(&users)
+	return users, result.Error
+}
