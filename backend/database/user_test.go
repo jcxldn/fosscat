@@ -5,25 +5,12 @@ import (
 
 	"github.com/jcxldn/fosscat/backend/database"
 	"github.com/jcxldn/fosscat/backend/graph/model"
-	"github.com/jcxldn/fosscat/backend/structs"
 	"github.com/jcxldn/fosscat/backend/test/common"
 	"github.com/stretchr/testify/suite"
 )
 
 type UserTestSuite struct {
-	common.DatabaseTestSuite
-	user *structs.User
-}
-
-func (s *UserTestSuite) TestCreateUser() {
-	newUser := model.NewUser{FirstName: "Example", LastName: "User", Email: "example.user@example.com"}
-	user, err := database.CreateUser(s.DB, newUser)
-
-	if err != nil {
-		panic(err)
-	}
-
-	s.user = user
+	common.UserDatabaseTestSuite
 }
 
 func (s *UserTestSuite) TestCreateUserInvalidEmail() {
@@ -48,7 +35,7 @@ func (s *UserTestSuite) TestGetAllUsers() {
 	s.Assertions.Empty(err)
 	// Check that the user created in this test is in the response
 	s.Assertions.Len(users, 1)
-	s.Assertions.Equal(users[0].ID, s.user.ID)
+	s.Assertions.Equal(users[0].ID, s.User.ID)
 
 }
 
