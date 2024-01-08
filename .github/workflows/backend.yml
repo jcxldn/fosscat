@@ -14,12 +14,20 @@ jobs:
       - name: Generate gqlgen files
         run: go run github.com/99designs/gqlgen generate
         working-directory: ./backend
-      - name: Run coverage
-        run: go test -coverpkg=./... -race -coverprofile=coverage.txt -covermode=atomic ./...
+
+      - name: Run tests
+        run: go test -v -coverpkg=./... -race -coverprofile=coverage.txt -covermode=atomic 2>&1 ./... | tee /dev/tty | go-junit-report -set-exit-code > report.xml
         working-directory: ./backend
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4-beta
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           files: backend/coverage.txt
+
+      - name: Generate test summary
+        uses: test-summary/action@v2
+        with:
+          paths: "backend/report.xml"
+        if: always()
