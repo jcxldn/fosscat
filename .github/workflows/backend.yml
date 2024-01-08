@@ -16,6 +16,8 @@ jobs:
         working-directory: ./backend
 
       - name: Run tests
+        # Allocate a TTY <https://github.com/gfx/example-github-actions-with-tty>
+        shell: 'script -q -e -c "bash {0}"'
         run: go test -v -coverpkg=./... -race -coverprofile=coverage.txt -covermode=atomic 2>&1 ./... | tee /dev/tty | go-junit-report -set-exit-code > report.xml
         working-directory: ./backend
 
