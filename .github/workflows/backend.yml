@@ -13,6 +13,7 @@ jobs:
       
       - name: Install dependencies
         run: go get ./...
+        working-directory: ./backend
         
       - name: Generate gqlgen files
         run: go run github.com/99designs/gqlgen generate
