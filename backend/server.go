@@ -5,6 +5,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/jcxldn/fosscat/backend/database"
 	"github.com/jcxldn/fosscat/backend/graph"
 	"github.com/jcxldn/fosscat/backend/graph/resolver"
 	"github.com/jcxldn/fosscat/backend/util/jwt"
@@ -16,7 +17,7 @@ func graphqlHandler() gin.HandlerFunc {
 	// Connect to the database and place the handle in the graphql resolver
 	// So that is accessible when executing graphql requests in ctx.
 	resolver := &resolver.Resolver{}
-	resolver.UpdateDb(connect())
+	resolver.UpdateDb(database.Connect())
 
 	// Setup JWT keys (load from file)
 	jwt.SetupKey()

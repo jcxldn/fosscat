@@ -1,0 +1,39 @@
+name: Backend
+
+on: [push, pull_request]
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version: 'stable'
+        
+      - name: Generate gqlgen files
+        run: go run github.com/99designs/gqlgen generate
+        working-directory: ./backend
+
+      - name: Install go-junit-report
+        run: go install github.com/jstemmer/go-junit-report@latest
+        working-directory: ./backend
+
+      - name: Run tests
+        # Allocate a TTY <https://github.com/gfx/example-github-actions-with-tty>
+        shell: 'script -q -e -c "bash {0}"'
+        run:  go test -v -coverpkg=./... -race -coverprofile=coverage.txt -covermode=atomic 2>&1 ./... | tee /dev/tty | go-junit-report -set-exit-code > report.xml
+        working-directory: ./backend
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4-beta
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: backend/coverage.txt
+
+      - name: Generate test summary
+        uses: test-summary/action@v2
+        with:
+          paths: "backend/report.xml"
+        if: always()
