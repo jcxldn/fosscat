@@ -14,6 +14,10 @@ func CreateItem(db *gorm.DB, input model.NewItem) (*structs.Item, error) {
 	// Create a Item struct
 	item := structs.Item{}
 
+	if input.Title != nil {
+		item.Title = *input.Title
+	}
+
 	isFreeUuid := false
 	for !isFreeUuid {
 		// Generate a UUID for the item id
