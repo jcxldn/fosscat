@@ -1,7 +1,6 @@
 package jwt
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -17,7 +16,7 @@ func getExpiryTime() int64 {
 func NewJwt(user structs.User) (str string, err error) {
 	claims := jwt.MapClaims{
 		"iss": "fosscat",
-		"sub": fmt.Sprintf(user.FirstName + " " + user.LastName),
+		"sub": user.ID,
 		"exp": getExpiryTime(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodES384, claims)
