@@ -12,7 +12,8 @@ import (
 
 func CreateCheckout(db *gorm.DB, input model.NewCheckout) (*structs.Checkout, error) {
 	// Create a Checkout struct
-	checkout := structs.Checkout{}
+	// Populate the TakeDate and ReturnDate fields using a util that sets them to zero-time if they are nil or not provided.
+	checkout := structs.Checkout{TakeDate: util.GetTimeOrZero(input.TakeDate), ReturnDate: util.GetTimeOrZero(input.ReturnDate)}
 
 	isFreeUuid := false
 	for !isFreeUuid {
