@@ -1,0 +1,4 @@
+type LoginResponse {
+    success: Boolean!
+    jwt: String
+}

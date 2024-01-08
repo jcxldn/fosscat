@@ -6,6 +6,7 @@ require (
 	github.com/99designs/gqlgen v0.17.40
 	github.com/AfterShip/email-verifier v1.3.3
 	github.com/gin-gonic/gin v1.9.1
+	github.com/golang-jwt/jwt/v5 v5.1.0
 	github.com/google/uuid v1.3.1
 	github.com/stretchr/testify v1.8.4
 	github.com/testcontainers/testcontainers-go v0.26.0

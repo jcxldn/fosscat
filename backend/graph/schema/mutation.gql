@@ -3,4 +3,6 @@ type Mutation {
   createEntity: Entity!
   createItem(input: NewItem!): Item!
   createUser(input: NewUser!): User!
+
+  login(email: String!, password: String!): LoginResponse!
 }
