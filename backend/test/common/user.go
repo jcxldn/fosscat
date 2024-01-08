@@ -12,8 +12,8 @@ type UserDatabaseTestSuite struct {
 	User *structs.User
 }
 
-func (s *UserDatabaseTestSuite) TestCreateUser() {
-	newUser := model.NewUser{FirstName: "Example", LastName: "User", Email: "example.user@example.com"}
+func (s *UserDatabaseTestSuite) CreateUser() {
+	newUser := model.NewUser{FirstName: "Example", LastName: "User", Email: "user@example.com"}
 	user, err := database.CreateUser(s.DB, newUser)
 
 	if err != nil {
@@ -21,4 +21,8 @@ func (s *UserDatabaseTestSuite) TestCreateUser() {
 	}
 
 	s.User = user
+
+	s.Assertions.Equal(user.FirstName, newUser.FirstName)
+	s.Assertions.Equal(user.LastName, newUser.LastName)
+	s.Assertions.Equal(user.Email, newUser.Email)
 }

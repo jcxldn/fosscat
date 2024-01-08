@@ -13,6 +13,10 @@ type UserTestSuite struct {
 	common.UserDatabaseTestSuite
 }
 
+func (s *UserTestSuite) TestCreateUser() {
+	s.CreateUser()
+}
+
 func (s *UserTestSuite) TestCreateUserInvalidEmail() {
 	newUser := model.NewUser{FirstName: "Example", LastName: "User", Email: "example*email"}
 	_, err := database.CreateUser(s.DB, newUser)
