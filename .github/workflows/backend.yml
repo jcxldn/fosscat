@@ -10,6 +10,9 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: 'stable'
+      
+      - name: Install dependencies
+        run: go get ./...
         
       - name: Generate gqlgen files
         run: go run github.com/99designs/gqlgen generate
