@@ -14,16 +14,72 @@ type CheckoutTestSuite struct {
 	common.UserDatabaseTestSuite
 }
 
+func (s *CheckoutTestSuite) SetupSuite() {
+	s.UserDatabaseTestSuite.SetupSuite() // Call parent SetupSuite
+	s.CreateUser()                       // Create a user for this test suite run
+}
+
 func (s *CheckoutTestSuite) TestCreateCheckoutAllFields() {
 	existingUser := model.ExistingUser{ID: s.User.ID.String()}
-	takeDate := time.Time{}
-	returnDate := time.Time{}.AddDate(0, 0, 1)
+	takeDate := time.Now()
+	returnDate := time.Now().AddDate(0, 0, 1)
 	newCheckout := model.NewCheckout{User: &existingUser, TakeDate: &takeDate, ReturnDate: &returnDate}
 
 	checkout, err := database.CreateCheckout(s.DB, newCheckout)
 
-	s.Assertions.NotNil(checkout.TakeDate)
-	s.Assertions.NotNil(checkout.ReturnDate)
+	s.Assertions.False(checkout.TakeDate.IsZero())
+	s.Assertions.False(checkout.ReturnDate.IsZero())
+
+	s.Assertions.Equal(checkout.User.ID, s.User.ID)
+	s.Assertions.Equal(checkout.UserID, s.User.ID)
+
+	s.Assertions.Nil(err)
+}
+
+func (s *CheckoutTestSuite) TestCreateCheckoutNoReturnDate() {
+
+	existingUser := model.ExistingUser{ID: s.User.ID.String()}
+	takeDate := time.Now()
+	newCheckout := model.NewCheckout{User: &existingUser, TakeDate: &takeDate, ReturnDate: nil}
+
+	checkout, err := database.CreateCheckout(s.DB, newCheckout)
+
+	s.Assertions.False(checkout.TakeDate.IsZero())
+	s.Assertions.True(checkout.ReturnDate.IsZero())
+
+	s.Assertions.Equal(checkout.User.ID, s.User.ID)
+	s.Assertions.Equal(checkout.UserID, s.User.ID)
+
+	s.Assertions.Nil(err)
+}
+
+func (s *CheckoutTestSuite) TestCreateCheckoutNoTakeDate() {
+
+	existingUser := model.ExistingUser{ID: s.User.ID.String()}
+	returnDate := time.Now().AddDate(0, 0, 1)
+	newCheckout := model.NewCheckout{User: &existingUser, TakeDate: nil, ReturnDate: &returnDate}
+
+	checkout, err := database.CreateCheckout(s.DB, newCheckout)
+
+	s.Assertions.True(checkout.TakeDate.IsZero())
+	s.Assertions.False(checkout.ReturnDate.IsZero())
+
+	s.Assertions.Equal(checkout.User.ID, s.User.ID)
+	s.Assertions.Equal(checkout.UserID, s.User.ID)
+
+	s.Assertions.Nil(err)
+}
+
+func (s *CheckoutTestSuite) TestCreateCheckoutOnlyID() {
+
+	existingUser := model.ExistingUser{ID: s.User.ID.String()}
+	newCheckout := model.NewCheckout{User: &existingUser, TakeDate: nil, ReturnDate: nil}
+
+	checkout, err := database.CreateCheckout(s.DB, newCheckout)
+
+	s.Assertions.True(checkout.TakeDate.IsZero())
+	s.Assertions.True(checkout.ReturnDate.IsZero())
+
 	s.Assertions.Equal(checkout.User.ID, s.User.ID)
 	s.Assertions.Equal(checkout.UserID, s.User.ID)
 
