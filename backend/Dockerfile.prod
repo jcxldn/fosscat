@@ -5,10 +5,10 @@ WORKDIR /src
 # Copy current directory
 COPY . .
 
-RUN go get  
-
 # graphql generate
 RUN go run github.com/99designs/gqlgen generate
+
+RUN go get
 
 RUN go build -ldflags "-s -w" -o /dist/backend
 
