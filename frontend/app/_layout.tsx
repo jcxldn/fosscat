@@ -3,7 +3,7 @@ import { useColorScheme } from 'react-native';
 
 import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+import { Slot, Stack } from 'expo-router';
 import { PaperProvider } from "react-native-paper";
 import { AuthSessionProvider } from "../components/AuthenticationContext";
 
@@ -32,9 +32,7 @@ const RootLayoutNav = ({ gqlClient }: { gqlClient: ApolloClient<any> }) => {
             <PaperProvider>
                 <ApolloProvider client={gqlClient}>
                     <AuthSessionProvider>
-                        <Stack>
-                            <Stack.Screen name="login" />
-                        </Stack>
+                        <Slot />
                     </AuthSessionProvider>
                 </ApolloProvider>
             </PaperProvider>
