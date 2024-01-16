@@ -1,9 +1,10 @@
 import React from "react";
+import { Text } from "../../components/Themed";
 
 const HomePage = () => {
     return (
         <>
-            Hello, world!
+            <Text>Hello, world!</Text>
         </>
     )
 }
