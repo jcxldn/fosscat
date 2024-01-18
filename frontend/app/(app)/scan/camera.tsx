@@ -1,12 +1,16 @@
 import React from "react";
-import { Text, View } from "../../components/Themed";
+import { View, Text } from "../../../components/Themed";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Button, StyleSheet } from "react-native";
+import { router, useNavigation } from "expo-router";
 
 const ScanPage = () => {
     // States
     const [hasPermission, setHasPermission] = React.useState<Boolean | null>(null);
     const [scanned, setScanned] = React.useState(false);
+
+    // Hook to grab the parentt navigator (in this case navigator "stack.scan")
+    const nav = useNavigation();
 
     React.useEffect(() => {
         console.log("DEFINE GBSP")
@@ -22,6 +26,8 @@ const ScanPage = () => {
     const handleScan = ({ type, data }) => {
         setScanned(true)
         alert(`Barcode scanned with type ${type} and data ${data}.`)
+        // Navigate to ./result
+        alert(nav.getParent()?.navigate("result", { hello: "here" }))
     }
 
     if (hasPermission === null) {

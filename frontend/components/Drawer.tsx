@@ -6,7 +6,7 @@ import { Drawer } from 'expo-router/drawer';
 // TODO: https://docs.expo.dev/router/advanced/platform-specific-modules/
 const DrawerComponent = () => {
     return (
-        <Drawer>
+        <Drawer id="root">
             <Drawer.Screen
                 name="index" // url
                 options={{
