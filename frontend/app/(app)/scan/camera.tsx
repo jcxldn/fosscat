@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text } from "../../../components/Themed";
-import { BarCodeScanner } from "expo-barcode-scanner";
 import { Button, StyleSheet } from "react-native";
 import { router, useNavigation } from "expo-router";
+import { Camera, CameraView } from "expo-camera/next";
 
 const ScanPage = () => {
     // States
@@ -15,7 +15,7 @@ const ScanPage = () => {
     React.useEffect(() => {
         console.log("DEFINE GBSP")
         const getBarcodeScannerPermissions = async () => {
-            const { status } = await BarCodeScanner.requestPermissionsAsync();
+            const { status } = await Camera.requestCameraPermissionsAsync();
             setHasPermission(status === "granted")
             console.log(`Status: ${status}`)
         };
@@ -41,9 +41,12 @@ const ScanPage = () => {
     return (
         <View style={StyleSheet.absoluteFillObject}>
             <Text>hi</Text>
-            <BarCodeScanner style={StyleSheet.absoluteFillObject} onBarCodeScanned={scanned ? undefined : handleScan}>
-                {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
-            </BarCodeScanner>
+            <CameraView style={StyleSheet.absoluteFillObject} onBarCodeScanned={scanned ? undefined : handleScan} barcodeScannerSettings={{
+                barCodeTypes: ["qr"]
+            }} />
+            {scanned && (
+                <Button title="Tap to Scan Again" onPress={() => setScanned(false)} />
+            )}
         </View>
     )
 }
