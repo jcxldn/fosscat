@@ -21,25 +21,27 @@ type DatabaseTestSuite struct {
 	dbCtx       context.Context
 }
 
-// Mock GORM
-// based on https://github.com/go-gorm/gorm/issues/1525#issuecomment-376164189
-// and (updated ver): https://addshore.com/2023/09/a-copy-paste-go-sql-mock-for-gorm/
+// SetupSuite is called before any tests run
 func (s *DatabaseTestSuite) SetupSuite() {
 	s.dbCtx = context.Background()
+	// Create a container request for a container running the "postgres" image
 	req := testcontainers.ContainerRequest{
-		Image:        "postgres",
-		ExposedPorts: []string{"5432"},
-		WaitingFor:   wait.ForLog("database system is ready to accept connections").WithOccurrence(2),
-		Env: map[string]string{
+		Image:        "postgres",                                                                      // container image to use
+		ExposedPorts: []string{"5432"},                                                                // ports to expose to host
+		WaitingFor:   wait.ForLog("database system is ready to accept connections").WithOccurrence(2), // trigger to define when container has started up
+		Env: map[string]string{ // environment variables
 			"POSTGRES_DB":       "fosscat",
 			"POSTGRES_USER":     "fosscat",
 			"POSTGRES_PASSWORD": "fosscat",
 		},
 	}
 
+	// Note that we do not define any persistent storage so the database will start from scratch every time it is created.
+
+	// Create the container **and** wait for it to start up
 	dbContainer, err := testcontainers.GenericContainer(s.dbCtx, testcontainers.GenericContainerRequest{
-		ContainerRequest: req,
-		Started:          true,
+		ContainerRequest: req,  // specify the container request
+		Started:          true, // automatically start once created
 	})
 
 	s.dbContainer = dbContainer
@@ -48,8 +50,13 @@ func (s *DatabaseTestSuite) SetupSuite() {
 		panic(err)
 	}
 
+	// Determine the IP address of the container
 	ctrIp, _ := dbContainer.ContainerIP(s.dbCtx)
+
+	// Log that the database is now available
 	log.Default().Printf("[test/common/database]: ephemeral db available on %s:5432", ctrIp)
+
+	// Define connection details for the database
 	dsn := fmt.Sprintf(
 		"host=%s user=fosscat password=fosscat dbname=fosscat port=5432", ctrIp,
 	)
@@ -61,14 +68,18 @@ func (s *DatabaseTestSuite) SetupSuite() {
 		panic(err)
 	}
 
+	// Call migrate function (defined in backend/database/database.go) to create tables
 	database.Migrate(db)
 
+	// make the GORM instance available to tests
 	s.DB = db
 
 }
 
+// TeardownSuite is called when all tests have finished
 func (s *DatabaseTestSuite) TeardownSuite() {
 	log.Default().Printf("[test/common/database]: teardown in progress")
+	// Attempt to stop (terminate) the container, panicking if any errors are encountered.
 	if err := s.dbContainer.Terminate(s.dbCtx); err != nil {
 		panic(err)
 	}
