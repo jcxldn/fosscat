@@ -407,9 +407,129 @@ CreateCheckout validation
 
 \subsubsection{Testing}
 
-\paragraph{Test Plan}
+\subparagraph{Test Plan}
 
-\paragraph{Test Results}
+\noindent \\ My plan for testing this iteration was to create \underline{unit tests} for my project. Unit tests are an automated set of tests designed to ensure that the tested application works correctly.
+
+\noindent \\ After some research, I decided to use the \underline{testify} testing framework, which is a toolkit with assertions and mocking support that works well with standard go functions.
+I also decided that it would be beneficial to have a testing database, so I decided to create a script that spins up an ephemeral (short-lasting) database container using the \textit{testcontainers} package. This database will only run for the duration of the test suite.
+
+\noindent \\ A snippet of this script is included below: (should I just remove this from the writeup? not *really* needed)
+
+\begin{lstlisting}[language=Go]
+// excerpt of backend/test/common/database.go
+
+// SetupSuite is called before any tests run
+func (s *DatabaseTestSuite) SetupSuite() {
+	s.dbCtx = context.Background()
+	// Create a container request for a container running the "postgres" image
+	req := testcontainers.ContainerRequest{
+		Image:        "postgres",                                                                      // container image to use
+		ExposedPorts: []string{"5432"},                                                                // ports to expose to host
+		WaitingFor:   wait.ForLog("database system is ready to accept connections").WithOccurrence(2), // trigger to define when container has started up
+		Env: map[string]string{ // environment variables
+			"POSTGRES_DB":       "fosscat",
+			"POSTGRES_USER":     "fosscat",
+			"POSTGRES_PASSWORD": "fosscat",
+		},
+	}
+
+	// Note that we do not define any persistent storage so the database will start from scratch every time it is created.
+
+	// Create the container **and** wait for it to start up
+	dbContainer, err := testcontainers.GenericContainer(s.dbCtx, testcontainers.GenericContainerRequest{
+		ContainerRequest: req,  // specify the container request
+		Started:          true, // automatically start once created
+	})
+
+	s.dbContainer = dbContainer
+
+	if err != nil {
+		panic(err)
+	}
+
+	// Determine the IP address of the container
+	ctrIp, _ := dbContainer.ContainerIP(s.dbCtx)
+
+	// Log that the database is now available
+	log.Default().Printf("[test/common/database]: ephemeral db available on %s:5432", ctrIp)
+
+	// Define connection details for the database
+	dsn := fmt.Sprintf(
+		"host=%s user=fosscat password=fosscat dbname=fosscat port=5432", ctrIp,
+	)
+
+	// Attempt to connect to the db
+	db, err2 := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+	if err2 != nil {
+		panic(err)
+	}
+
+	// Call migrate function (defined in backend/database/database.go) to create tables
+	database.Migrate(db)
+
+	// make the GORM instance available to tests
+	s.DB = db
+
+}
+\end{lstlisting}
+
+\noindent After setting this up, I create TestSuites that could be inherited from in order to reduce code duplication. I first created the following suites:
+
+\begin{outline}
+    \1 \lstinline{DatabaseTestSuite} - A test suite that provides the ephemeral database as seen above
+    \2 \lstinline{UserDatabaseTestSuite} - Handles creating user accounts for child test suites to use, includes assertions and it's own user tests.
+    \2 \lstinline{EntityDatabaseTestSuite} - Handles creating entities for child test suites use, includes assertions and it's own entity tests.
+\end{outline}
+
+\noindent Now the ground-work was in place, it was time to write the unit tests themselves.
+
+\noindent I started with User and Entity tests first, placing them in their respective suites.
+I used a \textbf{code coverage} tool to ensure that every line of code was covered.
+This means that the complete functionality of a function or line of code was tested in my tests.
+For example, with an if statement, both outcomes must be tested for.
+
+\noindent \\ When creating tests, it was important to ensure that all combinations of inputs were tested for.
+For example, for \textbf{Checkouts} I created tests for:
+
+\begin{outline}
+    \1 Checkout creation
+    \2 With all fields persistent
+    \2 Without a return date
+    \2 Without a take date
+    \2 With only the user ID field
+    \1 Checkout deletion (TBD)
+    \2 Deleting a non-existent checkout
+    \2 Deleting an existing checkout
+\end{outline}
+
+\noindent This allowed me to ensure that all parts of my program were tested properly.
+
+\noindent TODO. Rewrite this I am repeating myself quite a bit.
+
+
+\subparagraph{Test Results}
+
+\noindent \\ My unit testing uncovered \underline{three problems}:
+
+\begin{outline}
+    \1 (User creation): Email validation is broken
+    \1 (User creation): Password can only be 72 characters
+    \1 (Checkout creation): Take and Return dates not being stored in the database
+    \1 (Item creation): Item title not being stored in the database
+\end{outline}
+
+
+\noindent \\ commits:
+\begin{outline}
+    \1 User/create: email validation was broken, 72 char limit for passwords
+    \2 https://github.com/jcxldn/fosscat/commit/605df88838143f717779ba289b58d567b5929a5a
+    \1 Checkout/create: take and return dates not being stored in database
+    \2 https://github.com/jcxldn/fosscat/commit/64d53884117ffc035b523457f9ee87433868e65c
+    \1 Item/create: title not stored in DB
+    \2 https://github.com/jcxldn/fosscat/commit/73aa435cc089d95f25d88ebdff6b77fc95cd3543
+\end{outline}
 
 \paragraph{Errors encountered during testing}
 
