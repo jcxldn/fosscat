@@ -493,6 +493,8 @@ For example, with an if statement, both outcomes must be tested for.
 \noindent \\ When creating tests, it was important to ensure that all combinations of inputs were tested for.
 For example, for \textbf{Checkouts} I created tests for:
 
+// INCLUDE EXAMPLES OF TESTS
+
 \begin{outline}
     \1 Checkout creation
     \2 With all fields persistent
@@ -511,7 +513,7 @@ For example, for \textbf{Checkouts} I created tests for:
 
 \subparagraph{Test Results}
 
-\noindent \\ My unit testing uncovered \underline{three problems}:
+\noindent \\ My unit testing uncovered \underline{four problems}:
 
 \begin{outline}
     \1 (User creation): Email validation is broken
@@ -521,6 +523,71 @@ For example, for \textbf{Checkouts} I created tests for:
 \end{outline}
 
 
+
+\paragraph{Errors encountered during testing}
+
+\subparagraph{Issues with user creation}
+
+\noindent \\ I am using bcrypt for password hashing. When testing user creation with long passwords, I noticed that tests would fail with errors when the password was greater than 72 bytes (characters).
+Some further research revealed that this is a limitation of bcrypt itself.
+To avoid the unintentional behaviour caused by these errors, I added validation for the password length.
+If the validation is not successful, the user will be presented with a descriptive error and the user will not be added to the database.
+
+\noindent \\ After fixing this issue, I noticed that whilst writing tests for invalid e-mail addresses that the email address always appeared to be valid, even when it shouldn't.
+I am using the go \lstinline{emailVerifier} library to validate email strings passed to it, and it turned out I was calling the library incorrectly.
+After reading the docs for the library, I elected to use the much simpler \lstinline{ParseAddress} function instead of the more complicated \lstinline{VerifyEmail} function.
+The VerifyEmail function attempts to connect to the specified domain in the email address string to confirm that it can receive emails, which is overkill for my use.
+Instead I will be using the ParseAddress function which merely applies a regular expression to ensure that the email has the correct syntax.
+
+\subparagraph{Issues with checkout creation}
+
+\textbf{// INCLUDE DB SCREENSHOTS?}
+
+\noindent \\ When creating tests for checkouts, I noticed whilst using a database viewer that I was missing data in the database after creating a checkout. Specifically, the \lstinline{TakeDate} and \lstinline{ReturnDate} fields would always be empty.
+Upon taking a closer look at my code, it was soon obvious why this was the case.
+
+\begin{lstlisting}[language=Go]
+// Truncated from the original
+
+func CreateCheckout(db *gorm.DB, input model.NewCheckout) (*structs.Checkout, error) {
+	// Create a Checkout struct
+	checkout := structs.Checkout{}
+
+    // Set checkout.User to match the user object we queried from the database
+    checkout.User = *user
+
+	// Create the database entry
+	db.Create(&checkout)
+
+    // Return the entry and no error (nil)
+	return &checkout, nil
+}
+\end{lstlisting}
+
+\noindent As you can see, \lstinline{TakeDate} and \lstinline{ReturnDate} were never set in the \lstinline{checkout} struct, so when we called \lstinline{db.Create(&checkout)}, these values were \lstinline{nil}.
+However, the fix was not as simple as setting \lstinline{TakeDate} and \lstinline{ReturnDate}, as these fields are optional during creation. As the user cannot be sure about either the take or return dates when creating a checkout, they are marked as optional so that they do not have to be specified during checkout creation, instead allowing the user to edit the record and add them at a later date.
+
+\subparagraph{Issues with item creation}
+
+\noindent \\ Similar to before, when creating tests for my items, I noticed in the database viewer that the Title field would always be empty, even if it was passed to my CreateItem function.
+Similarly to before, I had forgotten to set the item name in the struct before adding the struct to the database.
+This was a simple fix, where I only needed to add three lines:
+
+\begin{lstlisting}[language=Go]
+func CreateItem(db *gorm.DB, input model.NewItem) (*structs.Item, error) {
+	// Create a Item struct
+	item := structs.Item{}
+
+    // [!] I added these three lines to set the title
+    if input.Title != nil {
+		item.Title = *input.Title
+	}
+
+    // [truncated]
+}
+\end{lstlisting}
+
+\begin{comment}
 \noindent \\ commits:
 \begin{outline}
     \1 User/create: email validation was broken, 72 char limit for passwords
@@ -530,10 +597,34 @@ For example, for \textbf{Checkouts} I created tests for:
     \1 Item/create: title not stored in DB
     \2 https://github.com/jcxldn/fosscat/commit/73aa435cc089d95f25d88ebdff6b77fc95cd3543
 \end{outline}
-
-\paragraph{Errors encountered during testing}
+\end{comment}
 
 \subparagraph{Summary}
+
+\noindent \\ After fixing these errors, I was able to create the rest of my tests.
+
+\noindent \\ As my code is hosted on GitHub, I setup their Continuous Integration (CI) service to automatically run my test suite every time I committed to the repository. After setting this up (not going to detail here as is not relevant?), I was able to queue the test and was greeted with the following result: \\\\
+
+\includegraphics{implementation/first iteration/test-dashboard}
+
+\noindent \\ Here is an excerpt from one of the test runs, showing the output from one of the test suites:
+
+\begin{lstlisting}
+=== RUN   TestUserTestSuite
+=== RUN   TestUserTestSuite/TestCreateUser
+=== RUN   TestUserTestSuite/TestCreateUserInvalidEmail
+=== RUN   TestUserTestSuite/TestCreateUserInvalidPasswordTooLong
+=== RUN   TestUserTestSuite/TestGetAllUsers
+--- PASS: TestUserTestSuite (6.21s)
+    --- PASS: TestUserTestSuite/TestCreateUser (0.91s)
+    --- PASS: TestUserTestSuite/TestCreateUserInvalidEmail (0.00s)
+    --- PASS: TestUserTestSuite/TestCreateUserInvalidPasswordTooLong (0.00s)
+    --- PASS: TestUserTestSuite/TestGetAllUsers (0.00s)
+\end{lstlisting}
+
+\noindent \\ As we can see both from the test summary generated by GitHub and the output of the test runs themselves, all of the tests are passing correctly.
+
+// show code coverage?
 
 \subparagraph{Fixing error XYZ}
 
