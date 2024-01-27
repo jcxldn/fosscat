@@ -52,6 +52,11 @@ platform :ios do
     )
 
     puts "[fosscat]: Building application..."
-    build_app(scheme: "fosscat", workspace: "./ios/fosscat.xcworkspace", export_method: "development")
+    build_app(
+      scheme: "fosscat",
+      workspace: "./ios/fosscat.xcworkspace",
+      export_method: "development",
+      codesigning_identity: "Apple Development: James Cahill (KZF7Q599CW)",
+    )
   end
 end
