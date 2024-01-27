@@ -108,7 +108,7 @@ platform :ios do
     build_app(
       scheme: "fosscat",
       workspace: "./ios/fosscat.xcworkspace",
-      export_method: "appstore",
+      export_method: "app-store",
       export_options: {
         method: "app-store",
           provisioningProfiles: { 
