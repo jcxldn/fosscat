@@ -41,13 +41,13 @@ platform :ios do
     puts "[fosscat]: Disabling automatic code signing, setting bundle identifier..."
     update_code_signing_settings(
       # use_automatic_signing: false, - default
-      path: "./ios/fosscat.xcworkspace",
+      path: "./ios/fosscat.xcodeproj",
       bundle_identifier: "net.jcxldn.fosscat"
     )
 
     puts "[fosscat]: Setting project team..."
     update_project_team(
-      path: "./ios/fosscat.xcworkspace",
+      path: "./ios/fosscat.xcodeproj",
       teamid: "ZK8CX5A77V"
     )
 
