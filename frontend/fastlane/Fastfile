@@ -52,6 +52,15 @@ platform :ios do
     )
 
     puts "[fosscat]: Building application..."
-    build_app(scheme: "fosscat", workspace: "./ios/fosscat.xcworkspace", export_method: "development")
+    build_app(
+      scheme: "fosscat",
+      workspace: "./ios/fosscat.xcworkspace",
+      export_method: "development",
+      export_options: {
+        provisioningProfiles: {
+          "net.jcxldn.fosscat" => "match Development net.jcxldn.fosscat"
+        }
+      }
+    )
   end
 end
