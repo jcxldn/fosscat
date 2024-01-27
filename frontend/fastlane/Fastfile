@@ -27,8 +27,7 @@ platform :ios do
     )
   end
 
-  desc "Description of what the lane does"
-  lane :main_development do
+  lane :common1 do
     puts "[fosscat]: Creating temporary keychain..." if ENV['CI']
     setup_ci if ENV['CI']
 
@@ -37,10 +36,9 @@ platform :ios do
 
     puts "[fosscat]: Loading App Store Connect API key"
     load_asc_api_key
+  end
 
-    puts "[fosscat]: Syncing code signing certificates/profiles..."
-    sync_code_signing(type: "development")
-    
+  lane :common2 do
     puts "[fosscat]: Disabling automatic code signing, setting bundle identifier..."
     update_code_signing_settings(
       # use_automatic_signing: false, - default
@@ -53,7 +51,16 @@ platform :ios do
       path: "./ios/fosscat.xcodeproj",
       teamid: "ZK8CX5A77V"
     )
+  end
 
+  desc "Build a development app"
+  lane :main_development do
+    common1
+
+    puts "[fosscat]: Syncing code signing certificates/profiles..."
+    sync_code_signing(type: "development")
+    
+    common2
 
     # https://github.com/fastlane/fastlane/issues/11806#issuecomment-364319610
     puts "[fosscat]: Updating project provisioning..."
@@ -63,7 +70,6 @@ platform :ios do
       profile:ENV["sigh_net.jcxldn.fosscat_development_profile-path"],
       build_configuration: "Release"
     )
-
 
     puts "[fosscat]: Building application..."
     build_app(
@@ -76,8 +82,40 @@ platform :ios do
             # https://github.com/fastlane/fastlane/issues/11806#issuecomment-364319610
             "net.jcxldn.fosscat" => ENV["sigh_net.jcxldn.fosscat_development_profile-name"]
         }
-      },
-      codesigning_identity: "Apple Development: James Cahill (KZF7Q599CW)",
+      }
+    )
+  end
+
+  desc "Build an appstore app"
+  lane :main do
+    common1
+
+    puts "[fosscat]: Syncing code signing certificates/profiles..."
+    sync_code_signing(type: "appstore")
+    
+    common2
+
+    # https://github.com/fastlane/fastlane/issues/11806#issuecomment-364319610
+    puts "[fosscat]: Updating project provisioning..."
+    update_project_provisioning(
+      xcodeproj: "./ios/fosscat.xcodeproj",
+      target_filter: "fosscat",
+      profile:ENV["sigh_net.jcxldn.fosscat_appstore_profile-path"],
+      build_configuration: "Release"
+    )
+
+    puts "[fosscat]: Building application..."
+    build_app(
+      scheme: "fosscat",
+      workspace: "./ios/fosscat.xcworkspace",
+      export_method: "appstore",
+      export_options: {
+        method: "app-store",
+          provisioningProfiles: { 
+            # https://github.com/fastlane/fastlane/issues/11806#issuecomment-364319610
+            "net.jcxldn.fosscat" => ENV["sigh_net.jcxldn.fosscat_appstore_profile-name"]
+        }
+      }
     )
   end
 end
