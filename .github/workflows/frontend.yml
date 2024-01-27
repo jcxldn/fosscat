@@ -6,6 +6,7 @@ on:
       - 'feat/fastlane_gha'
 jobs:
   build-ios:
+    name: Build (iOS)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
