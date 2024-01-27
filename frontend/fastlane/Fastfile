@@ -29,6 +29,9 @@ platform :ios do
 
   desc "Description of what the lane does"
   lane :main_development do
+    puts "[fosscat]: Creating temporary keychain..." if ENV['CI']
+    setup_ci if ENV['CI']
+
     puts "[fosscat]: Calling match to get signing certificates/profiles..."
     match(readonly: true)
 
