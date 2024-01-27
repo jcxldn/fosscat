@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build-ios-development:
-    name: Build (iOS - Development)
+    name: Build - iOS
     # macos-latest is macOS 12 (at the time of writing - 27/01/24)
     # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
     # https://github.com/expo/expo/issues/25905
