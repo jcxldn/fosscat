@@ -54,11 +54,29 @@ platform :ios do
       teamid: "ZK8CX5A77V"
     )
 
+
+    # https://github.com/fastlane/fastlane/issues/11806#issuecomment-364319610
+    puts "[fosscat]: Updating project provisioning..."
+    update_project_provisioning(
+      xcodeproj: "./ios/fosscat.xcodeproj",
+      target_filter: "fosscat",
+      profile:ENV["sigh_net.jcxldn.fosscat_development_profile-path"],
+      build_configuration: "Release"
+    )
+
+
     puts "[fosscat]: Building application..."
     build_app(
       scheme: "fosscat",
       workspace: "./ios/fosscat.xcworkspace",
       export_method: "development",
+      export_options: {
+        method: "app-store",
+          provisioningProfiles: { 
+            # https://github.com/fastlane/fastlane/issues/11806#issuecomment-364319610
+            "net.jcxldn.fosscat" => ENV["sigh_net.jcxldn.fosscat_development_profile-name"]
+        }
+      },
       codesigning_identity: "Apple Development: James Cahill (KZF7Q599CW)",
     )
   end
