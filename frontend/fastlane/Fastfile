@@ -18,26 +18,26 @@ default_platform(:ios)
 platform :ios do
   desc "Description of what the lane does"
   lane :main_development do
-    echo("[fosscat]: Calling match to get signing certificates/profiles...")
+    puts "[fosscat]: Calling match to get signing certificates/profiles..."
     match(readonly: true)
 
-    echo("[fosscat]: Syncing code signing certificates/profiles...")
+    puts "[fosscat]: Syncing code signing certificates/profiles..."
     sync_code_signing(type: "development")
     
-    echo("[fosscat]: Disabling automatic code signing, setting bundle identifier...")
+    puts "[fosscat]: Disabling automatic code signing, setting bundle identifier..."
     update_code_signing_settings(
       # use_automatic_signing: false, - default
       path: "./ios/fosscat.xcworkspace",
       bundle_identifier: "net.jcxldn.fosscat"
     )
 
-    echo("[fosscat]: Setting project team...")
+    puts "[fosscat]: Setting project team..."
     update_project_team(
       path: "./ios/fosscat.xcworkspace",
       teamid: "ZK8CX5A77V"
     )
 
-    echo("[fosscat]: Building application...")
+    puts "[fosscat]: Building application..."
     build_app(scheme: "fosscat", workspace: "./ios/fosscat.xcworkspace", export_method: "development")
   end
 end
