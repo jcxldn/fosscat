@@ -36,8 +36,8 @@ jobs:
         with:
           name: ios-development
           path: |
-            fosscat.ipa
-            fosscat.app.dSYM.zip
+            ./frontend/fosscat.ipa
+            ./frontend/fosscat.app.dSYM.zip
 
   build-ios-appstore:
     name: Build (iOS - AppStore)
@@ -64,6 +64,3 @@ jobs:
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
         working-directory: ./frontend
-      - uses: actions/upload-artifact@v4
-        with:
-          path: fosscat.ipa
