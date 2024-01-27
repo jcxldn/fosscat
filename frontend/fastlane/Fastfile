@@ -115,7 +115,8 @@ platform :ios do
             # https://github.com/fastlane/fastlane/issues/11806#issuecomment-364319610
             "net.jcxldn.fosscat" => ENV["sigh_net.jcxldn.fosscat_appstore_profile-name"]
         }
-      }
+      },
+      codesigning_identity: "Apple Distribution: James Cahill (ZK8CX5A77V)",
     )
 
     puts "[fosscat]: Uploading to TestFlight..."
