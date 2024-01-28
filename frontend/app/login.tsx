@@ -6,6 +6,7 @@ import { Button, TextInput } from 'react-native-paper';
 import { StyleSheet } from "react-native";
 import { useSession } from "../components/AuthenticationContext";
 import { InvalidEmailPassword } from "../components/InvalidEmailPassword";
+import { useApolloClient } from "../components/ApolloClientProvider";
 
 const LoginPage = () => {
 
@@ -18,6 +19,8 @@ const LoginPage = () => {
 
     const { login } = useSession();
 
+    const { createClient, setServerUri, serverUri } = useApolloClient();
+
     return (
         <>
             <Stack.Screen options={{ title: "Login" }} />
@@ -25,6 +28,13 @@ const LoginPage = () => {
                 <Text style={styles.title}>Login</Text>
                 {showEmailPassError ? <InvalidEmailPassword /> : <></>}
                 <View style={styles.itemContainer}>
+                    <View style={styles.itemContainer}>
+                        <TextInput
+                            label="Server URL"
+                            value={serverUri}
+                            onChangeText={text => setServerUri(text)}
+                        />
+                    </View>
                     <TextInput
                         label="Email"
                         value={email}
@@ -40,6 +50,8 @@ const LoginPage = () => {
                 </View>
                 <Button
                     onPress={async () => {
+                        // Call a hook in ApolloClientProvider to create the client
+                        createClient();
 
                         const res = await login(email, password)
 
@@ -71,8 +83,8 @@ const styles = StyleSheet.create({
         padding: 20
     },
     itemContainer: {
-        paddingTop: 5,
-        paddingBottom: 5
+        width: "100%",
+        paddingBottom: 10
     }
 })
 

@@ -6,35 +6,27 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { Slot, Stack } from 'expo-router';
 import { PaperProvider } from "react-native-paper";
 import { AuthSessionProvider } from "../components/AuthenticationContext";
+import { ApolloClientProvider } from "../components/ApolloClientProvider";
 
 
 
 
 const RootLayout = () => {
-    // https://www.apollographql.com/docs/react/integrations/react-native/
-    const gqlClient = new ApolloClient({
-
-        uri: "http://localhost:8080/graphql",
-
-        cache: new InMemoryCache()
-
-    });
-
-    return <RootLayoutNav gqlClient={gqlClient} />
+    return <RootLayoutNav />
 }
 
-const RootLayoutNav = ({ gqlClient }: { gqlClient: ApolloClient<any> }) => {
+const RootLayoutNav = () => {
 
     const colorScheme = useColorScheme();
 
     return (
         <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
             <PaperProvider>
-                <ApolloProvider client={gqlClient}>
+                <ApolloClientProvider>
                     <AuthSessionProvider>
                         <Slot />
                     </AuthSessionProvider>
-                </ApolloProvider>
+                </ApolloClientProvider>
             </PaperProvider>
         </ThemeProvider>
     )
