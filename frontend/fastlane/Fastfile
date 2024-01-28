@@ -23,7 +23,6 @@ platform :android do
       task: 'assemble',
       build_type: 'Release'
     )
-end
   end
 end
 
