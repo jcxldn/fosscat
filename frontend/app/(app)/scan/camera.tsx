@@ -41,9 +41,7 @@ const ScanPage = () => {
     return (
         <View style={StyleSheet.absoluteFillObject}>
             <Text>hi</Text>
-            <CameraView style={StyleSheet.absoluteFillObject} onBarcodeScanned={scanned ? undefined : handleScan} barcodeScannerSettings={{
-                barCodeTypes: ["qr"]
-            }} />
+            <CameraView style={StyleSheet.absoluteFillObject} onBarcodeScanned={scanned ? undefined : handleScan} barcodeScannerSettings={{ barCodeTypes: ["org.iso.Code128", "org.iso.QRCode"] }} />
             {scanned && (
                 <Button title="Tap to Scan Again" onPress={() => setScanned(false)} />
             )}
