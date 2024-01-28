@@ -45,6 +45,7 @@ jobs:
         working-directory: ./frontend
       - run: npx expo prebuild
         working-directory: ./frontend
+      - run: gem install bundler
       - run: bundle install
         working-directory: ./frontend
       - run: bundle exec fastlane android main
