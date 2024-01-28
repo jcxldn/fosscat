@@ -1,0 +1,126 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Load ASC API Key information to use in subsequent lanes"
+  lane :load_asc_api_key do
+    app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: ENV["ASC_KEY"],
+      is_key_content_base64: true,
+      in_house: false # detecting this via ASC private key not currently supported
+    )
+  end
+
+  lane :common1 do
+    puts "[fosscat]: Creating temporary keychain..." if ENV['CI']
+    setup_ci if ENV['CI']
+
+    puts "[fosscat]: Calling match to get signing certificates/profiles..."
+    match(readonly: true)
+
+    puts "[fosscat]: Loading App Store Connect API key"
+    load_asc_api_key
+  end
+
+  lane :common2 do
+    puts "[fosscat]: Disabling automatic code signing, setting bundle identifier..."
+    update_code_signing_settings(
+      # use_automatic_signing: false, - default
+      path: "./ios/fosscat.xcodeproj",
+      bundle_identifier: "net.jcxldn.fosscat"
+    )
+
+    puts "[fosscat]: Setting project team..."
+    update_project_team(
+      path: "./ios/fosscat.xcodeproj",
+      teamid: "ZK8CX5A77V"
+    )
+  end
+
+  desc "Build a development app"
+  lane :main_development do
+    common1
+
+    puts "[fosscat]: Syncing code signing certificates/profiles..."
+    sync_code_signing(type: "development")
+    
+    common2
+
+    # https://github.com/fastlane/fastlane/issues/11806#issuecomment-364319610
+    puts "[fosscat]: Updating project provisioning..."
+    update_project_provisioning(
+      xcodeproj: "./ios/fosscat.xcodeproj",
+      target_filter: "fosscat",
+      profile:ENV["sigh_net.jcxldn.fosscat_development_profile-path"],
+      build_configuration: "Release"
+    )
+
+    puts "[fosscat]: Building application..."
+    build_app(
+      scheme: "fosscat",
+      workspace: "./ios/fosscat.xcworkspace",
+      export_method: "development",
+      export_options: {
+        method: "app-store",
+          provisioningProfiles: { 
+            # https://github.com/fastlane/fastlane/issues/11806#issuecomment-364319610
+            "net.jcxldn.fosscat" => ENV["sigh_net.jcxldn.fosscat_development_profile-name"]
+        }
+      }
+    )
+  end
+
+  desc "Build an appstore app"
+  lane :main do
+    common1
+
+    puts "[fosscat]: Syncing code signing certificates/profiles..."
+    sync_code_signing(type: "appstore")
+    
+    common2
+
+    # https://github.com/fastlane/fastlane/issues/11806#issuecomment-364319610
+    puts "[fosscat]: Updating project provisioning..."
+    update_project_provisioning(
+      xcodeproj: "./ios/fosscat.xcodeproj",
+      target_filter: "fosscat",
+      profile:ENV["sigh_net.jcxldn.fosscat_appstore_profile-path"],
+      build_configuration: "Release"
+    )
+
+    puts "[fosscat]: Building application..."
+    build_app(
+      scheme: "fosscat",
+      workspace: "./ios/fosscat.xcworkspace",
+      export_method: "app-store",
+      export_options: {
+        method: "app-store",
+          provisioningProfiles: { 
+            # https://github.com/fastlane/fastlane/issues/11806#issuecomment-364319610
+            "net.jcxldn.fosscat" => ENV["sigh_net.jcxldn.fosscat_appstore_profile-name"]
+        }
+      },
+      codesigning_identity: "Apple Distribution: James Cahill (ZK8CX5A77V)",
+    )
+
+    puts "[fosscat]: Uploading to TestFlight..."
+    changelog_from_git_commits # this will generate the changelog based on your last commits
+    upload_to_testflight
+  end
+end

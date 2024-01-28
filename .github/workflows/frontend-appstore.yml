@@ -1,0 +1,33 @@
+name: Frontend (App Store)
+on:
+  push:
+    branches:
+      - 'main'
+  workflow_dispatch:
+
+jobs:
+  build-ios-appstore:
+    name: Build - iOS
+    # macos-latest is macOS 12 (at the time of writing - 27/01/24)
+    # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
+    # https://github.com/expo/expo/issues/25905
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v4
+      - run: npm ci
+        working-directory: ./frontend
+      - run: npx expo prebuild
+        working-directory: ./frontend
+      - run: bundle install
+        working-directory: ./frontend
+      - run: bundle exec fastlane main
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+        working-directory: ./frontend
