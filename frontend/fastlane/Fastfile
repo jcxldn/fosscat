@@ -17,7 +17,7 @@ default_platform(:ios)
 
 platform :android do
   desc "Build android app"
-  land :main do
+  lane :main do
     # Adjust the `build_type` and `flavor` params as needed to build the right APK for your setup
     gradle(
       task: 'assemble',
