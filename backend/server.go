@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -52,6 +53,11 @@ func pingHandler(c *gin.Context) {
 func main() {
 	// Create a gin engine instance
 	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{"Content-Type"},
+	}))
 
 	// Define routes
 	r.POST("/graphql", graphqlHandler())              // GraphQL query endpoint
