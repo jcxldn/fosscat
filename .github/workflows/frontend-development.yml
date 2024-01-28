@@ -34,3 +34,36 @@ jobs:
           path: |
             ./frontend/fosscat.ipa
             ./frontend/fosscat.app.dSYM.zip
+
+  build-android:
+    name: Build - Android
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3' # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin' # See 'Supported distributions' for available options
+          java-version: '17' # lts
+      - run: npm ci
+        working-directory: ./frontend
+      - run: npx expo prebuild
+        working-directory: ./frontend
+      - run: bundle install
+        working-directory: ./frontend
+      - run: bundle exec fastlane android main
+        working-directory: ./frontend
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-development
+          path: |
+            ./frontend/android/app/build/outputs/apk/release/app-release.apk
+          # Additional files:
+          # ./frontend/android/app/build/outputs/apk/release/output-metadata.json
+          # ./frontend/android/app/build/outputs/logs/manifest-merger-release-report.txt
+          # ./frontend/android/app/build/outputs/native-debug-symbols/release/native-debug-symbols.zip
+          # ./frontend/android/app/build/outputs/sdk-dependencies/release/sdkDependencies.txt

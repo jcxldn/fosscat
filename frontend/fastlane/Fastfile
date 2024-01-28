@@ -15,6 +15,18 @@
 
 default_platform(:ios)
 
+platform :android do
+  desc "Build android app"
+  lane :main do
+    # Adjust the `build_type` and `flavor` params as needed to build the right APK for your setup
+    gradle(
+      task: 'assemble',
+      build_type: 'Release',
+      project_dir: "./android/"
+    )
+  end
+end
+
 platform :ios do
   desc "Load ASC API Key information to use in subsequent lanes"
   lane :load_asc_api_key do
