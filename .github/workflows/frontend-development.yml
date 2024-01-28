@@ -61,5 +61,5 @@ jobs:
         with:
           name: android-development
           path: |
-            ./frontend/fosscat.apk
-      - run: ls
+            ./frontend/fosscat.aab
+      - run: ls ./frontend
