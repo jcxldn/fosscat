@@ -21,7 +21,8 @@ platform :android do
     # Adjust the `build_type` and `flavor` params as needed to build the right APK for your setup
     gradle(
       task: 'assemble',
-      build_type: 'Release'
+      build_type: 'Release',
+      project_dir: "./android/"
     )
   end
 end
