@@ -1,6 +1,6 @@
 name: Frontend (Development)
 
-on: [push, pull_request]
+on: [push, workflow_dispatch]
 
 jobs:
   build-ios-development:
