@@ -61,5 +61,9 @@ jobs:
         with:
           name: android-development
           path: |
-            ./frontend/android/app/build/outputs/bundle/app-release.aab
-      - run: ls -R ./frontend/android/app/build/outputs/
+            ./frontend/android/app/build/outputs/apk/release/app-release.apk
+          # Additional files:
+          # ./frontend/android/app/build/outputs/apk/release/output-metadata.json
+          # ./frontend/android/app/build/outputs/logs/manifest-merger-release-report.txt
+          # ./frontend/android/app/build/outputs/native-debug-symbols/release/native-debug-symbols.zip
+          # ./frontend/android/app/build/outputs/sdk-dependencies/release/sdkDependencies.txt
