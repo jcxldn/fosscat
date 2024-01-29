@@ -126,7 +126,7 @@ jobs:
         with:
           name: android-development-devclient
           path: |
-            ./frontend/android/app/build/outputs/apk/debug/app-release.apk
+            ./frontend/android/app/build/outputs/apk/debug/app-debug.apk
           # Additional files:
           # ./frontend/android/app/build/outputs/apk/release/output-metadata.json
           # ./frontend/android/app/build/outputs/logs/manifest-merger-release-report.txt
