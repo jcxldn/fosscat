@@ -80,7 +80,7 @@ platform :ios do
       xcodeproj: "./ios/fosscat.xcodeproj",
       target_filter: "fosscat",
       profile:ENV["sigh_net.jcxldn.fosscat_development_profile-path"],
-      build_configuration: "Release"
+      build_configuration: "Debug"
     )
 
     puts "[fosscat]: Building application..."
