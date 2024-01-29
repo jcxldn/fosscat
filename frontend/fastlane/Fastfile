@@ -25,6 +25,17 @@ platform :android do
       project_dir: "./android/"
     )
   end
+
+
+  desc "Build android app (with dev client)"
+  lane :main_devclient do
+    # Adjust the `build_type` and `flavor` params as needed to build the right APK for your setup
+    gradle(
+      task: 'assemble',
+      build_type: 'Debug',
+      project_dir: "./android/"
+    )
+  end
 end
 
 platform :ios do
@@ -85,6 +96,40 @@ platform :ios do
 
     puts "[fosscat]: Building application..."
     build_app(
+      scheme: "fosscat",
+      workspace: "./ios/fosscat.xcworkspace",
+      export_method: "development",
+      export_options: {
+        method: "app-store",
+          provisioningProfiles: { 
+            # https://github.com/fastlane/fastlane/issues/11806#issuecomment-364319610
+            "net.jcxldn.fosscat" => ENV["sigh_net.jcxldn.fosscat_development_profile-name"]
+        }
+      }
+    )
+  end
+
+  desc "Build a development app (with dev client)"
+  lane :main_development_devclient do
+    common1
+
+    puts "[fosscat]: Syncing code signing certificates/profiles..."
+    sync_code_signing(type: "development")
+    
+    common2
+
+    # https://github.com/fastlane/fastlane/issues/11806#issuecomment-364319610
+    puts "[fosscat]: Updating project provisioning..."
+    update_project_provisioning(
+      xcodeproj: "./ios/fosscat.xcodeproj",
+      target_filter: "fosscat",
+      profile:ENV["sigh_net.jcxldn.fosscat_development_profile-path"],
+      build_configuration: "Debug"
+    )
+
+    puts "[fosscat]: Building application..."
+    build_app(
+      configuration: "Debug", # defaults to Release
       scheme: "fosscat",
       workspace: "./ios/fosscat.xcworkspace",
       export_method: "development",
