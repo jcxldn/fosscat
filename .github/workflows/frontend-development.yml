@@ -35,6 +35,38 @@ jobs:
             ./frontend/fosscat.ipa
             ./frontend/fosscat.app.dSYM.zip
 
+  build-ios-development-devclient:
+    name: Build - iOS (Dev Client)
+    # macos-latest is macOS 12 (at the time of writing - 27/01/24)
+    # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
+    # https://github.com/expo/expo/issues/25905
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v4
+      - run: npm ci
+        working-directory: ./frontend
+      - run: npx expo prebuild
+        working-directory: ./frontend
+      - run: bundle install
+        working-directory: ./frontend
+      - run: bundle exec fastlane main_development_devclient
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+        working-directory: ./frontend
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-development-devclient
+          path: |
+            ./frontend/fosscat.ipa
+            ./frontend/fosscat.app.dSYM.zip
+
   build-android:
     name: Build - Android
     runs-on: ubuntu-latest
@@ -56,6 +88,39 @@ jobs:
       - run: bundle install
         working-directory: ./frontend
       - run: bundle exec fastlane android main
+        working-directory: ./frontend
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-development
+          path: |
+            ./frontend/android/app/build/outputs/apk/release/app-release.apk
+          # Additional files:
+          # ./frontend/android/app/build/outputs/apk/release/output-metadata.json
+          # ./frontend/android/app/build/outputs/logs/manifest-merger-release-report.txt
+          # ./frontend/android/app/build/outputs/native-debug-symbols/release/native-debug-symbols.zip
+          # ./frontend/android/app/build/outputs/sdk-dependencies/release/sdkDependencies.txt
+
+  build-android-devclient:
+    name: Build - Android (Dev Client)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3' # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin' # See 'Supported distributions' for available options
+          java-version: '17' # lts
+      - run: npm ci
+        working-directory: ./frontend
+      - run: npx expo prebuild
+        working-directory: ./frontend
+      - run: bundle install
+        working-directory: ./frontend
+      - run: bundle exec fastlane android main_devclient
         working-directory: ./frontend
       - uses: actions/upload-artifact@v4
         with:
