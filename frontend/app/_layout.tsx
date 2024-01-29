@@ -1,3 +1,7 @@
+// Add better error handlers when using expo-dev-client
+// https://docs.expo.dev/bare/install-dev-builds-in-bare/#add-better-error-handlers
+import 'expo-dev-client';
+
 import React from "react";
 import { useColorScheme } from 'react-native';
 
