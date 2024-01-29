@@ -85,6 +85,7 @@ platform :ios do
 
     puts "[fosscat]: Building application..."
     build_app(
+      configuration: "Debug", # defaults to Release
       scheme: "fosscat",
       workspace: "./ios/fosscat.xcworkspace",
       export_method: "development",
