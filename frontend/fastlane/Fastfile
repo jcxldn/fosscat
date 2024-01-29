@@ -116,6 +116,12 @@ platform :ios do
       build_configuration: "Release"
     )
 
+    puts "[fosscat]: Incrementing buid number"
+    increment_build_number({
+      build_number: latest_testflight_build_number(app_identifier: "net.jcxldn.fosscat") + 1,
+      xcodeproj: "./ios/fosscat.xcodeproj"
+    })
+
     puts "[fosscat]: Building application..."
     build_app(
       scheme: "fosscat",
