@@ -2,7 +2,7 @@
   "expo": {
     "name": "fosscat",
     "slug": "fosscat",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/Icon_1024x1024.png",
     "scheme": "myapp",
