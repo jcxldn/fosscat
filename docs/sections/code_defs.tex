@@ -1,0 +1,25 @@
+
+% Automating file inclusion, initially based on https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings#Automating_file_inclusion
+% Fields have changed from the original
+\newcommand{\includecode}[2][c]{
+    \lstinputlisting[
+        caption=\lstinline{#2},
+        captionpos=t, % caption position: top
+        escapechar=,
+        language=#1,
+        frame=single
+    ]{#2}
+    %\centerline{\rule{13cm}{0.4pt}}
+    %\bigskip
+}
+
+\lstdefinelanguage{graphql}
+{
+    morekeywords={type, query, mutation, subscription, interface, union, enum, scalar, schema, directive, fragment, on, input, as, null, true, false},
+    sensitive=true,
+    morecomment=[l]{\%},
+    morecomment=[l]{\#},
+    otherkeywords={Int, Float, String, Boolean, ID},
+    literate={->}{{$\mapsto$}}2,
+    literate={...}{{$\dots$}}2
+}
