@@ -21,6 +21,13 @@ const DrawerComponent = () => {
                     title: "Scan"
                 }}
             />
+            <Drawer.Screen
+                name="about" // url
+                options={{
+                    drawerLabel: "About",
+                    title: "About"
+                }}
+            />
         </Drawer>
     );
 };
