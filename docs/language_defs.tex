@@ -1,0 +1,75 @@
+\usepackage{xcolor}
+
+% Based on: https://github.com/nextstepitt/standard-course-template/blob/master/Workbook/_Preambles/workbook-def.tex
+% SPDX-License-Identifier: MIT
+% https://github.com/nextstepitt/standard-course-template
+
+%% JavaScript
+
+\lstdefinelanguage{javascript}{
+    keywords=[1]{break, case, catch, class, const, continue, debugger, default, delete, do, else, export, extends, finally, for, function, if, import, in, instanceof, let, new, of, return, static, switch, throw, try, typeof, var, while, var},
+    keywordstyle=[1]\color{blue}\bfseries,
+    keywords=[2]{Array, boolean, Date, false, implements, import, NaN, Number, Math, null, String, super, this, true, undefined},
+    keywordstyle=[2]\color{darkgray}\bfseries,
+    keywords=[3]{isNaN, parseInt, parseFloat},
+    keywordstyle=[3]\color{darkgray}\bfseries,
+    identifierstyle=\color{black},
+    sensitive=false,
+    comment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    commentstyle=\color{purple}\ttfamily,
+    stringstyle=\color{red}\ttfamily,
+    morestring=[b]',
+    morestring=[b]"
+}
+
+\lstdefinelanguage{js}[]{javascript}{}
+
+%% JSX extends JavaScript
+
+\lstdefinelanguage{jsx}[]{javascript}{
+    alsoletter=-,
+    morestring=[b]",stringstyle=\color[rgb]{0,0,1},
+    moredelim=*[s][{\color[rgb]{0.75,0,0}}]{<}{>},
+    moredelim=[s][{\color{purple}}]{<!--}{-->},
+    moredelim=[l][{\color[rgb]{0,0,0}}]{\ <\ },
+    moredelim=[l][{\color[rgb]{0,0,0}}]{\ <=\ },
+    moredelim=[l][{\color[rgb]{0,0,0}}]{\ >\ },
+    moredelim=[l][{\color[rgb]{0,0,0}}]{\ >=\ },
+    moredelim=[l][{\color[rgb]{0,0,0}}]{\ =>\ },
+}
+
+%% JSON looks like JavaScript arrays and objects, but nothing more. There are only strings, numbers, and true and false.
+
+\lstdefinelanguage{json}{
+    keywords=[2]{false, true},
+    keywordstyle=[2]\color{darkgray}\bfseries,
+    stringstyle=\color{red}\ttfamily,
+    morestring=[b]',
+    morestring=[b]"
+}
+
+%% TypeScript extends JavaScript.
+
+\lstdefinelanguage{typescript}[]{javascript}{
+    keywords=[91]{interface, enum, implements},
+    keywordstyle=[91]\color{blue}\bfseries,
+    keywords=[92]{string, number, boolan},
+    keywordstyle=[2]\color{darkgray}\bfseries,
+}
+
+\lstdefinelanguage{ts}[]{typescript}{}
+
+%% TSX extends TypesScript (this is a copy of jsx, but we cannot combine them).
+
+\lstdefinelanguage{tsx}[]{typescript}{
+    alsoletter=-,
+    morestring=[b]",stringstyle=\color[rgb]{0,0,1},
+    moredelim=*[s][{\color[rgb]{0.75,0,0}}]{<}{>},
+    moredelim=[s][{\color{purple}}]{<!--}{-->},
+    moredelim=[l][{\color[rgb]{0,0,0}}]{\ <\ },
+    moredelim=[l][{\color[rgb]{0,0,0}}]{\ <=\ },
+    moredelim=[l][{\color[rgb]{0,0,0}}]{\ >\ },
+    moredelim=[l][{\color[rgb]{0,0,0}}]{\ >=\ },
+    moredelim=[l][{\color[rgb]{0,0,0}}]{\ =>\ },
+}
