@@ -1,40 +1,74 @@
 import React from "react";
 import Constants from "expo-constants";
-import { ApplicationReleaseType, applicationId, applicationName, nativeApplicationVersion, nativeBuildVersion } from "expo-application";
+import { ApplicationReleaseType, applicationId, applicationName, getIosApplicationReleaseTypeAsync, nativeApplicationVersion, nativeBuildVersion } from "expo-application";
 import { Stack, router } from "expo-router";
 
-import { Platform } from "react-native";
-import { Button } from "react-native-paper";
+import { Platform, StyleSheet } from "react-native";
+import { Avatar, Button, Divider } from "react-native-paper";
 
-import { View, Text } from "../../components/Themed";
 
-const AboutPage = () => {
-    let releaseType = "";
-    switch (ApplicationReleaseType) {
+import { Text } from 'react-native-paper';
+
+import { View } from "../../components/Themed";
+
+const IosAppReleaseType = () => {
+    const [releaseType, setReleaseType] = React.useState<ApplicationReleaseType | null>(null);
+
+    React.useEffect(() => {
+        const func = async () => {
+            setReleaseType(await getIosApplicationReleaseTypeAsync());
+        };
+        func()
+    });
+    if (!releaseType) {
+        return <Text>Fetching release type...</Text>
+    }
+
+    let releaseTypeStr = ""
+    switch (releaseType) {
         case ApplicationReleaseType.SIMULATOR:
-            releaseType = "Simulator"
+            releaseTypeStr = "Simulator"
             break;
         case ApplicationReleaseType.ENTERPRISE:
-            releaseType = "Enterprise"
+            releaseTypeStr = "Enterprise"
             break;
         case ApplicationReleaseType.DEVELOPMENT:
-            releaseType = "Development"
+            releaseTypeStr = "Development"
             break;
         case ApplicationReleaseType.AD_HOC:
-            releaseType = "Ad-hoc"
+            releaseTypeStr = "Ad-hoc"
             break;
         case ApplicationReleaseType.APP_STORE:
-            releaseType = "App Store"
+            releaseTypeStr = "App Store"
+            break;
         default:
-            releaseType = "Unknown"
-
+            releaseTypeStr = "Unknown"
+            break;
     }
+
+    return (
+        <Text>{releaseTypeStr} Build</Text>
+    )
+
+}
+
+const AboutPage = () => {
     return (
         <>
             <Stack.Screen options={{ title: "About" }} />
             <View style={{ flex: 1, padding: 16 }}>
-                <Text>{applicationName} ({releaseType}) - {applicationId}</Text>
+                <View style={styles.banner}>
+                    {/** Default size 64 */}
+                    <Avatar.Image source={require("../../assets/images/Icon_1024x1024.png")} />
+                    <View style={styles.bannerText}>
+                        <Text variant="displaySmall">{applicationName}</Text>
+                        <Text variant="labelLarge">{applicationId}</Text>
+                    </View>
+                </View>
 
+                <Divider />
+                <Text style={styles.headline} variant="headlineSmall">Developer</Text>
+                {Platform.OS == "ios" ? <IosAppReleaseType /> : undefined}
                 <Text>Version {nativeApplicationVersion}</Text>
                 <Text>Build {nativeBuildVersion}</Text>
                 <Text>Expo SDK {Constants.expoConfig?.sdkVersion}</Text>
@@ -62,5 +96,23 @@ const AboutPage = () => {
         </>
     )
 }
+
+const styles = StyleSheet.create({
+    banner: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "row",
+        paddingTop: 16, /** already have 16 padding on page itself */
+        paddingBottom: 32
+    },
+    bannerText: {
+        paddingLeft: 32
+    },
+    headline: {
+        paddingTop: 16,
+        paddingBottom: 16
+    }
+})
 
 export default AboutPage;
