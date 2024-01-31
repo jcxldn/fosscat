@@ -14,14 +14,7 @@ import (
 
 // Define the Graphql route handler
 // based on https://gqlgen.com/recipes/gin/
-func graphqlHandler() gin.HandlerFunc {
-	// Connect to the database and place the handle in the graphql resolver
-	// So that is accessible when executing graphql requests in ctx.
-	resolver := &resolver.Resolver{}
-	resolver.UpdateDb(database.Connect())
-
-	// Setup JWT keys (load from file)
-	jwt.SetupKey()
+func graphqlHandler(resolver *resolver.Resolver) gin.HandlerFunc {
 
 	// NewExecutableSchema and Config are in the generated.go file
 	// Resolver is in the resolver.go file
@@ -51,6 +44,14 @@ func pingHandler(c *gin.Context) {
 
 // Main function
 func main() {
+	// Connect to the database and place the handle in the graphql resolver
+	// So that is accessible when executing graphql requests in ctx.
+	resolver := &resolver.Resolver{}
+	resolver.UpdateDb(database.Connect())
+
+	// Setup JWT keys (load from file)
+	jwt.SetupKey()
+
 	// Create a gin engine instance
 	r := gin.Default()
 
@@ -59,8 +60,10 @@ func main() {
 		AllowHeaders: []string{"Content-Type"},
 	}))
 
+	r.Use(AuthMiddleware(resolver.DB))
+
 	// Define routes
-	r.POST("/graphql", graphqlHandler())              // GraphQL query endpoint
+	r.POST("/graphql", graphqlHandler(resolver))      // GraphQL query endpoint
 	r.GET("/graphql/playground", playgroundHandler()) // GraphiQL playground
 	r.GET("/ping", pingHandler)                       // Ping/pong endpoint (for healthcheck)
 

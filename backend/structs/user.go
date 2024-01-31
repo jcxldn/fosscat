@@ -14,3 +14,13 @@ type User struct {
 	Email     string
 	Hash      string
 }
+
+func (u User) GetPublicFields() User {
+	publicUser := User{
+		ID:        u.ID,
+		FirstName: u.FirstName,
+		LastName:  u.LastName,
+		Email:     u.Email,
+	}
+	return publicUser
+}

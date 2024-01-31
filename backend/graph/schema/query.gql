@@ -3,4 +3,5 @@ type Query {
   entity: [Entity!]!
   item: [Item!]!
   users: [User!]!
+  me: User!
 }
