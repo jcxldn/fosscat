@@ -46,7 +46,7 @@ func (s *UtilJwtTestSuite) TestVerifyJwtValid() {
 
 	s.Assertions.Nil(err)
 
-	parsedToken, claims, err2 := jwt.VerifyJwt(token, *s.User)
+	parsedToken, claims, err2 := jwt.VerifyJwt(token)
 
 	s.Assertions.Nil(err2)
 
@@ -59,7 +59,7 @@ func (s *UtilJwtTestSuite) TestVerifyJwtValid() {
 
 func (s *UtilJwtTestSuite) TestVerifyJwtInvalid() {
 
-	parsedToken, claims, err := jwt.VerifyJwt("invalid jwt", *s.User)
+	parsedToken, claims, err := jwt.VerifyJwt("invalid jwt")
 
 	s.Assertions.NotNil(err)
 	s.Assertions.Nil(parsedToken)
