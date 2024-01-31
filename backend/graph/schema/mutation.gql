@@ -1,3 +1,6 @@
+"The `Upload` scalar type represents a multipart file upload."
+scalar Upload
+
 type Mutation {
   createCheckout(input: NewCheckout!): Checkout!
   createEntity: Entity!
@@ -5,4 +8,6 @@ type Mutation {
   createUser(input: NewUser!): User!
 
   login(email: String!, password: String!): LoginResponse!
+  
+  uploadFiles(files: NewFiles!): [File!]!
 }

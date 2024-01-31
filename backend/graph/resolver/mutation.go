@@ -67,6 +67,27 @@ func (r *mutationResolver) Login(ctx context.Context, email string, password str
 	}
 }
 
+// UploadFiles is the resolver for the uploadFiles field.
+func (r *mutationResolver) UploadFiles(ctx context.Context, files model.NewFiles) ([]*structs.File, error) {
+	// Check if the user context is present
+	// (is present when a valid jwt is placed in the authorization header)
+	user := ctx.Value("user")
+	if user != nil {
+		// Type assertion that "user" ctx is not nil and is of type structs.User
+		userStruct := user.(*structs.User)
+
+		// database.UploadFiles will iterate over every entry in files.Files
+		uploadedFiles, err := database.UploadFiles(r.DB, files, *userStruct)
+
+		if err == nil {
+			return uploadedFiles, nil
+		} else {
+			return nil, err
+		}
+	}
+	return nil, errors.New("route requires authorization")
+}
+
 // Mutation returns graph.MutationResolver implementation.
 func (r *Resolver) Mutation() graph.MutationResolver { return &mutationResolver{r} }
 

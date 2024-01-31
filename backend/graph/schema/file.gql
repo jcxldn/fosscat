@@ -1,0 +1,17 @@
+enum FileTypes {
+    ERROR_DETERMINING,
+    GENERIC,
+    IMAGE
+}
+
+type File {
+    id: String!
+    uploader: User!
+    name: String!
+    content: String!
+    type: FileTypes!
+}
+
+input NewFiles {
+    files: [Upload!]!
+}
