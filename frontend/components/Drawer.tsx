@@ -1,11 +1,33 @@
 import * as React from 'react';
 
 import { Drawer } from 'expo-router/drawer';
-import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
+import { DrawerContentScrollView, DrawerHeaderProps, DrawerItem, useDrawerStatus } from '@react-navigation/drawer';
 import { View, StyleSheet } from 'react-native';
-import { Avatar, Caption, Title } from 'react-native-paper';
+import { Appbar, Avatar, Caption, Title } from 'react-native-paper';
 import { router } from 'expo-router';
 
+
+// layout prop not used
+const Header = ({ navigation, options, route }: DrawerHeaderProps) => {
+
+    const isDrawerOpen = useDrawerStatus()
+    return (
+        <Appbar.Header>
+            {
+                // If can go back (and menu is not open)
+                // If we only check if we can go back it switches from menu to back icon when the drawer is opened.
+                navigation.canGoBack() && !isDrawerOpen ?
+                    // Can go back, show back button
+                    <Appbar.BackAction onPress={navigation.goBack} /> :
+                    // Can't go back, show menu button for drawer
+                    <Appbar.Action icon="menu" onPress={navigation.openDrawer} />
+            }
+
+            {/** Set header title to options.title if present, else route name */}
+            <Appbar.Content title={options.title ? options.title : route.name} />
+        </Appbar.Header>
+    )
+}
 
 const DrawerContent = () => {
     return (
@@ -32,7 +54,11 @@ const DrawerContent = () => {
 // TODO: https://docs.expo.dev/router/advanced/platform-specific-modules/
 const DrawerComponent = () => {
     return (
-        <Drawer id="root" drawerContent={() => <DrawerContent />} />
+        <Drawer
+            id="root"
+            drawerContent={DrawerContent}
+            screenOptions={{ header: Header }}
+        />
     );
 };
 
