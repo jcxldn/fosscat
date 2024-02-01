@@ -1,9 +1,9 @@
 import React from "react";
 import { View, Text } from "../components/Themed";
-import { Stack, router } from "expo-router";
+import { router } from "expo-router";
 
 import { Button, TextInput } from 'react-native-paper';
-import { StyleSheet } from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
 import { useSession } from "../components/AuthenticationContext";
 import { InvalidEmailPassword } from "../components/InvalidEmailPassword";
 import { useApolloClient } from "../components/ApolloClientProvider";
@@ -22,51 +22,48 @@ const LoginPage = () => {
     const { createClient, setServerUri, serverUri } = useApolloClient();
 
     return (
-        <>
-            <Stack.Screen options={{ title: "Login" }} />
-            <View style={styles.container}>
-                <Text style={styles.title}>Login</Text>
-                {showEmailPassError ? <InvalidEmailPassword /> : <></>}
-                <View style={styles.itemContainer}>
-                    <View style={styles.itemContainer}>
-                        <TextInput
-                            label="Server URL"
-                            value={serverUri}
-                            onChangeText={text => setServerUri(text)}
-                        />
-                    </View>
-                    <TextInput
-                        label="Email"
-                        value={email}
-                        onChangeText={text => setEmail(text)}
-                    />
-                </View>
+        <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+            <Text style={styles.title}>Login</Text>
+            {showEmailPassError ? <InvalidEmailPassword /> : <></>}
+            <View style={styles.itemContainer}>
                 <View style={styles.itemContainer}>
                     <TextInput
-                        label="Password"
-                        value={password}
-                        onChangeText={text => setPassword(text)}
+                        label="Server URL"
+                        value={serverUri}
+                        onChangeText={text => setServerUri(text)}
                     />
                 </View>
-                <Button
-                    onPress={async () => {
-                        // Call a hook in ApolloClientProvider to create the client
-                        createClient();
-
-                        const res = await login(email, password)
-
-                        if (!res?.login.success) {
-                            // Login was not sucessful
-                            setShowEmailPassError(true)
-                        } else {
-                            // Login was a success, redirect to homepage.
-                            router.replace('/')
-                        }
-                    }}>
-                    Login
-                </Button>
+                <TextInput
+                    label="Email"
+                    value={email}
+                    onChangeText={text => setEmail(text)}
+                />
             </View>
-        </>
+            <View style={styles.itemContainer}>
+                <TextInput
+                    label="Password"
+                    value={password}
+                    onChangeText={text => setPassword(text)}
+                />
+            </View>
+            <Button
+                onPress={async () => {
+                    // Call a hook in ApolloClientProvider to create the client
+                    createClient();
+
+                    const res = await login(email, password)
+
+                    if (!res?.login.success) {
+                        // Login was not sucessful
+                        setShowEmailPassError(true)
+                    } else {
+                        // Login was a success, redirect to homepage.
+                        router.replace('/')
+                    }
+                }}>
+                Login
+            </Button>
+        </KeyboardAvoidingView>
     )
 }
 
