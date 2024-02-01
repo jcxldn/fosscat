@@ -4,22 +4,25 @@ import { Stack, router } from "expo-router";
 
 export default function ScanStack() {
     return (
-        <Stack id="stack.scan">
+        <>
+            <Stack.Screen options={{ title: "Scan" }} />
+            <Stack id="stack.scan">
 
-            <Stack.Screen name="camera" options={{
-                headerShown: false
-            }} />
+                <Stack.Screen name="camera" options={{
+                    headerShown: false
+                }} />
 
-            <Stack.Screen name="result" options={{
-                headerTitle: "Scan Result",
-                headerBackButtonMenuEnabled: true,
+                <Stack.Screen name="result" options={{
+                    headerTitle: "Scan Result",
+                    headerBackButtonMenuEnabled: true,
 
-                headerLeft: ({ label }) => (
-                    <Button onPress={() => router.back()} title="Close" />
-                ),
-                presentation: "modal"
+                    headerLeft: ({ label }) => (
+                        <Button onPress={() => router.back()} title="Close" />
+                    ),
+                    presentation: "modal"
 
-            }} />
-        </Stack>
+                }} />
+            </Stack>
+        </>
     )
 }
