@@ -5,6 +5,7 @@ import { View } from "react-native";
 import { Stack } from "expo-router";
 
 import ItemPictures from "../../../components/item/ItemPictures";
+import { Text } from "react-native-paper";
 
 
 const ItemPage = () => {
@@ -13,6 +14,10 @@ const ItemPage = () => {
             <Stack.Screen options={{ title: "Item" }} />
             <View style={{ flex: 1 }}>
                 <ItemPictures />
+                <View style={{ flex: 1, padding: 16 }}>
+                    <Text variant="headlineLarge">Item</Text>
+                    <Text variant="titleMedium">Item Description</Text>
+                </View>
             </View>
         </>
     )

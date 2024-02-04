@@ -77,7 +77,7 @@ const ItemPictures = () => {
     );
 
     return (
-        <>
+        <View style={{ flex: 1 }}>
             <AnimatedPagerView
                 initialPage={0}
                 style={{ flex: 1 }}
@@ -101,7 +101,7 @@ const ItemPictures = () => {
                 }}
 
             />
-        </>
+        </View>
     )
 
 }
