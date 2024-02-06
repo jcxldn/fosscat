@@ -1,6 +1,8 @@
 package database
 
 import (
+	"io"
+
 	"github.com/google/uuid"
 	"github.com/jcxldn/fosscat/backend/graph/model"
 	"github.com/jcxldn/fosscat/backend/structs"
@@ -23,17 +25,23 @@ func createFileStruct(db *gorm.DB) *structs.File {
 	return &file
 }
 
-func UploadFiles(db *gorm.DB, files model.NewFiles, uploader structs.User) ([]*structs.File, error) {
+func UploadFiles(db *gorm.DB, files []*model.UploadFile, uploader structs.User) ([]*structs.File, error) {
 	fileStructs := []*structs.File{}
-	for _, file := range files.Files {
-		fileType, err := util.GetFileTypeForFile(file)
+	for _, fileModel := range files {
+		fileType, err := util.GetFileTypeForFile(fileModel.File)
 		if err == nil && fileType == structs.FileTypesImage {
 			// Create a new file struct with a unique UUID
 			file := createFileStruct(db)
 
 			// Set other fields
+			file.Name = fileModel.File.Filename
 			file.Uploader = uploader
 			file.Type = structs.FileTypesImage
+			data, readErr := io.ReadAll(fileModel.File.File)
+			if readErr != nil {
+				return nil, err
+			}
+			file.Data = data
 
 			// Add to database
 			db.Create(&file)
