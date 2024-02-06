@@ -68,7 +68,7 @@ func (r *mutationResolver) Login(ctx context.Context, email string, password str
 }
 
 // UploadFiles is the resolver for the uploadFiles field.
-func (r *mutationResolver) UploadFiles(ctx context.Context, files model.NewFiles) ([]*structs.File, error) {
+func (r *mutationResolver) UploadFiles(ctx context.Context, files []*model.UploadFile) ([]*structs.File, error) {
 	// Check if the user context is present
 	// (is present when a valid jwt is placed in the authorization header)
 	user := ctx.Value("user")
