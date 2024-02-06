@@ -31,6 +31,16 @@ func (r *queryResolver) Entity(ctx context.Context) ([]*structs.Entity, error) {
 	return entities, result.Error
 }
 
+// File is the resolver for the file field.
+func (r *queryResolver) File(ctx context.Context) ([]*structs.File, error) {
+	// Get all files. Proof of concept only, returns all fields!
+	files := []*structs.File{}
+	// Preload all associations (https://gorm.io/docs/preload.html#Preload-All)
+	// TODO much later: don't preload private fields like hash unless user = logged in user.
+	result := r.DB.Preload(clause.Associations).Find(&files)
+	return files, result.Error
+}
+
 // Item is the resolver for the item field.
 func (r *queryResolver) Item(ctx context.Context) ([]*structs.Item, error) {
 	// Get all items. Proof of concept only, returns all fields!

@@ -5,6 +5,4 @@ type Mutation {
   createUser(input: NewUser!): User!
 
   login(email: String!, password: String!): LoginResponse!
-  
-  uploadFiles(files: [UploadFile!]!): [File!]!
 }

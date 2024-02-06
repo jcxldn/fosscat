@@ -6,7 +6,6 @@ package resolver
 
 import (
 	"context"
-
 	b64 "encoding/base64"
 
 	"github.com/jcxldn/fosscat/backend/graph"

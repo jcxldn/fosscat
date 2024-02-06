@@ -1,7 +1,3 @@
-"The `Upload` scalar type represents a multipart file upload."
-scalar Upload
-
-
 enum FileTypes {
     ERROR_DETERMINING,
     GENERIC,
@@ -14,9 +10,4 @@ type File {
     name: String!
     data: String!
     type: FileTypes!
-}
-
-input UploadFile {
-    id: Int!
-    file: Upload!
 }
