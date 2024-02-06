@@ -6,7 +6,8 @@ package resolver
 
 import (
 	"context"
-	"fmt"
+
+	b64 "encoding/base64"
 
 	"github.com/jcxldn/fosscat/backend/graph"
 	"github.com/jcxldn/fosscat/backend/graph/model"
@@ -15,22 +16,17 @@ import (
 
 // ID is the resolver for the id field.
 func (r *fileResolver) ID(ctx context.Context, obj *structs.File) (string, error) {
-	panic(fmt.Errorf("not implemented: ID - id"))
+	return obj.ID.String(), nil
 }
 
-// Name is the resolver for the name field.
-func (r *fileResolver) Name(ctx context.Context, obj *structs.File) (string, error) {
-	panic(fmt.Errorf("not implemented: Name - name"))
-}
-
-// Content is the resolver for the content field.
-func (r *fileResolver) Content(ctx context.Context, obj *structs.File) (string, error) {
-	panic(fmt.Errorf("not implemented: Content - content"))
+// Data is the resolver for the data field.
+func (r *fileResolver) Data(ctx context.Context, obj *structs.File) (string, error) {
+	return b64.StdEncoding.EncodeToString(obj.Data), nil
 }
 
 // Type is the resolver for the type field.
 func (r *fileResolver) Type(ctx context.Context, obj *structs.File) (model.FileTypes, error) {
-	panic(fmt.Errorf("not implemented: Type - type"))
+	return model.FileTypes(obj.Type), nil
 }
 
 // File returns graph.FileResolver implementation.
