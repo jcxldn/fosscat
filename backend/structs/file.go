@@ -16,3 +16,9 @@ type File struct {
 	Type       FileTypes
 	Data       []byte
 }
+
+// An array of UploadedFile will be returned following a successful call to /upload (non-graphql)
+type UploadedFile struct {
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
+}
