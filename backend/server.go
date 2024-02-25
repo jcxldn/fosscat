@@ -54,6 +54,17 @@ func uploadHandler(db *gorm.DB) gin.HandlerFunc {
 			// Type assertion that "user" ctx is not nil and is of type structs.User
 			userStruct := user.(*structs.User)
 
+			// Check if upload[] was set
+			fileExists, err := c.FormFile("upload[]")
+			if fileExists == nil || err != nil {
+				c.JSON(422, gin.H{
+					"error": "upload[] not set",
+				})
+				return
+			}
+
+			// upload[] was set
+
 			// Multipart form
 			form, _ := c.MultipartForm()
 			files := form.File["upload[]"]
