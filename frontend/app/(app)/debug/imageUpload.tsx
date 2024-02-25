@@ -20,20 +20,24 @@ const ImageUploadPage = () => {
                 const formData = new FormData();
 
                 // If assets exists, iterate over it
-                result.assets?.forEach(async asset => {
-                    console.log("ADDING ASSET")
-                    const blob = await fetchImageFromUri(asset.uri);
-                    formData.append("upload[]", blob);
-                })
+                if (result.assets) {
+                    for (let i = 0; i < result.assets?.length; i++) {
+                        console.log("Adding asset")
+                        console.log(result.assets[i].uri)
+                        const blob = await fetchImageFromUri(result.assets[i].uri)
+                        console.log(blob.size)
+                        formData.append("upload[]", blob)
+                    }
+                }
 
                 console.log(formData)
 
                 const res = await fetch("http://10.255.0.202:8080/upload", {
                     method: "POST",
-                    body: formData,
                     headers: {
                         "Authorization": `Bearer ${jwt}`
-                    }
+                    },
+                    body: formData,
                 }).catch((err: Error) => {
                     // TODO, make cleaner, just a proof of concept.
                     alert("Error uploading image: " + err.message)
