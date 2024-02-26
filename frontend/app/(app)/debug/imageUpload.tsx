@@ -6,8 +6,6 @@ import * as ImagePicker from 'expo-image-picker';
 import { fetchImageFromUri } from "../../../util/fetchImageFromUri";
 import { useSession } from "../../../components/AuthenticationContext";
 
-import ReactNativeBlobUtil from 'react-native-blob-util'
-
 const ImageUploadPage = () => {
     const jwt = useSession().jwt
 
@@ -34,22 +32,13 @@ const ImageUploadPage = () => {
 
                 console.log(formData)
 
-                const res = await ReactNativeBlobUtil.fetch(
-                    "POST",
-                    "http://10.255.0.202:8080/upload",
-                    {
-                        "Authorization": `Bearer ${jwt}`,
-                        // this is required, otherwise it won't be process as a multipart/form-data request
-                        'Content-Type': 'multipart/form-data',
+                const res = await fetch("http://10.255.0.202:8080/upload", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${jwt}`
                     },
-                    [
-                        result.assets?.map(asset => ({
-                            name: "upload[]",
-                            filename: asset.fileName,
-                            data: ReactNativeBlobUtil.wrap(asset.uri)
-                        }))
-                    ],
-                ).catch((err: Error) => {
+                    body: formData,
+                }).catch((err: Error) => {
                     // TODO, make cleaner, just a proof of concept.
                     alert("Error uploading image: " + err.message)
                 })
@@ -69,7 +58,7 @@ const ImageUploadPage = () => {
             }}>
                 <Text>Upload File</Text>
             </Button>
-        </View >
+        </View>
     )
 }
 
