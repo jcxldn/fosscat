@@ -116,7 +116,7 @@ func main() {
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"*"},
-		AllowHeaders: []string{"Content-Type"},
+		AllowHeaders: []string{"Authorization", "Content-Type"},
 	}))
 
 	r.Use(AuthMiddleware(resolver.DB))
