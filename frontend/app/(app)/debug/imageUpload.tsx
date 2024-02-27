@@ -27,7 +27,8 @@ const ImageUploadPage = () => {
                         formData.append("upload[]", {
                             uri: asset.uri,
                             type: asset.mimeType || "application/octet-stream",
-                            name: asset.fileName
+                            // Filename is required or the form entry will not be recognised as a file
+                            name: asset.fileName || asset.uri.split("/").pop()
                             // https://github.com/g6ling/React-Native-Tips/issues/1#issuecomment-1165945160
                         } as unknown as Blob)
                     }
