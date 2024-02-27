@@ -33,9 +33,17 @@
     },
     "plugins": [
       "expo-router",
-      ["expo-camera", {
-        "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera in order to scan barcodes."
-      }]
+      [
+      "expo-camera", {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera in order to scan barcodes."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos in order to add pictures to items."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
