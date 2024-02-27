@@ -3,7 +3,6 @@ import { View } from "../../../components/Themed";
 import { Button, Text } from "react-native-paper";
 
 import * as ImagePicker from 'expo-image-picker';
-import { fetchImageFromUri } from "../../../util/fetchImageFromUri";
 import { useSession } from "../../../components/AuthenticationContext";
 
 const ImageUploadPage = () => {
@@ -22,19 +21,21 @@ const ImageUploadPage = () => {
                 // If assets exists, iterate over it
                 if (result.assets) {
                     for (let i = 0; i < result.assets?.length; i++) {
-                        console.log("Adding asset")
                         const asset = result.assets[i]
+                        // Append to formData an object contaning the file uri, mimetype and name
+                        // These are the required values for it to be detected as a file.
+                        // on iOS, we must use this method (as opposed to uploading a blob using
+                        // `formData.append("xyz", blob)`) as otherwise the file contents are not present in the request
                         formData.append("upload[]", {
-                            uri: asset.uri,
+                            uri: asset.uri, // usually "file://" in this context.
                             type: asset.mimeType || "application/octet-stream",
                             // Filename is required or the form entry will not be recognised as a file
                             name: asset.fileName || asset.uri.split("/").pop()
-                            // https://github.com/g6ling/React-Native-Tips/issues/1#issuecomment-1165945160
+                            // Cast the object to a Blob to make TypeScript happy
+                            // See: https://github.com/g6ling/React-Native-Tips/issues/1#issuecomment-1165945160
                         } as unknown as Blob)
                     }
                 }
-
-                console.log(formData)
 
                 const res = await fetch("http://172.20.10.8:8080/upload", {
                     method: "POST",
