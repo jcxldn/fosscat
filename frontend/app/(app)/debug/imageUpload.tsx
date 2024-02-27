@@ -4,9 +4,11 @@ import { Button, Text } from "react-native-paper";
 
 import * as ImagePicker from 'expo-image-picker';
 import { useSession } from "../../../components/AuthenticationContext";
+import { useApolloClient } from "../../../components/ApolloClientProvider";
 
 const ImageUploadPage = () => {
     const jwt = useSession().jwt
+    const { serverUri } = useApolloClient();
 
     return (
         <View>
@@ -37,7 +39,7 @@ const ImageUploadPage = () => {
                     }
                 }
 
-                const res = await fetch("http://172.20.10.8:8080/upload", {
+                const res = await fetch(`${serverUri}/upload`, {
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${jwt}`
@@ -53,6 +55,7 @@ const ImageUploadPage = () => {
                 if (res instanceof Response) {
                     if (res.status == 200) {
                         // Uploaded successfully
+                        alert("Uploaded sucessfully")
                     } else {
                         // Did not upload successfully.
                         alert("Error uploading image: Response was not 200")

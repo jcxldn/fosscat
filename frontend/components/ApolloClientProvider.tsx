@@ -41,7 +41,7 @@ export function ApolloClientProvider(props: React.PropsWithChildren) {
                 // https://www.apollographql.com/docs/react/integrations/react-native/
                 setClientState(new ApolloClient({
 
-                    uri: serverUriState,
+                    uri: `${serverUriState}/graphql`,
 
                     cache: new InMemoryCache()
 
