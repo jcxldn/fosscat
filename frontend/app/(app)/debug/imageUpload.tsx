@@ -23,16 +23,19 @@ const ImageUploadPage = () => {
                 if (result.assets) {
                     for (let i = 0; i < result.assets?.length; i++) {
                         console.log("Adding asset")
-                        console.log(result.assets[i].uri)
-                        const blob = await fetchImageFromUri(result.assets[i].uri)
-                        console.log(blob.size)
-                        formData.append("upload[]", blob)
+                        const asset = result.assets[i]
+                        formData.append("upload[]", {
+                            uri: asset.uri,
+                            type: asset.mimeType || "application/octet-stream",
+                            name: asset.fileName
+                            // https://github.com/g6ling/React-Native-Tips/issues/1#issuecomment-1165945160
+                        } as unknown as Blob)
                     }
                 }
 
                 console.log(formData)
 
-                const res = await fetch("http://10.255.0.202:8080/upload", {
+                const res = await fetch("http://172.20.10.8:8080/upload", {
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${jwt}`
