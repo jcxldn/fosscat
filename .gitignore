@@ -6,3 +6,5 @@ secrets
 
 # Docker compose data directory
 data
+
+docs/**/*.pdf
