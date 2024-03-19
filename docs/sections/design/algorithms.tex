@@ -1,0 +1,121 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\subsubsection{Authorization Middleware}
+
+\begin{tikzpicture}[node distance=2cm]
+    %\node (root) [mb_node] {Application};
+    %\node (scan) [mb_node, below of=root] {Scan};
+    %\draw [line] (root) -- (scan);
+
+    % Objects
+    \node (start) [startstop] {Start};
+    \node[align=center] (inp1) [io, below of=start] {Read Authorization\\ Header};
+    \node (dec1) [decision, below of=inp1, yshift=-1cm] {Header exists?};
+    %\node (out1) [io, right of=dec1, xshift=3cm] {Display error};
+
+    % Header exists: no
+    \node[align=center] (no-dec1) [decision, right of=dec1, xshift=3cm] {Does request \\require \\authorization?};
+    %\node (no-dec1-pro1) [process, right of=no-dec1, xshift=3cm] {Request Handler};
+    \node[inner sep=0pt] (positioning1) [right of=no-dec1, xshift=2cm] {};
+    \node[inner sep=0pt] (positioning2) [below of=positioning1, yshift=-9cm] {};
+
+    % Header exists: yes
+    \node (pro1) [process, below of=dec1, yshift=-1cm] {Parse token};
+    \node (dec2) [decision, below of=pro1, yshift=-1cm] {Was successful?};
+    \node (out2) [io, right of=dec2, xshift=3cm] {Display error};
+
+    \node[inner sep=0pt] (positioning3) [below of=out2, yshift=-5cm] {};
+    %\node (end) [startstop, xshift=1cm] {End};
+
+    \node (pro2) [process, below of=dec2, yshift=-1cm] {Set user context};
+    \node (pro3) [process, below of=pro2] {Request Handler};
+
+    \node (end) [startstop, below of=pro3] {End};
+
+    % Lines
+    \draw [arrow] (start) -- (inp1);
+    \draw [arrow] (inp1) -- (dec1);
+
+    \draw [arrow] (dec1) -- node[anchor=south] {No} (no-dec1);
+    \draw [arrow] (no-dec1) -- node[anchor=east] {No} (out2);
+    %\draw [arrow] (no-dec1) -- node[anchor=east] {Yes} (no-dec1-pro1);
+
+    \draw [arrow] (dec1) -- node[anchor=east] {Yes} (pro1);
+    \draw [arrow] (pro1) -- (dec2);
+
+    \draw [arrow] (dec2) -- node[anchor=south] {No} (out2);
+    \draw [arrow] (dec2) -- node[anchor=east] {Yes} (pro2);
+    \draw [arrow] (pro2) -- (pro3);
+    \draw [arrow] (pro3) -- (end);
+
+    % Line between no-dec1 and pro3
+    \draw [thick,-,>=stealth] (no-dec1) edge node[anchor=south] {Yes} (positioning1) (positioning1) edge (positioning2); % (positioning2) edge (pro3);
+    \draw [arrow] (positioning2) -- (pro3);
+
+    % Line between out2 and end
+    \draw [thick,-,>=stealth] (out2) -- (positioning3);
+    \draw [arrow] (positioning3) -- (end);
+
+
+
+    %\draw [arrow] (dec1) -- node[anchor=south] {No} (out1);
+    %\draw [arrow] (out1) -- (end);
+
+
+\end{tikzpicture}
+
+\subsubsection{Uploading Files - File Processing}
+
+\begin{lstlisting}
+function processFiles(files: byte[])
+    fileIDs = []
+    for i = 0 to len(files)
+        if isImage(file)
+            id = addToDatabase(file)
+            fileIDs.append(id)
+        else
+            print "unsupported file type"
+        endif
+    endfor
+endfunction
+\end{lstlisting}
+
+\subsubsection{Uploading Files - Request Handler}
+
+\begin{tikzpicture}[node distance=2cm]
+
+    % Objects
+    \node (start) [startstop] {Start};
+    \node (pro1) [process, below of=start] {Execute Auth Middleware};
+    \node[align=center] (dec1) [decision, below of=pro1, yshift=-1cm] {Was\\context\\received?};
+
+    % > Context was not received
+    \node (out1) [io, below of=dec1, yshift=-2cm] {Display error};
+    \node (end) [startstop, below of=out1, yshift=-4cm] {End};
+
+    % > Context was received
+    \node (pro2) [process, right of=dec1, xshift=5cm] {Read request body};
+    \node[align=center] (dec2) [decision, below of=pro2, yshift=-2cm] {Was\\upload field\\set?};
+
+    \node (pro3) [process, below of=dec2, yshift=-2cm] {Process files to be uploaded};
+
+    % Lines
+    \draw [arrow] (start) -- (pro1);
+    \draw [arrow] (pro1) -- (dec1);
+
+    \draw [arrow] (dec1) -- node[anchor=east] {No} (out1);
+    \draw [arrow] (out1) -- (end);
+
+    \draw [arrow] (dec1) -- node[anchor=south] {Yes} (pro2);
+    \draw [arrow] (pro2) -- (dec2);
+
+    \draw [arrow] (dec2) -- node[anchor=south] {No} (out1);
+    \draw [arrow] (dec2) -- node[anchor=east] {Yes} (pro3);
+
+    \draw [arrow] (pro3) -- (end);
+
+\end{tikzpicture}
+
+\end{document}

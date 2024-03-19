@@ -1,0 +1,20 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\subsubsection{Frontend Application - Screens}
+
+\begin{tikzpicture}[node distance=2cm]
+    % objects
+    \node (root) [mb_node] {Application};
+    \node (scan) [mb_node, below of=root] {Scan};
+    \node (home) [mb_node, left of=scan, xshift=-2cm] {Home Screen};
+    \node (item) [mb_node, right of=scan, xshift=2cm] {Item};
+
+    % lines between objects
+    \draw [line] (root) -- (scan);
+    \draw [line] (root) -- (home);
+    \draw [line] (root) -- (item);
+\end{tikzpicture}
+
+\end{document}

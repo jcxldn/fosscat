@@ -25,18 +25,79 @@ After doing some research (should I talk about the different options?) I decided
 
 \subsubsection{Introduction}
 
-In this sprint I will work on the backend service.
-This service will provide an interface for the frontend to talk to the database via an API (Application Programming Interface).
-I am writing the backend in Go, which is a performant, statically typed high level language designed by Google.
+This is the first iteration of my system. My aim for this iteration is to create the initial backend service for the application.
+This service will provide an interface for the frontend to talk to the database via an API.
+
+\noindent \\ An API, or \textbf{A}pplication \textbf{P}rogramming \textbf{I}nterface, is a mechanism that allows two pieces of software to communicate with each other
+using a predefined protocol. I will be making use of an API to allow the client application (the frontend) to request and send data to the backend application (the backend).
+
+\noindent \\ I am writing the backend service in Go, which is a performant, statically typed high level language designed by Google.
 Go is frequently used for backend development thanks to it's excellent performance and built in memory safety.
 I am also going to use \underline{GraphQL} as the query language used by the frontend to interact with the backend.
 
-\noindent \\ GraphQL is an open-source query and manipulation language designed for use in APIs. The backend will serve as an API which will interface with my database.
-I choose to use GraphQL as it is better suited for larger, more complex data sources, and supports querying for multiple different types of data at once, unlike REST. It is also something I was interested in learning more about as I have not designed a system using it before. \\
+\noindent \\ GraphQL is an open-source query and manipulation language designed for use in APIs. The backend will serve as an API which will interface
+with my database.
+I choose to use GraphQL as it is better suited for larger, more complex data sources, and supports querying for multiple different types of data at
+once, unlike a REST API. GraphQL was also a technology I am interested in learning more about as I have not implemented a complex system using it before.
 
-James: Should this intro be in the design area instead?
+\noindent \\ A REST API, also known as a RESTful API, is an application programming interface that makes use of REST. REST, or \textbf{RE}presentational \textbf{S}tate \textbf{T}ransfer,
+is a standard architecture that was created as a way to manage communication over a complex network, such as the Internet. RESTful APIs are most commonly implemented using
+the Hypertext Transfer Protocol, or HTTP. HTTP requests can have several methods, which is used to instruct the server what action should be performed on the requested resource.
 
-TODO: explain what a graphql mutation is (it's a function)
+\noindent \\ GraphQL has two main operation types that I will be making use of in my system. The first operation is a \textbf{query}. This allows the caller to request
+data from the GraphQL server. In addition, the caller can make use of parameters to change the result of their query. This is the GraphQL equivalent of
+a HTTP \textbf{GET} request as would be used for a REST API. The other operation type is called a \textbf{mutation}. A mutation is an operation that
+allows the caller to insert new data or modify existing data on the server. It is the GraphQL equivalent of a HTTP \lstinline{POST}, \lstinline{PUT},
+\lstinline{PATCH} or \lstinline{DELETE} request as used in a REST API.
+
+
+\subsubsection{Web Server Setup}
+
+GraphQL, like RESTful APIs, is usually accessed over HTTP. To achieve this, I first needed to create a basic HTTP server in Go.
+Go's standard library does in fact provide functions ot create a HTTP server, and that is what I used first.
+To start, I setup my Go project by running \lstinline{go mod init fosscat}, which creates the dependency file, \lstinline{go.mod}.
+As specified in my design document, I then installed \lstinline{gqlgen} by adding it to the project's \lstinline{tools.go}.
+I then ran \lstinline{go run github.com/99designs/gqlgen init} and \lstinline{go mod tidy} to initialize the gqlgen configuration and generate
+GraphQL models. Lastly, I added boilerplate code to create a webserver using Go's standard library functions and register the GraphQL route handler.
+
+\noindent \\ After doing this, my main file, \lstinline{server.go}, looked like this:
+
+\begin{lstlisting}[language=Go]
+package main
+
+import (
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/jcxldn/fosscat/backend/graph"
+)
+
+const defaultPort = "8080"
+
+func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = defaultPort
+	}
+
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+
+	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	http.Handle("/query", srv)
+
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
+}
+
+\end{lstlisting}
+
+\noindent This code checks for the presence of an \underline{environment variable} called \lstinline{PORT}. If it is present that port is used by the webserver as it's listening port. If it was not specified, port 8080 is used.
+I then register routes for both GraphiQL (\lstinline{"/"}) and the GraphQL server itself (\lstinline{"/query"}).
+
+\noindent \\ GraphiQL is a webpage that ships with GraphQL servers that allows for easy testing. It provides a web-based interface to interact with the attached GraphQL server. It is similar in function to programs like Altair which I will be using later on in this iteration to test the functionality of my code.
 
 \subsubsection{User account creation}
 

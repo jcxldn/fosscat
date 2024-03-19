@@ -34,7 +34,7 @@ func Connect() *gorm.DB {
 func Migrate(db *gorm.DB) {
 	log.Println("[database] migrating...")
 
-	var errors [4]error
+	var errors [5]error
 
 	// "Migrate" the schema
 	// This will create tables, keys, columns, etc. Everything really.
@@ -45,8 +45,9 @@ func Migrate(db *gorm.DB) {
 	// Item has a dependency on Entity, so do them in the correct order
 	// to avoid "relation does not exist" error during table creation.
 	errors[1] = db.AutoMigrate(&structs.Entity{})
-	errors[2] = db.AutoMigrate(&structs.Item{})
-	errors[3] = db.AutoMigrate(&structs.User{})
+	errors[2] = db.AutoMigrate(&structs.File{})
+	errors[3] = db.AutoMigrate(&structs.Item{})
+	errors[4] = db.AutoMigrate(&structs.User{})
 
 	for index, err := range errors {
 		if err != nil {

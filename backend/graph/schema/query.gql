@@ -1,6 +1,7 @@
 type Query {
   checkout: [Checkout!]!
   entity: [Entity!]!
+  file: [File!]!
   item: [Item!]!
   users: [User!]!
   me: User!

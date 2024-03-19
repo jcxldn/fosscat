@@ -17,9 +17,13 @@
 \usepackage{lstautogobble} % listings: Fix relative indenting
 \usepackage{color} % listings: Code coloring
 \usepackage{zi4} % listings: Nice font
+\usepackage{array} % for \begin{tabular}{ | p{'width'} | } (https://www.overleaf.com/learn/latex/Tables)
 
 \usepackage[british]{datetime2} % load before gitinfo2 to customize
 \usepackage[mark=true,grumpy=true]{gitinfo2}
+
+\usepackage{tikz}
+\usepackage{tikz-uml}
 
 \usepackage{subfiles} % Best loaded last in the preamble
 
@@ -37,6 +41,18 @@
 
 % Variables
 \def\projectname{Inventory Project}
+
+% TiKz style defines for flowcharts
+\tikzstyle{startstop} = [ellipse, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=red!30]
+\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!30]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=orange!30]
+\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30]
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+% TiKz style defines for modular breakdown
+\tikzstyle{mb_node} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black]
+\tikzstyle{line} = [thick,-,>=stealth]
+
 
 % Override subparagraph with a variant that has no indentation
 % https://tex.stackexchange.com/a/392014
@@ -231,10 +247,14 @@ sentance or two on what it does and why (justify it being there)
 \subsubsection{Feedback from stakeholder}
 
 \subsection{Modular breakdown}
+\subfile{sections/design/modular_breakdown.tex}
 
 \subsection{Algorithms}
+\subfile{sections/design/algorithms.tex}
 
 \subsection{Data Dictionary}
+
+\subsubsection{Classes}
 
 \subsection{Inputs and outputs}
 
