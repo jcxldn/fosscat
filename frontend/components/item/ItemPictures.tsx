@@ -1,46 +1,66 @@
 import React from "react";
 
-import { View, Animated, Dimensions, ImageSourcePropType } from "react-native";
+import { View, Animated, Dimensions, ImageSourcePropType, useColorScheme } from "react-native";
 import PagerView, { PagerViewOnPageScrollEventData } from 'react-native-pager-view';
-import { Card } from "react-native-paper";
+import { Button, Card, Surface } from "react-native-paper";
 import { ScalingDot } from 'react-native-animated-pagination-dots';
+
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 // Create an Animated version of the PagerView
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
 type PhotoEntry = {
     key: number,
-    source: ImageSourcePropType
+    source?: ImageSourcePropType,
+    component?: React.JSX.Element
 }
 
-// Test data before we integrate it into the production DB
-const testData: PhotoEntry[] = [
-    {
-        key: 1,
-        source: { uri: "https://picsum.photos/1024" }
-    },
-    {
-        key: 2,
-        source: { uri: "https://picsum.photos/1024" }
-    }
-]
 
 const PhotoCard = ({ entry }: { entry: PhotoEntry }) => {
     return (
         <View
             key={entry.key}
             style={{
-                padding: 16
+                padding: 16,
             }}
         >
             <Card>
-                <Card.Cover source={entry.source} />
+                {entry.source ? <Card.Cover source={entry.source} /> : entry.component ? entry.component : null}
             </Card>
-        </View>
+        </View >
     )
 }
 
 const ItemPictures = () => {
+
+    const colorScheme = useColorScheme()
+
+    // Test data before we integrate it into the production DB
+
+    // Key is for React only, does not affect order.
+    const testData: PhotoEntry[] = [
+        {
+            key: 1,
+            source: { uri: "https://picsum.photos/1024" },
+        },
+        {
+            key: 2,
+            source: { uri: "https://picsum.photos/1024" }
+        },
+        {
+            key: -1, component: (
+                <>
+                    <Button style={{ height: 195 }} onPress={() => alert("add image handler tbd")}>
+                        <Surface elevation={0} style={{ height: "100%", alignItems: "center", justifyContent: "center" }}>
+                            <MaterialCommunityIcons name="image-plus" size={128} color={colorScheme == "dark" ? "white" : "black"} style={{ opacity: 0.5 }} />
+                        </Surface>
+                    </Button>
+                </>
+            )
+        }
+    ]
+
     // Variables for AnimatedPagerView
     // From "react-native-pager-view" PaginationDotsExample.tsx
     // <https://github.com/callstack/react-native-pager-view/blob/master/example/src/PaginationDotsExample.tsx>
@@ -77,10 +97,10 @@ const ItemPictures = () => {
     );
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, maxHeight: 275 }}>
             <AnimatedPagerView
                 initialPage={0}
-                style={{ flex: 1 }}
+                style={{ flex: 1, maxHeight: 250 }}
                 ref={ref}
                 onPageScroll={onPageScroll}
             >
@@ -99,7 +119,7 @@ const ItemPictures = () => {
                     borderRadius: 5,
                     marginHorizontal: 5,
                 }}
-
+                containerStyle={{ top: 250 }}
             />
         </View>
     )
