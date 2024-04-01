@@ -7,15 +7,7 @@ import (
 	"github.com/jcxldn/fosscat/backend/structs"
 )
 
-type ReturnFactory func() (any, error)
-
-func Return(a any, b error) ReturnFactory {
-	return func() (any, error) {
-		return a, b
-	}
-}
-
-func QueryResolver[T any](ctx context.Context, resolver func(user *structs.User) ReturnFactory) (T, error) {
+func Resolver[T any](ctx context.Context, resolver func(user *structs.User) ReturnFactory) (T, error) {
 	// Check if the user context is present
 	// (is present when a valid jwt is placed in the authorization header)
 	user := ctx.Value("user")
