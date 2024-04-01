@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/jcxldn/fosscat/backend/authResolver"
 	"github.com/jcxldn/fosscat/backend/graph"
 	"github.com/jcxldn/fosscat/backend/structs"
 	"gorm.io/gorm/clause"
@@ -47,10 +48,28 @@ func (r *queryResolver) Item(ctx context.Context) ([]*structs.Item, error) {
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*structs.User, error) {
-	// Get all users. Proof of concept only, returns all fields!
-	users := []*structs.User{}
-	result := r.DB.Find(&users)
-	return users, result.Error
+	// Use the query resolver. The anonymous function passed as a parameter will be called if auth context was set.
+	// If auth context was not set, query resolver will return an error message.
+	return authResolver.QueryResolver[[]*structs.User](ctx, func(user *structs.User) authResolver.ReturnFactory {
+		// Create an empty array of user pointers
+		users := []*structs.User{}
+		// Populate the array
+		result := r.DB.Find(&users)
+
+		if result.Error == nil {
+			// If the operation completed successfully, iterate through each user
+			for index := range users {
+				// Only expose public fields. (eg. not password hash)
+				pubFields := users[index].GetPublicFields()
+				users[index] = &pubFields
+			}
+
+			// Convert return type to generic ReturnFactory
+			return authResolver.Return(users, nil)
+		} else {
+			return authResolver.Return(nil, result.Error)
+		}
+	})
 }
 
 // Me is the resolver for the me field.
