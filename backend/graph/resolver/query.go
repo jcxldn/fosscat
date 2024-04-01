@@ -13,7 +13,7 @@ import (
 func (r *queryResolver) Checkout(ctx context.Context) ([]*structs.Checkout, error) {
 	// Use the query resolver to make this an authenticated route.
 	// Even though user is not used, it must still be passed to the func.
-	return authResolver.QueryResolver[[]*structs.Checkout](ctx, func(user *structs.User) authResolver.ReturnFactory {
+	return authResolver.Resolver[[]*structs.Checkout](ctx, func(user *structs.User) authResolver.ReturnFactory {
 		// Get all entities, returns all fields!
 		checkouts := []*structs.Checkout{}
 		// Preload all associations (https://gorm.io/docs/preload.html#Preload-All)
@@ -27,7 +27,7 @@ func (r *queryResolver) Checkout(ctx context.Context) ([]*structs.Checkout, erro
 func (r *queryResolver) Entity(ctx context.Context) ([]*structs.Entity, error) {
 	// Use the query resolver to make this an authenticated route.
 	// Even though user is not used, it must still be passed to the func.
-	return authResolver.QueryResolver[[]*structs.Entity](ctx, func(user *structs.User) authResolver.ReturnFactory {
+	return authResolver.Resolver[[]*structs.Entity](ctx, func(user *structs.User) authResolver.ReturnFactory {
 		// Get all entities, returns all fields!
 		entities := []*structs.Entity{}
 		result := r.DB.Find(&entities)
@@ -39,7 +39,7 @@ func (r *queryResolver) Entity(ctx context.Context) ([]*structs.Entity, error) {
 func (r *queryResolver) File(ctx context.Context) ([]*structs.File, error) {
 	// Use the query resolver to make this an authenticated route.
 	// Even though user is not used, it must still be passed to the func.
-	return authResolver.QueryResolver[[]*structs.File](ctx, func(user *structs.User) authResolver.ReturnFactory {
+	return authResolver.Resolver[[]*structs.File](ctx, func(user *structs.User) authResolver.ReturnFactory {
 		// Get all files, returns all fields!
 		files := []*structs.File{}
 		// Preload all associations (https://gorm.io/docs/preload.html#Preload-All)
@@ -53,7 +53,7 @@ func (r *queryResolver) File(ctx context.Context) ([]*structs.File, error) {
 func (r *queryResolver) Item(ctx context.Context) ([]*structs.Item, error) {
 	// Use the query resolver to make this an authenticated route.
 	// Even though user is not used, it must still be passed to the func.
-	return authResolver.QueryResolver[[]*structs.Item](ctx, func(user *structs.User) authResolver.ReturnFactory {
+	return authResolver.Resolver[[]*structs.Item](ctx, func(user *structs.User) authResolver.ReturnFactory {
 		// Get all items, returns all fields!
 		items := []*structs.Item{}
 		result := r.DB.Find(&items)
@@ -65,7 +65,7 @@ func (r *queryResolver) Item(ctx context.Context) ([]*structs.Item, error) {
 func (r *queryResolver) Users(ctx context.Context) ([]*structs.User, error) {
 	// Use the query resolver. The anonymous function passed as a parameter will be called if auth context was set.
 	// If auth context was not set, query resolver will return an error message.
-	return authResolver.QueryResolver[[]*structs.User](ctx, func(user *structs.User) authResolver.ReturnFactory {
+	return authResolver.Resolver[[]*structs.User](ctx, func(user *structs.User) authResolver.ReturnFactory {
 		// Create an empty array of user pointers
 		users := []*structs.User{}
 		// Populate the array
@@ -82,7 +82,7 @@ func (r *queryResolver) Users(ctx context.Context) ([]*structs.User, error) {
 func (r *queryResolver) Me(ctx context.Context) (*structs.User, error) {
 	// Use the query resolver. The anonymous function passed as a parameter will be called if auth context was set.
 	// If auth context was not set, query resolver will return an error message.
-	return authResolver.QueryResolver[*structs.User](ctx, func(user *structs.User) authResolver.ReturnFactory {
+	return authResolver.Resolver[*structs.User](ctx, func(user *structs.User) authResolver.ReturnFactory {
 		// Return the user object from context.
 		return authResolver.Return(user, nil)
 	})
