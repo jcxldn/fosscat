@@ -2,7 +2,6 @@ package resolver
 
 import (
 	"context"
-	"errors"
 
 	"github.com/jcxldn/fosscat/backend/authResolver"
 	"github.com/jcxldn/fosscat/backend/graph"
@@ -12,38 +11,54 @@ import (
 
 // Checkout is the resolver for the checkout field.
 func (r *queryResolver) Checkout(ctx context.Context) ([]*structs.Checkout, error) {
-	// Get all checkouts. Proof of concept only, returns all fields!
-	checkouts := []*structs.Checkout{}
-	// Preload all associations (https://gorm.io/docs/preload.html#Preload-All)
-	// TODO much later: don't preload private fields like hash unless user = logged in user.
-	result := r.DB.Preload(clause.Associations).Find(&checkouts)
-	return checkouts, result.Error
+	// Use the query resolver to make this an authenticated route.
+	// Even though user is not used, it must still be passed to the func.
+	return authResolver.QueryResolver[[]*structs.Checkout](ctx, func(user *structs.User) authResolver.ReturnFactory {
+		// Get all entities, returns all fields!
+		checkouts := []*structs.Checkout{}
+		// Preload all associations (https://gorm.io/docs/preload.html#Preload-All)
+		// TODO much later: don't preload private fields like hash unless user = logged in user.
+		result := r.DB.Preload(clause.Associations).Find(&checkouts)
+		return authResolver.Return(checkouts, result.Error)
+	})
 }
 
 // Entity is the resolver for the entity field.
 func (r *queryResolver) Entity(ctx context.Context) ([]*structs.Entity, error) {
-	// Get all entities. Proof of concept only, returns all fields!
-	entities := []*structs.Entity{}
-	result := r.DB.Find(&entities)
-	return entities, result.Error
+	// Use the query resolver to make this an authenticated route.
+	// Even though user is not used, it must still be passed to the func.
+	return authResolver.QueryResolver[[]*structs.Entity](ctx, func(user *structs.User) authResolver.ReturnFactory {
+		// Get all entities, returns all fields!
+		entities := []*structs.Entity{}
+		result := r.DB.Find(&entities)
+		return authResolver.Return(entities, result.Error)
+	})
 }
 
 // File is the resolver for the file field.
 func (r *queryResolver) File(ctx context.Context) ([]*structs.File, error) {
-	// Get all files. Proof of concept only, returns all fields!
-	files := []*structs.File{}
-	// Preload all associations (https://gorm.io/docs/preload.html#Preload-All)
-	// TODO much later: don't preload private fields like hash unless user = logged in user.
-	result := r.DB.Preload(clause.Associations).Find(&files)
-	return files, result.Error
+	// Use the query resolver to make this an authenticated route.
+	// Even though user is not used, it must still be passed to the func.
+	return authResolver.QueryResolver[[]*structs.File](ctx, func(user *structs.User) authResolver.ReturnFactory {
+		// Get all files, returns all fields!
+		files := []*structs.File{}
+		// Preload all associations (https://gorm.io/docs/preload.html#Preload-All)
+		// TODO much later: don't preload private fields like hash unless user = logged in user.
+		result := r.DB.Preload(clause.Associations).Find(&files)
+		return authResolver.Return(files, result.Error)
+	})
 }
 
 // Item is the resolver for the item field.
 func (r *queryResolver) Item(ctx context.Context) ([]*structs.Item, error) {
-	// Get all items. Proof of concept only, returns all fields!
-	items := []*structs.Item{}
-	result := r.DB.Find(&items)
-	return items, result.Error
+	// Use the query resolver to make this an authenticated route.
+	// Even though user is not used, it must still be passed to the func.
+	return authResolver.QueryResolver[[]*structs.Item](ctx, func(user *structs.User) authResolver.ReturnFactory {
+		// Get all items, returns all fields!
+		items := []*structs.Item{}
+		result := r.DB.Find(&items)
+		return authResolver.Return(items, result.Error)
+	})
 }
 
 // Users is the resolver for the users field.
@@ -65,17 +80,12 @@ func (r *queryResolver) Users(ctx context.Context) ([]*structs.User, error) {
 
 // Me is the resolver for the me field.
 func (r *queryResolver) Me(ctx context.Context) (*structs.User, error) {
-	// Check if the user context is present
-	// (is present when a valid jwt is placed in the authorization header)
-	user := ctx.Value("user")
-	if user != nil {
-		// Type assertion that "user" ctx is not nil and is of type structs.User
-		userStruct := user.(*structs.User)
-
-		// Return the public fields only struct.
-		return userStruct, nil
-	}
-	return nil, errors.New("route requires authorization")
+	// Use the query resolver. The anonymous function passed as a parameter will be called if auth context was set.
+	// If auth context was not set, query resolver will return an error message.
+	return authResolver.QueryResolver[*structs.User](ctx, func(user *structs.User) authResolver.ReturnFactory {
+		// Return the user object from context.
+		return authResolver.Return(user, nil)
+	})
 }
 
 // Query returns graph.QueryResolver implementation.
