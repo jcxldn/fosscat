@@ -56,19 +56,10 @@ func (r *queryResolver) Users(ctx context.Context) ([]*structs.User, error) {
 		// Populate the array
 		result := r.DB.Find(&users)
 
-		if result.Error == nil {
-			// If the operation completed successfully, iterate through each user
-			for index := range users {
-				// Only expose public fields. (eg. not password hash)
-				pubFields := users[index].GetPublicFields()
-				users[index] = &pubFields
-			}
-
-			// Convert return type to generic ReturnFactory
-			return authResolver.Return(users, nil)
-		} else {
-			return authResolver.Return(nil, result.Error)
-		}
+		// Convert return type to generic ReturnFactory
+		// If error occurred, users will be nil.
+		// If no error occurred, result.Error will be nil. No if/else block needed; can be done in one line.
+		return authResolver.Return(users, result.Error)
 	})
 }
 
@@ -81,11 +72,8 @@ func (r *queryResolver) Me(ctx context.Context) (*structs.User, error) {
 		// Type assertion that "user" ctx is not nil and is of type structs.User
 		userStruct := user.(*structs.User)
 
-		// Get a copy of the struct with "private" fields (like password hash) removed.
-		publicUserStruct := userStruct.GetPublicFields()
-
 		// Return the public fields only struct.
-		return &publicUserStruct, nil
+		return userStruct, nil
 	}
 	return nil, errors.New("route requires authorization")
 }

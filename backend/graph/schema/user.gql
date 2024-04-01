@@ -1,9 +1,10 @@
+# exclude hash from gql user object
+# this means that even if hash is returned to gqlgen, it will be stripped from the response
 type User {
   id: String!
   firstName: String!
   lastName: String!
   email: String!
-  hash: String
 }
 
 input NewUser {
