@@ -47,6 +47,7 @@ const DrawerContent = () => {
             <DrawerItem label="Home" onPress={() => { router.navigate("/") }} />
             <DrawerItem label="Scan" onPress={() => { router.navigate("/scan") }} />
             <DrawerItem label="About" onPress={() => { router.navigate("/about") }} />
+            <DrawerItem label="Item" onPress={() => { router.navigate("/item/123") }} />
         </DrawerContentScrollView>
     )
 }
