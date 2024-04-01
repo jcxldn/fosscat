@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/jcxldn/fosscat/backend/authResolver"
 	"github.com/jcxldn/fosscat/backend/database"
 	"github.com/jcxldn/fosscat/backend/graph"
 	"github.com/jcxldn/fosscat/backend/graph/model"
@@ -14,17 +15,26 @@ import (
 
 // CreateCheckout is the resolver for the createCheckout field.
 func (r *mutationResolver) CreateCheckout(ctx context.Context, input model.NewCheckout) (*structs.Checkout, error) {
-	return database.CreateCheckout(r.DB, input)
+	// Use the mutation resolver to make this an authenticated route
+	return authResolver.Resolver[*structs.Checkout](ctx, func(user *structs.User) authResolver.ReturnFactory {
+		return authResolver.Return(database.CreateCheckout(r.DB, input))
+	})
 }
 
 // CreateEntity is the resolver for the createEntity field.
 func (r *mutationResolver) CreateEntity(ctx context.Context) (*structs.Entity, error) {
-	return database.CreateEntity(r.DB)
+	// Use the mutation resolver to make this an authenticated route
+	return authResolver.Resolver[*structs.Entity](ctx, func(user *structs.User) authResolver.ReturnFactory {
+		return authResolver.Return(database.CreateEntity(r.DB))
+	})
 }
 
 // CreateItem is the resolver for the createItem field.
 func (r *mutationResolver) CreateItem(ctx context.Context, input model.NewItem) (*structs.Item, error) {
-	return database.CreateItem(r.DB, input)
+	// Use the mutation resolver to make this an authenticated route
+	return authResolver.Resolver[*structs.Item](ctx, func(user *structs.User) authResolver.ReturnFactory {
+		return authResolver.Return(database.CreateItem(r.DB, input))
+	})
 }
 
 // CreateUser is the resolver for the createUser field.
