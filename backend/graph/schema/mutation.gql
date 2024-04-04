@@ -5,4 +5,5 @@ type Mutation {
   createUser(input: NewUser!): User!
 
   login(email: String!, password: String!): LoginResponse!
+  loginRefresh(refresh: String!): LoginResponse!
 }

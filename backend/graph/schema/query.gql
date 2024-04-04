@@ -5,4 +5,5 @@ type Query {
   item: [Item!]!
   users: [User!]!
   me: User!
+  refreshToken: LoginResponse! # Reuse the loginResponse from login action
 }

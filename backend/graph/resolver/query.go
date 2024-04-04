@@ -5,7 +5,9 @@ import (
 
 	"github.com/jcxldn/fosscat/backend/authResolver"
 	"github.com/jcxldn/fosscat/backend/graph"
+	"github.com/jcxldn/fosscat/backend/graph/model"
 	"github.com/jcxldn/fosscat/backend/structs"
+	"github.com/jcxldn/fosscat/backend/util/login"
 	"gorm.io/gorm/clause"
 )
 
@@ -85,6 +87,17 @@ func (r *queryResolver) Me(ctx context.Context) (*structs.User, error) {
 	return authResolver.Resolver[*structs.User](ctx, func(user *structs.User) authResolver.ReturnFactory {
 		// Return the user object from context.
 		return authResolver.Return(user, nil)
+	})
+}
+
+// RefreshToken is the resolver for the refreshToken field.
+func (r *queryResolver) RefreshToken(ctx context.Context) (*model.LoginResponse, error) {
+	// Use the query resolver. The anonymous function passed as a parameter will be called if auth context was set.
+	// If auth context was not set, query resolver will return an error message.
+	return authResolver.Resolver[*model.LoginResponse](ctx, func(user *structs.User) authResolver.ReturnFactory {
+		// Generate a loginResponse with a *refresh* token (third param true)
+		// No pre-validation is required since if this func runs the user is already authorized.
+		return authResolver.Return(login.HandleLoginActions(true, user, true))
 	})
 }
 

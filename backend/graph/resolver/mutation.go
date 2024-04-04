@@ -2,7 +2,6 @@ package resolver
 
 import (
 	"context"
-	"errors"
 
 	"github.com/jcxldn/fosscat/backend/authResolver"
 	"github.com/jcxldn/fosscat/backend/database"
@@ -10,6 +9,7 @@ import (
 	"github.com/jcxldn/fosscat/backend/graph/model"
 	"github.com/jcxldn/fosscat/backend/structs"
 	"github.com/jcxldn/fosscat/backend/util/jwt"
+	"github.com/jcxldn/fosscat/backend/util/login"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -54,22 +54,26 @@ func (r *mutationResolver) Login(ctx context.Context, email string, password str
 
 	res := bcrypt.CompareHashAndPassword([]byte(user.Hash), []byte(password))
 
-	if res == nil {
-		// Password matches, generate and return a JWT
-		lr := model.LoginResponse{Success: true}
-		jwt, err := jwt.NewJwt(user)
-		if err == nil {
-			lr.Jwt = &jwt
-			return &lr, nil
-		} else {
-			lr := model.LoginResponse{Success: false}
-			return &lr, errors.New("Error creating jwt")
-		}
+	// If res == nil, password hash matches and so shouldLogin is true. A jwt response is returned.
+	// Else, shouldLogin is false and an error response is given
+	return login.HandleLoginActions(res == nil, &user, false)
+}
 
+// LoginRefresh is the resolver for the loginRefresh field.
+func (r *mutationResolver) LoginRefresh(ctx context.Context, refresh string) (*model.LoginResponse, error) {
+	// Verify that we signed the given jwt (required argument)
+	token, _, err := jwt.VerifyJwt(refresh)
+	if err == nil {
+		// JWT was verified sucessfully (we created it)
+		// Let's fetch the user for this token
+		user, err2 := jwt.GetUserForJwt(r.DB, token)
+
+		// If err2 == nil, user was fetched sucessfully
+		// Else, user is nil (this is okay as false shouldLogin does not call *user)
+		return login.HandleLoginActions(err2 == nil, user, false)
 	} else {
-		// Password does not match (bcrypt returns error on failure)
-		lr := model.LoginResponse{Success: false}
-		return &lr, nil
+		// Return error handle login action (user var is not used in false shouldLogin)
+		return login.HandleLoginActions(false, nil, false)
 	}
 }
 

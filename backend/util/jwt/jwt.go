@@ -13,27 +13,60 @@ import (
 
 type Claims struct {
 	jwt.RegisteredClaims
+	ExtraClaims
 }
 
-func getExpiryTime() time.Time {
+type ExtraClaims struct {
+	KeyID string `json:"kid,omitempty"`
+}
+
+type ExpiryOffset struct {
+	years  int
+	months int
+	days   int
+}
+
+func generateRelativeExpiryTime(offset ExpiryOffset) time.Time {
 	time := time.Now()
-	time = time.AddDate(0, 0, 1) // one day
+	time = time.AddDate(offset.years, offset.months, offset.days)
 	return time
 }
 
-func NewJwt(user structs.User) (str string, err error) {
+func newJwt(user structs.User, offset ExpiryOffset, extraClaims ExtraClaims) (str string, err error) {
 	claims := Claims{
 		jwt.RegisteredClaims{
 			Issuer:    "fosscat",
 			Subject:   user.ID.String(),
-			ExpiresAt: jwt.NewNumericDate(getExpiryTime()),
+			ExpiresAt: jwt.NewNumericDate(generateRelativeExpiryTime(offset)),
 		},
+		extraClaims, // Extra claims not in jwt.RegisteredClaims
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodES384, claims)
 
 	str, err = token.SignedString(key)
 
-	return
+	return // returns str, err
+
+}
+
+func NewAccessJwt(user structs.User) (str string, err error) {
+	extraClaims := ExtraClaims{
+		KeyID: "access",
+	}
+
+	str, err = newJwt(user, ExpiryOffset{days: 1}, extraClaims)
+	return // str, err
+}
+
+// NOTE: We don't need to store the refresh token in the database, instead we check to see that we issued it and that it has not expired.
+func NewRefreshJwt(user structs.User) (str string, err error) {
+	extraClaims := ExtraClaims{
+		KeyID: "refresh",
+	}
+
+	// Create the refresh token
+	str, err = newJwt(user, ExpiryOffset{months: 12}, extraClaims)
+	return // str, err
 }
 
 // Returns token, claims and nil error if jwt can be verified
