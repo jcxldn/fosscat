@@ -4,13 +4,13 @@ import { ApolloClient, InMemoryCache, ApolloProvider, gql, NormalizedCacheObject
 
 const ApolloClientContext = React.createContext<{
     setServerUri: (uri: string) => void,
-    createClient: () => void,
+    createClient: (access?: string) => void,
     serverUri: string,
     client: ApolloClient<NormalizedCacheObject> | null
 }>({
     // Default values
     setServerUri: (uri) => null,
-    createClient: () => null,
+    createClient: (access) => null,
     serverUri: "",
     client: null
 })
@@ -28,22 +28,37 @@ export function useApolloClient() {
     return value;
 }
 
+function getNoAuthClient(uri: string) {
+    return new ApolloClient({
+        uri: `${uri}/graphql`,
+        cache: new InMemoryCache()
+    })
+}
+
 export function ApolloClientProvider(props: React.PropsWithChildren) {
     const [serverUriState, setServerUriState] = React.useState("")
-    const [clientState, setClientState] = React.useState(new ApolloClient({ cache: new InMemoryCache() }))
+    // Use a React state for the ApolloClient, setting the default to a client without auth headers.
+    // NB: uri is not set here?
+    const [clientState, setClientState] = React.useState(getNoAuthClient(serverUriState))
 
     return (
         <ApolloClientContext.Provider value={{
             setServerUri: (uri) => {
                 setServerUriState(uri)
+                setClientState(getNoAuthClient(uri))
             },
-            createClient: () => {
+            createClient: (access?: string) => {
                 // https://www.apollographql.com/docs/react/integrations/react-native/
                 setClientState(new ApolloClient({
 
                     uri: `${serverUriState}/graphql`,
 
-                    cache: new InMemoryCache()
+                    cache: new InMemoryCache(),
+
+                    headers: {
+                        // Set auth header if access token as passed
+                        authorization: access ? `Bearer ${access}` : ""
+                    }
 
                 }));
             },

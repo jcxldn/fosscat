@@ -19,7 +19,7 @@ const LoginPage = () => {
 
     const { login } = useSession();
 
-    const { createClient, setServerUri, serverUri } = useApolloClient();
+    const { setServerUri, serverUri } = useApolloClient();
 
     return (
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
@@ -48,9 +48,6 @@ const LoginPage = () => {
             </View>
             <Button
                 onPress={async () => {
-                    // Call a hook in ApolloClientProvider to create the client
-                    createClient();
-
                     const res = await login(email, password)
 
                     if (!res?.login.success) {

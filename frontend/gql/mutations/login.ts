@@ -1,12 +1,12 @@
 import { gql } from "@apollo/client";
 
-interface Login {
+interface LoginResponse {
     success: boolean,
     jwt: string | null
 }
 
 interface LoginData {
-    login: Login
+    login: LoginResponse
 }
 
 const LOGIN = gql`
@@ -19,5 +19,5 @@ const LOGIN = gql`
 `
 
 export {
-    LOGIN, LoginData
+    LOGIN, LoginData, LoginResponse
 };
