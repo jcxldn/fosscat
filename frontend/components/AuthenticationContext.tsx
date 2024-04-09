@@ -49,16 +49,23 @@ export function AuthSessionProvider(props: React.PropsWithChildren) {
 
     const { client, createClient } = useApolloClient();
 
-    if (client) {
-        const [login, { data, loading, error }] = useMutation<LoginData>(LOGIN);
-        const [getRefreshToken, refr] = useLazyQuery(REFRESH_TOKEN);
+    const [login, { data, loading, error }] = useMutation<LoginData>(LOGIN);
+    const [getRefreshToken, refr] = useLazyQuery(REFRESH_TOKEN);
 
+    // React state is not available on the first render, so render a placeholder on the first render
+    // On subsequent renders, react state will have finished loading.
+    // Required for login processes to work, otherwise jwts are blank -> isexpiredjwt fails -> always goes to login screen
+
+    // Return lines must be after all hooks.
+    if (isAccessJwtLoading || isRefreshJwtLoading) {
+        return <Text>Waiting for tokens to be fetched...</Text>
+    }
+
+    if (client) {
 
         const _refreshToken = async () => {
 
             await getRefreshToken();
-
-            debugger;
 
             const res = refr.data.refreshToken as LoginResponse
 
@@ -85,7 +92,6 @@ export function AuthSessionProvider(props: React.PropsWithChildren) {
                         console.error(error)
                     }
 
-                    console.log(data?.login.success)
                     if (data?.login.success == true) {
                         setAccess(data.login.jwt)
                         createClient(accessJwt!)
@@ -134,7 +140,7 @@ export function AuthSessionProvider(props: React.PropsWithChildren) {
                             }
                         }
                     }
-                    return false // not able to get creds
+                    return true // credentials already valid.
 
                 },
                 access: {
