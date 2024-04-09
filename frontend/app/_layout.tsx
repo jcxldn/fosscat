@@ -12,6 +12,10 @@ import { PaperProvider } from "react-native-paper";
 import { AuthSessionProvider } from "../components/AuthenticationContext";
 import { ApolloClientProvider } from "../components/ApolloClientProvider";
 
+// Polyfill base-64 for jwt-decode until Hermes 0.74 releases
+// https://github.com/auth0/jwt-decode/issues/241#issuecomment-1955965836
+import { decode } from 'base-64';
+global.atob = decode;
 
 
 
