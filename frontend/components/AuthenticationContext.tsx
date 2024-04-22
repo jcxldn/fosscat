@@ -138,6 +138,9 @@ export function AuthSessionProvider(props: React.PropsWithChildren) {
                                 await _refreshToken()
                                 return true // able to get creds
                             }
+                        } else {
+                            // Refresh JWT expired, go to login page.
+                            return false
                         }
                     }
                     return true // credentials already valid.
