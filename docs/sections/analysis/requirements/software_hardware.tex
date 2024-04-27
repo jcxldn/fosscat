@@ -6,50 +6,95 @@
 
 \begin{tabular}{ |p{0.45\textwidth}|p{0.5\textwidth}| }
     \hline
-    \textbf{Hardware}                                    & \textbf{Justification}                                                                                                                                                                                                                                                   \\
-    \hline
-    \textit{Laptop/Desktop}\newline
-    Keyboard and Pointing Device (eg. Mouse)             &
-    For desktop or laptop computer users, a suitable input device is required in order to interact with the software.\newline
-    A pointing device (a mouse) is necessary in order to interact with the user interface, to perform actions such as clicking buttons, icons, and opening menus.\newline
-    A keyboard will be used to manually input data into the system.                                                                                                                                                                                                                                                                 \\
+    \textbf{Hardware}                                    & \textbf{Justification}                                                                                                                                                                                                                                   \\
     \hline
     \textit{Tablet Device}\newline
-    Touchscreen                                          & For tablet users, it would be impractical to expect the user to have access to a keyboard and or pointing device. Therefore, we must design the system to accept inputs from a touchscreen.\newline
-    This will be easier to use and more intuitive for tablet users. \newline
-    The touchscreen will be used to input data into the system and to interact with the user interface.                                                                                                                                                                                                                             \\
+    Touchscreen                                          & For tablet users, it would be impractical to expect the user to have access to a keyboard and or pointing device. Therefore, we must design the system to accept inputs from a touchscreen.
+    This will be easier to use and more intuitive for tablet users.
+    The touchscreen will be used to input data into the system and to interact with the user interface.                                                                                                                                                                                                             \\
     \hline
     Dual-Core Processor
-    \newline(x86, ARM, RISCV architectures)              &
-    A modern processor with sufficient resources to run an up-to-date web browser such as Chrome, Edge or Firefox is required in order to access the web-based interface.                                                                                                                                                           \\
+    \newline(x86, ARM or RISCV architectures)            &
+    A modern processor with sufficient resources to run a React Native application and it's dependencies, such as an embedded web browser, is required in order to access the application user interface.                                                                                                           \\
     \hline
-    2GB of RAM                                           & Sufficient RAM is required to run the web browser, which can be a memory intensive task.                                                                                                                                                                                 \\
+    2GB of RAM                                           & Sufficient RAM is required to run the application and embedded web browser, which can be a memory intensive task.                                                                                                                                        \\
     \hline
-    Monitor                                              & To display the user interface.                                                                                                                                                                                                                                           \\
+    Display (Monitor or Touchscreen display)             & Required to display the user interface.                                                                                                                                                                                                                  \\
     \hline
-    Network Interface Card (NIC)                         & A Network Interface Card, or NIC, is required for the computer to be connected to a network, such as the Internet. This is required as the web interface will be hosted on a domain and server that is external to the user, that is to say, not on their local network. \\
+    Network Interface Card (NIC)                         & A Network Interface Card, or NIC, is required for the computer to be connected to a network, such as the Internet. This is required as the backend server software will not run on the user's device, instead running on an external server.             \\
     \hline
-    \textit{\textbf{Optional}: Wireless Network Adapter} & \textit{A Wireless Network Adapter is an optional requirement, it will allow the user to connect to a wireless network in order to access the network or Internet so that they can access the external user interface.}                                                  \\
+    \textit{\textbf{Optional}: Wireless Network Adapter} & \textit{A Wireless Network Adapter is an optional requirement, it will allow the user to connect to a wireless network in order to access a network such as the Internet wirelessly in order to connect to the backend that runs on an external server.} \\
     \hline
-    \textit{\textbf{Optional}: Camera}                   & \textit{A Camera is an optional requirement; devices with cameras will be able to scan barcodes or QR codes corresponding to inventory items and easily perform actions on them.}                                                                                        \\
+    \textit{\textbf{Optional}: Camera}                   & \textit{A Camera is an optional requirement; devices with cameras will be able to scan barcodes or QR codes corresponding to inventory items and easily perform actions on them.}                                                                        \\
     \hline
 \end{tabular}
 
-\paragraph{Software Requirements\\\\}
+\pagebreak
 
-Talk about why I don't need much software since dependencies hosted on the server.\\
+\paragraph{User Software Requirements\\\\}
 
 \begin{tabular}{ |p{0.45\textwidth}|p{0.5\textwidth}| }
     \hline
-    \textbf{Software}                                                & \textbf{Justification}          \\
+    \textbf{Software}                                      & \textbf{Justification}                                                                                                                                                                                      \\
     \hline
     Operating System \newline
-    \textit{(Windows, MacOS, Linux, ChromeOS, iOS, iPadOS, Android)} &
-    An operating system is required in order to run the web browser necessary to access the interface. \\
+    \textit{(iOS, iPadOS, Android)}                        &
+    An operating system is required in order to run the client software necessary to display the user interface.                                                                                                                                                         \\
     \hline
-    A web browser \newline
-    \textit{(eg. Chrome, Firefox, Microsoft Edge, Safari)}           &
-    A web browser is necessary to access the interface as it will be primarily a web application.      \\
+    \textbf{Either} The client software \newline
+    \textit{A mobile application}                          & The client software provides the user interface, otherwise known as the frontend. The client server is responsible for connecting to the backend server and fetching information to display it to the user. \\
+    \hline
+    \textbf{OR} A web browser \newline
+    \textit{(eg. Chrome, Firefox, Microsoft Edge, Safari)} &
+    On platforms where the client software cannot be run on-device, such as on \textit{Windows, macOS or Linux} devices, a web browser can instead be used to connect to a server hosting a copy of the user interface. This allows the device to access and display the web interface without having to install anything on-device.
+    \newline However, this method is slower to execute as compared to if the client application had been installed on-device.                                                                                                                                            \\
+    \hline
+\end{tabular}
+
+\paragraph{Server Pre-Requisite Software Requirements\\\\}
+
+\begin{tabular}{ |p{0.45\textwidth}|p{0.5\textwidth}| }
+    \hline
+    \textbf{Software} & \textbf{Justification}                                                                                                                                                                \\
+    \hline
+    Docker Engine     & Docker is a system of tools to run isolated containers.\newline
+    Docker Engine is the container runtime itself.\newline
+    Docker Engine is used to run different parts of the backend such as the database, and backend server itself in a manner that is isolated from the host machine (the machine being used to run the server) \\
+    \hline
+    Docker Compose    & Docker Compose is a command-line tool that allows you to define a set of containers and their properties in a YAML file.\newline
+    The solution makes use of Docker Compose to instruct docker how to run the various containers that make up the backend service, such as the database and backend itself.                                  \\
+    \hline
+\end{tabular}
+
+\pagebreak
+
+\paragraph{Server Container Software}
+
+\noindent \\\\ \textbf{Note}: This software is contained in the relevant container and does \underline{not} need to be installed manually.
+
+\noindent \\ It is included here for completeness to get a better understanding of how the backend works.\\
+
+\begin{tabular}{ |p{0.45\textwidth}|p{0.5\textwidth}| }
+    \hline
+    \textbf{Software}         & \textbf{Justification}                                                                                                                         \\
+    \hline
+    PostgreSQL                & PostgreSQL is a free and open-source relational database system. It is fully compatible with SQL and supports standard SQL queries.\newline
+    I will be using PostgreSQL as my database for this solution. I chose this platform as it is the industry standard database software for my type of application.
+    It is open source and covered by unit tests.\newline
+    PostgreSQL runs in it's own independent Docker container and contains the database itself.                                                                                 \\
+    \hline
+    Go (programming language) & Go, or "Golang", is a fast memory-safe programming language developed by Google. Is is used in many of their projects.\newline
+    I will be using Go to write the code for my backend "server".
+    This server communicates with the database (PostgreSQL) and provides a method for secure communication between the client application and itself.
+    It will expose an API, or Application Programming Interface, to the client to allow it to safely control the database.                                                     \\
+    \hline
+    gqlgen (Go library)       & gqlgen is a Go library that allows a Go program to act as a GraphQL server.
+    GraphQL is the method of communication I will be using for this solution between the backend and frontend applications.\newline
+    I am using a library (instead of writing this myself) as libraries such as these are fully tested and audited, so I can confirm that they work before placing them into my program.
+    In addition, the library is likely of better quality than I could have done myself, as well as it saving time as I do not have to write a similar program.                 \\
+    \hline
+    GORM (Go library)         & GORM is a Go library that allows Go programs to interact with a object relational database, such as PostgreSQL or other SQL databases.\newline
+    I am using this library as it is the standard for interacting with databases using the Go language.                                                                        \\
     \hline
 \end{tabular}
 
