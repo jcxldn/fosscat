@@ -1,0 +1,96 @@
+\documentclass[../../../main.tex]{subfiles}
+
+\begin{document}
+
+\begin{comment}
+why creating this solution is better with the use of technology
+eg:
+need a way to store large amounts of data; perfect for a database
+easy way to add/remove inventory (would be labour intensive otherwise - paper based systems)
+can be v. easily done with a gui
+
+identifying key things the solution should have; explain why doing
+this computationally is a good idea / is easy
+
+1/2 a page to a page
+
+eg decomposition/abstraction
+decomp:
+large program; by splitting into smaller sub-programs
+can make each one individually and combine at the end
+explain how they can be used to achieve the goals/impls
+\end{comment}
+
+
+\paragraph{Why is a Computational Solution Applicable?}
+
+\noindent \\ This problem is applicable for a computational solution due to a variety of factors.
+
+\subparagraph{Decomposition}
+
+\noindent \\ Decomposition is the process of breaking down a problem into smaller sub-problems.
+This is an example of a \textit{"Divide and Conquer"} approach.
+
+\noindent \\ This problem is well suited for the use of decomposition because the problem can be
+broken down into discinct, smaller sections which can be tackled one at a time. Some of these sections that I have outlined are:
+\begin{enumerate}
+    \item The backend service
+          \begin{enumerate}
+              \item The communication between frontend and backend programs
+              \item Interacting and managing a database
+          \end{enumerate}
+    \item The frontend service
+          \begin{enumerate}
+              \item Accepting user credentials and "logging in" the user, that is to say
+                    issuing them with a token to make further (authenticated) requests.
+              \item Representing the data in an intuitive manner in order to fulfill SMART objective \#3 (\textit{To produce an intuitive and easy to use solution})
+          \end{enumerate}
+
+    \item Common functions
+          \begin{enumerate}
+              \item Ability to create user accounts and items.
+              \item Ability to track multiple instances of the same item and check them in/out independently of other items
+              \item Ability to create and scan QR codes in order to quickly reference an instance of a catalogued item
+          \end{enumerate}
+\end{enumerate}
+
+\subparagraph{Use of libraries in my solution}
+
+\noindent \\ A library a self-contained program which is designed to solve a specific problem.
+Libraries can speed up development as libraries are often tested beforehand by the library's
+developer and so can be placed into a larger program with the knowledge that the library will
+perform as expected.
+
+\noindent \\ In the solution for this problem I will be making use of a number of libraries
+in order to solve some of the sub-problems outlined above. (sections 1 \& 2)
+
+\subparagraph{Abstraction}
+
+\noindent \\ Abstraction is the process of hiding non-essential detail, leaving just the key elements relevant to the problem.
+
+\noindent \\ For example, in my solution I will be making use of a SQL database, but in order to fulfill SMART objective
+\#3 I will abstract away complex SQL queries into a simple to use an intuitive interface which
+will displayed to the user. This means that depending on the user input into the program, the
+program will independently construct and execute the relevant SQL query without the user being
+aware of the details of said query.
+
+\subparagraph{Algorithmic Thinking}
+
+\noindent \\ An algorithm is a set of simple, step-by-step instructions that are used to solve a specific problem.
+
+\noindent \\ Algorithmic thinking is the process of creating an algorithm or set of algorithms
+in the form of step-by-step instructions that can be carried out (in a repeatable fashion)
+in order to solve a problem.
+
+\noindent \\ Algorithmic thinking is suitable for this problem as many procedures / steps are
+repeatable (such as assessing a entry from a database), and so making use of algorithmic
+thinking allows for pre-made solutions to be applied to various problems that may arise (or repeatedly arise) during
+development. For example, an algorithm to access an entry to a database can be used to access
+many different types of entries. (such as a User, File or Item struct)
+
+\noindent \\ This approach is useful as it reduces the need to rewrite code or solve similar problems multiple times.
+Instead, one generic function is written that can be applied to many similar problems without duplicating the code.
+This also means that we can make use of the "Don't repeat yourself" (DRY) coding principle. This can help save development time and increase the efficiency of the development process.
+
+
+\end{document}
