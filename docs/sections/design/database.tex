@@ -1,5 +1,44 @@
 \documentclass[../../main.tex]{subfiles}
 
 \begin{document}
-Hi
+
+\begin{center}
+    \begin{tikzpicture}
+        % Nodes
+        \pic {entity={user}{User}{
+                    ID: UUID, PK \\
+                    FirstName: text \\
+                    LastName: text \\
+                    Email: text \\
+                    Hash: text \\
+                }};
+        \pic[below=3em of user] {entity={checkout}{Checkout}{
+                    ID: UUID, PK \\
+                    EntityID: UUID, FK \\
+                    UserID: UUID, FK \\
+                    TakeDate: time \\
+                    ReturnDate: time
+                }};
+        \pic[left=6em of checkout, text width=4.5cm] {entity={entity}{Entity}{
+                    ID: UUID, PK \\
+                    ItemID: UUID, FK \\
+                    \mbox{Checkouts: Checkout[]} % no line break
+                }};
+        \pic[above=5em of entity] {entity={item}{Item}{
+                    ID: UUID, PK \\
+                    Title: text \\
+                    Entities: Entity[]
+                }};
+        % Empty nodes for pathfinding
+        % https://tex.stackexchange.com/questions/286791/invisible-states-in-automata-with-tikz
+        \node[state, draw=none] (user1) [right=3em of user] {};
+        \node[state, draw=none] (item1) [left=3em of item] {};
+        % Lines
+        %\draw[one to omany] (user.east) -| ($(user1.west)!0!(checkout.west)$) |- node[below]{\footnotesize is in} (checkout.east);
+        \draw[one to omany] (user.east) -| ($(user1.west)!0!(checkout.west)$) |- node[below]{} (checkout.east);
+        \draw[one to omany] (entity.east) -- node[below]{} (checkout.west);
+        \draw[one to omany] (item.west) -| ($(item1.east)!0!(item.east)$) |- node[below]{} (entity.west);
+    \end{tikzpicture}
+\end{center}
+
 \end{document}

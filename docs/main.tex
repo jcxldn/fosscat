@@ -45,6 +45,9 @@
 \def\projectname{Inventory Project}
 \input{variables.tex} % Candidate Number, Centre Number
 
+% TiKz: \node[state]
+\usetikzlibrary{automata}
+
 % TiKz style defines for flowcharts
 \tikzstyle{startstop} = [ellipse, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=red!30]
 \tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!30]
@@ -109,6 +112,7 @@
 }
 
 \input{language_defs.tex}
+\input{erd_defs.tex}
 \input{sections/code_defs.tex}
 
 
