@@ -1,0 +1,82 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\noindent This section will describe and justify the proposed classes to be used in the solution.
+These classes will be represented using UML (Unified Modelling Language) diagrams.
+
+% \paragraph{Backend (Server Application)}
+
+\noindent Go, the language I plan to use for the backend, does not have classes.
+Instead, go uses structs and types, which can have methods attached to them, in a similar way
+to classes. I will be using these Go structs with GORM, the Go database library that
+I will be using. For convenience I have denoted which struct fields should be specified as
+GORM primary or foreign keys. \\
+
+% \noindent I will also not be using any methods on these structs, with the \textit{exception of the constructor}. \\
+
+% \raggedright to fix large spacing between words. (https://tex.stackexchange.com/a/676495)
+\noindent \begin{tabular}{ | >{\raggedright}p{0.5\textwidth} | >{\raggedright\arraybackslash}p{0.5\textwidth} | }
+    \hline
+    \textbf{Class UML} & \textbf{Description} \\
+    \hline
+    % User class UML
+    \begin{center}
+        \begin{tikzpicture}
+            \umlclass{User}{
+                ID: uuid.UUID \textbf{[PK]} \\
+                FirstName: string \\
+                LastName: string \\
+                Email: string \\
+                Hash: string
+            }{}
+        \end{tikzpicture}
+    \end{center}
+    % User class description
+                       & TBD                  \\
+    \hline
+    % Checkout class UML
+    \begin{center}
+        \begin{tikzpicture}
+            \umlclass{Checkout}{
+                ID: uuid.UUID \textbf{[PK]} \\
+                EntityID : uuid.UUID \textbf{[FK]} \\
+                User: User \\
+                UserID: uuid.UUID \textbf{[FK]} \\
+                TakeDate time.Time \\
+                ReturnData time.time
+            }{}
+        \end{tikzpicture}
+    \end{center}
+    % Checkout class description
+                       & TBD                  \\
+    \hline
+    % Entity class UML
+    \begin{center}
+        \begin{tikzpicture}
+            \umlclass{Entity}{
+            ID: uuid.UUID \textbf{[PK]} \\
+            ItemID: uuid.UUID \textbf{[FK]} \\
+            Checkouts: []Checkout
+            }{}
+        \end{tikzpicture}
+    \end{center}
+    % Entity class description
+                       & TBD                  \\
+    \hline
+    % Item class UML
+    \begin{center}
+        \begin{tikzpicture}
+            \umlclass{Item}{
+            ID: uuid.UUID \textbf{[PK]} \\
+            Title: string \\
+            Entities: []Entity
+            }{}
+        \end{tikzpicture}
+    \end{center}
+    % Item class description
+                       & TBD                  \\
+    \hline
+\end{tabular}
+
+\end{document}
