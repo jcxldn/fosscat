@@ -21,57 +21,62 @@ to my solution.
 \paragraph{Features to be incorporated into my solution}
 
 \begin{enumerate}
-    \item \textbf{The ability to represent multiple copies (instances) of the same item, without duplicating shared data.}\\
-          This would allow multiple copies of a book to exist in the database, with shared data (such as book title, author, etc), only being stored once.
-          This reduces the amount of time needed to add items to the database, improving efficiency and saving time for the user.
-          In addition, there is a smaller chance of mis-entering data and causing inconsistencies.
-          This would require the following sub-features:
-          \begin{enumerate}
-              \item \textbf{Storage of items as separate "item" and "entity" objects in a database}\\
-                    \textit{Shared data would be stored in the "item" object (eg. details about
-                        a specific book), with copy-specific data being stored an "entity" object,
-                        repesenting a certain copy of an item. (eg. a book)
-                        This reduces the time to insert multiple copies of the same item into the
-                        system, saving time and increasing efficiency}
-              \item \textbf{The ability to store details about an "entity" object's corresponding "item" object.}\\
-                    \textit{This is required in order to allow the system to fetch the
-                        corresponding item for the given entity.}
-          \end{enumerate}
+      \item \textbf{The ability to represent multiple copies (instances) of the same item, without duplicating shared data.}\\
+            This would allow multiple copies of a book to exist in the database, with shared data (such as book title, author, etc), only being stored once.
+            This reduces the amount of time needed to add items to the database, improving efficiency and saving time for the user.
+            In addition, there is a smaller chance of mis-entering data and causing inconsistencies.
+            This would require the following sub-features:
+            \begin{enumerate}
+                  \item \textbf{Storage of items as separate "item" and "entity" objects in a database}\\
+                        \textit{Shared data would be stored in the "item" object (eg. details about
+                              a specific book), with copy-specific data being stored an "entity" object,
+                              repesenting a certain copy of an item. (eg. a book)
+                              This reduces the time to insert multiple copies of the same item into the
+                              system, saving time and increasing efficiency}
+                  \item \textbf{The ability to store details about an "entity" object's corresponding "item" object.}\\
+                        \textit{This is required in order to allow the system to fetch the
+                              corresponding item for the given entity.}
+            \end{enumerate}
 
-    \item \textbf{The ability for multiple users to interact with the system}\\
-          In addition, following best practices as well as to ensure feature parity with the
-          previously-researched solutions, I have chosen to expand this feature by adding:
-          \begin{enumerate}
-              \item \textbf{The ability for users to log-in to individual user accounts}
-              \item \textbf{The ability for users to securely access the system}
-          \end{enumerate}
-          The specifics of this will be planned in the \underline{Design} section.
+      \item \textbf{The ability for multiple users to interact with the system}\\
+            In addition, following best practices as well as to ensure feature parity with the
+            previously-researched solutions, I have chosen to expand this feature by adding:
+            \begin{enumerate}
+                  \item \textbf{The ability for users to log-in to individual user accounts}
+                  \item \textbf{The ability for users to securely access the system}
+            \end{enumerate}
+            The specifics of this will be planned in the \underline{Design} section.
 
-    \item \textbf{The ability for the system to be accessed from anywhere over the Internet}\\
-          \textit{Dependent on: Requirement 2(a), 2(b)}\\
-          Allowing users to access the system from anywhere improves it's usefulness and ensures that access is always available (how to improve?)
+      \item \textbf{The ability for the system to be accessed from anywhere over the Internet}\\
+            \textit{Dependent on: Requirement 2(a), 2(b)}\\
+            Allowing users to access the system from anywhere improves it's usefulness and ensures that access is always available (how to improve?)
 
-    \item \textbf{The ability for the system to be accessed from a mobile device}\\
-          This allows the system to be  easily accessed by prospective users.\\
-          \begin{enumerate}
-              \item \textbf{... from anywhere, not just on-site}\\
-                    \textit{Dependent on: Requirement 3}
-          \end{enumerate}
+      \item \textbf{The ability for the system to be accessed from a mobile device}\\
+            This allows the system to be  easily accessed by prospective users.\\
+            \begin{enumerate}
+                  \item \textbf{... from anywhere, not just on-site}\\
+                        \textit{Dependent on: Requirement 3}
+            \end{enumerate}
 
 
-          Allows students (issued with mobile devices only) to access the system.
-          \begin{enumerate}
-              \item ...in order to check details of books and perform other actions whilst they are at home, outside of school hours.
-          \end{enumerate}
+            Allows students (issued with mobile devices only) to access the system.
+            \begin{enumerate}
+                  \item ...in order to check details of books and perform other actions whilst they are at home, outside of school hours.
+            \end{enumerate}
 
-    \item \textbf{The ability to search through objects stored in the database}\\
-          This allows users to quickly access database objects in a intuitive and user-friendly manner.
+      \item \textbf{The ability to search through objects stored in the database}\\
+            This allows users to quickly access database objects in a intuitive and user-friendly manner.
 
-          \begin{enumerate}
-              \item \textbf{The ability for the program to auto-complete with suggestions when typing a partial search query}\\
-                    This is a relatively simple to implement yet remarkably powerful time-saving tool for the end user.
-                    This has the effect of making the program easier to use as well being a time-saving mechanism for the user.
-          \end{enumerate}
+            \begin{enumerate}
+                  \item \textbf{The ability for the program to auto-complete with suggestions when typing a partial search query}\\
+                        This is a relatively simple to implement yet remarkably powerful time-saving tool for the end user.
+                        This has the effect of making the program easier to use as well being a time-saving mechanism for the user.
+            \end{enumerate}
+
+      \item \textbf{The ability to upload images to the system to assign to items as a thumbnail}\\
+            This would allow users to quickly at a glance see what item is currently on screen without having to read the title.
+            This would increase the system's intuitiveness as it makes it easier for users, especially the children at which this system
+            is targeted, to find the item they are searching for.
 \end{enumerate}
 
 \paragraph{Features that will not be incorporated into my solution}
@@ -80,9 +85,9 @@ to my solution.
 have been deemed out of scope and will not be implemented into my solution at this time.
 
 \begin{enumerate}
-    \item \textbf{The ability for a user to exist with "administrator" permissions who can perform management actions on other users}
-    \item \textbf{The ability to create an "audit log" of what user account performed which action}
-    \item \textbf{For books, the ability for the program to suggest similar titles to the currently selected title}
+      \item \textbf{The ability for a user to exist with "administrator" permissions who can perform management actions on other users}
+      \item \textbf{The ability to create an "audit log" of what user account performed which action}
+      \item \textbf{For books, the ability for the program to suggest similar titles to the currently selected title}
 \end{enumerate}
 
 \noindent \\ However, since my solution will be documented both through the use of the
