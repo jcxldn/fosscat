@@ -19,6 +19,19 @@
 
 \end{comment}
 
+\subsubsection{Decomposing the problem through the use of top-down design}
+
+\noindent \\ This section will provide an overview of the proposed solution,
+making use of a "top-down" approach. This is the process of breaking down the proposed
+solution's various modules into smaller, more manageable chunks.
+The decomposed overview should make it clear what aspects of the system exist and what
+functions they perform.
+
+\noindent \\ I have tried to present the proposed system's design in a clear manner,
+outlining what modules of the system exist, their functions, and how they interact
+with other modules of the system. For the frontend module, I have split each "screen" or page into it's
+own module.
+
 \subsubsection{Frontend screens (pages)}
 
 \begin{tikzpicture}[node distance=2cm]
@@ -44,7 +57,7 @@
 
 \pagebreak
 
-\subsubsection{Backend}
+\subsubsection{Backend Modules}
 
 \begin{tikzpicture}[node distance=2cm]
     % objects
@@ -91,11 +104,8 @@
         align=left,
         xshift=4.3cm,
     ] {
-        The actions module will consist of the\\
-        functions that fulfil each request. It\\
-        will also be responsible for validating\\
-        each request and handling errors\\
-        appropriately.
+        The handler module will consist of the\\
+        functions that fulfil each request.
     };
 
     % lines between objects
@@ -110,7 +120,7 @@
 
 \end{tikzpicture}
 
-\paragraph{Database\\}
+\paragraph{Database Module\\}
 
 \begin{tikzpicture}[node distance=2cm]
     \node (root) [mb_node] {1. Database};
@@ -149,8 +159,8 @@ functions. These functions fall into four categories:
           database, as well as setting any constraints such as
           primary/foreign keys, nullable fields and the field type.
           It should handle creating any missing tables in order to conform
-          with section 2.4.1 as well as creating fields based on the
-          classes/structs defined in section 2.4.2.
+          with section 2.6.1 as well as creating fields based on the
+          classes/structs defined in section 2.6.2.
 
     \item \textbf{Searching} will be an abstracted function that should
           provide an easy way to search through the database, using table fields
@@ -164,7 +174,7 @@ functions. These functions fall into four categories:
 
 \end{enumerate}
 
-\paragraph{GraphQL API\\}
+\paragraph{GraphQL API Module\\}
 
 \begin{tikzpicture}[node distance=2cm]
     \node (root) [mb_node] {2. GraphQL API};
@@ -198,7 +208,7 @@ functions. These functions fall into four categories:
     % \node (handler) [mb_node, right of=query, xshift=2cm, yshift=-1cm] {Request Handler};
 
     % Validation children
-    \node (error) [mb_node, right of=validation, xshift=2cm] {Error handling};
+    \node (error) [mb_node, right of=validation, xshift=2cm] {GraphQL error handling};
 
     % lines
     \draw [line] (root) -- (auth);
@@ -241,7 +251,7 @@ via GraphQL.
                     This middleware will ensure that requests to "authenticated"
                     routes (routes requiring authorization) are accompanied by a
                     valid authentication token. This algorithm is thoroughly
-                    documented in \underline{Section 2.3.1}.
+                    documented in \underline{Section 2.5.1}.
 
               \item Authentication routes\\
                     These routes will serve as a method for a client
@@ -249,14 +259,16 @@ via GraphQL.
                     credentials which will be validated on the server. If
                     the credentials are valid the client will be issued
                     two tokens, an access token and a refresh token.
-                    (TODO: explain in 2.0.0? and poss algorithm section?)
+                    More details about this approach using tokens is explained
+                    in \underline{Section 2.1, No. 4, JSON Web Tokens}
           \end{enumerate}
 
     \item \textbf{Operation} will handle all other GraphQL requests,
           such as a request to fetch user information.
           There are two types of requests in GraphQL which each require
-          a different type of handler, queries and mutations.\\
-          (TODO: explain in 2.0.0? post link).
+          a different type of handler, queries and mutations.
+          More information about queries and mutations is available in
+          \underline {Section 2.1, No. 3, GraphQL}.\\
           \begin{enumerate}
               \item Query\\
                     \resizebox{\textwidth}{!}{
@@ -299,7 +311,69 @@ via GraphQL.
                             \draw [line] (mutation) -- (mutation_checkout.north);
                         \end{tikzpicture}}
           \end{enumerate}
-    \item \textbf{Validation}
+
+    \item \textbf{Validation} will handle error handling for GraphQL-related errors
+          and performing preliminary validation on requests.\\\\
+          It will be responsible for catching any errors that occur before the
+          request handler is called (such as a GraphQL validation error when the
+          request does not match the schema) and passing them to an appropriate
+          error handler (detailed below). For queries or mutations that take arguments,
+          this module should validate the inputs before passing them
+          to their respective handler, returning a human-readable error
+          message to to the GraphQL caller (eg. the frontend application) if needed.\\
+          This sub-module will also consist of the \textbf{GraphQL Schema}, which defines
+          the structure and rules of the GraphQL API.
 \end{enumerate}
+
+\paragraph{Handler Module\\}
+
+\noindent \\ The final sub-module is the Handler module. This module consists of
+the functions that perform the actions required to fulfil a request.
+Each function in this module should fully validate any and all inputs, as opposed
+to the preliminary validation against the GraphQL schema done when calling using GraphQL.
+I have designed the system in this way so that the request handlers are not reliant
+on the availability of the GraphQL module. This increases the solution's resiliency
+as it allows for the addition of other methods of calling handlers in the future.
+
+\noindent \\ De-coupling the request handlers from GraphQL also allows them to be
+tested \textbf{independently} of the GraphQL module. This allows for easier
+testing of the solution as each module can be tested individually,  avoiding
+a circular dependency which would make it more difficult to track down any problems
+encountered during the development of the solution.
+
+\subparagraph{Error Handlers\\}
+
+\noindent \\ This module will also consist of error handlers for the request handlers.
+Error handlers are middleware functions that run before and after a request handler to:
+
+\begin{enumerate}
+    \item \textbf{Ensure that all prerequisites for a request to be handled, such
+              as any required route authorization, are present and valid.}
+
+          This ensures that the solution can handle edge case scenarios such as if:
+
+          \begin{enumerate}
+              \item The authentication middleware was to malfunction.
+
+              \item The solution cannot not access data necessary to fulfil the desired request, such as if the database was not available.
+          \end{enumerate}
+
+          \noindent In both of these cases, instead of trying to fulfil the request
+          which could cause undefined
+          behaviour (such as a crash), the solution will check
+          to make sure that the prerequisites are available before attempting
+          to fulfil the request, preventing such errors from occurring.
+          This helps to improve the resiliency of the solution by making it
+          more tolerant of module or dependency failures.
+
+
+    \item \textbf{Ensure that eny errors encountered during the
+              fulfilment of a request are\\ handled correctly.}
+
+\end{enumerate}
+
+\noindent The use of error handlers in the proposed solution serves to
+help fulfil success criteria objective 2b. (\textit{To produce a solution
+    that returns friendly, understandable errors when an error occurs})
 
 \end{document}

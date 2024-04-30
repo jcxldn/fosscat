@@ -1,0 +1,99 @@
+\documentclass[../../main.tex]{subfiles}
+
+\begin{document}
+
+\subparagraph{Standards to be utilized in the solution\\}
+
+\noindent \\ In order to increase interoperability with other systems, the solution
+should make use of standards where reasonably possible.
+
+\noindent \\ Incorporating standards into the solution benefits both
+the programmers and users of the system. Standards are beneficial
+for programmers as existing libraries can be used which adhere to
+the standard, reducing the amount of development time needed as
+part of the system has already been built. In addition, as an
+external library, the library is likely to have been
+\underline{tested} to ensure that it functions as expected,
+and may have better code quality than what I could implement myself.
+Users can benefit from standards as standards are used to enable
+communication between different systems. The use of standards in the
+proposed solution will enable users to more easily integrate the solution
+with other programs.
+
+\noindent \\ I have proposed the use of five standards that should be
+utilized in the proposed solution:
+
+\begin{enumerate}
+      \item \textbf{Application Programming Interface (API)}\\
+            An API is a defined, standardised method for two or more programs to communicate
+            with each other. It is an interface that exposes part of one program to another.
+            The backend service will expose an API that will be accessed over HTTP using GraphQL
+            so that the frontend service can interact with it.
+
+      \item \textbf{Hypertext Transfer Protocol (HTTP) }\\
+            HTTP is a application layer (OSI Layer 7) protocol for fetching
+            resources over a network such as the Internet. The backend application
+            will expose a HTTP server that serves a single route handled by GraphQL.
+            This is in contrast to REST APIs which expose a variety of routes.
+
+      \item \textbf{GraphQL}\\
+            An open-source query language designed for creating APIs.
+            GraphQL allows programs to interact with one another using a SQL-like language,
+            allowing for the client program to fetch or upload data in any combination in a single request.
+            This is in contrast to REST apis where different functions such as requesting different types of data
+            must be fetched in separate requests.
+            Similarly to SQL, the client specifies what nodes it wants to be present in the response
+            and the GraphQL implementation will resolve the nodes to the appropriate values.\\
+
+            GraphQL has two types of requests:
+
+            \begin{enumerate}
+                  \item \textbf{Query}\\
+                        A GraphQL query is an operation to retrieve data from a server, similar to a HTTP GET request.
+                        In the proposed solution, GraphQL queries wil be used for read operations.
+
+                  \item \textbf{Mutation}\\
+                        A GraphQL mutation is an operation that inserts, modifies or deletes data on a server.
+                        In the proposed solution, GraphQL mutations will be used for write operations.
+            \end{enumerate}
+
+            \noindent The details of which operations will be implemented in the solution will be discussed
+            in \underline{Section 2.4.3 - Modular Breakdown - Backend}.
+
+            %\textbf{\\Justification for using GraphQL over REST}
+            % TODO: use gql/rest in analysis somewhere?
+            %\noindent \\ TBD
+
+      \item \textbf{JSON Web Tokens (JWT)}\\
+            A standard for creating signed "tokens" that carry a payload
+            with definable claims. THe contents of any claims
+            can be verified and trusted as the token is digitally signed
+            by the issuer. This enables a server to detect if a token has been modified
+            (tampered with) since it was issued.\\\\
+            JWTs are most commonly used for authentication purposes.
+            In this case, once the user logs in to the system,
+            a token will be issued using a standard such as OAuth 2.0 (see below).
+            This token is then used to authenticate
+            the user in subsequent requests. This is beneficial as the user's
+            credentials are only transmitted once. JWTs allow a service to verify
+            that a user is authenticated \underline{without} the service ever having
+            access to the user's credentials, such as their username or password.
+
+      \item \textbf{OAuth 2.0}\\
+            OAuth, or "Open Authorization", is a standard for access control for applications or websites.
+            It allows users to prove their authorization to access a service without revealing the user's
+            credentials. Instead, the application is passed an attestation (proof) of the user's credentials
+            and a unique ID to represent the user.\\
+
+            The proposed solution will make use of two aspects of OAuth; namely the concept of \underline{access}
+            and \underline{refresh} tokens.\\
+
+            Access tokens are short-lived tokens (with a short validity window) that are used in place of
+            a user's credentials to access a service. Refresh tokens are longer-lived tokens that are used
+            to "refresh" or re-issue a new access token once the current once has expired. Both of these tokens
+            commonly use JSON Web Tokens (JWTs) standard, using claims to encode information about the token
+            such as it's type, validity, issuer and subject.
+
+\end{enumerate}
+
+\end{document}

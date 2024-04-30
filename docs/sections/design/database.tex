@@ -1,44 +1,81 @@
 \documentclass[../../main.tex]{subfiles}
 
+\usepackage{lipsum}
+
 \begin{document}
 
-\begin{center}
-    \begin{tikzpicture}
-        % Nodes
-        \pic {entity={user}{User}{
-                    ID: UUID, PK \\
-                    FirstName: text \\
-                    LastName: text \\
-                    Email: text \\
-                    Hash: text \\
-                }};
-        \pic[below=3em of user] {entity={checkout}{Checkout}{
-                    ID: UUID, PK \\
-                    EntityID: UUID, FK \\
-                    UserID: UUID, FK \\
-                    TakeDate: time \\
-                    ReturnDate: time
-                }};
-        \pic[left=6em of checkout, text width=4.5cm] {entity={entity}{Entity}{
-                    ID: UUID, PK \\
-                    ItemID: UUID, FK \\
-                    \mbox{Checkouts: Checkout[]} % no line break
-                }};
-        \pic[above=5em of entity] {entity={item}{Item}{
-                    ID: UUID, PK \\
-                    Title: text \\
-                    Entities: Entity[]
-                }};
-        % Empty nodes for pathfinding
-        % https://tex.stackexchange.com/questions/286791/invisible-states-in-automata-with-tikz
-        \node[state, draw=none] (user1) [right=3em of user] {};
-        \node[state, draw=none] (item1) [left=3em of item] {};
-        % Lines
-        %\draw[one to omany] (user.east) -| ($(user1.west)!0!(checkout.west)$) |- node[below]{\footnotesize is in} (checkout.east);
-        \draw[one to omany] (user.east) -| ($(user1.west)!0!(checkout.west)$) |- node[below]{} (checkout.east);
-        \draw[one to omany] (entity.east) -- node[below]{} (checkout.west);
-        \draw[one to omany] (item.west) -| ($(item1.east)!0!(item.east)$) |- node[below]{} (entity.west);
-    \end{tikzpicture}
-\end{center}
+% Dummy env to escape wrapfig
+\begin{dummyenv}
+    % 50pt is overhang
+    \begin{wrapfigure}{r}[50pt]{0.6\textwidth}
+        \begin{framed}
+            \begin{tikzpicture}[scale=0.8, every node/.style={scale=0.8}]
+                % Nodes
+                \pic {entity={user}{User}{
+                            ID: UUID, PK \\
+                            FirstName: text \\
+                            LastName: text \\
+                            Email: text \\
+                            Hash: text \\
+                        }};
+                \pic[right=6em of user] {entity={checkout}{Checkout}{
+                            ID: UUID, PK \\
+                            EntityID: UUID, FK \\
+                            UserID: UUID, FK \\
+                            TakeDate: time \\
+                            ReturnDate: time
+                        }};
+                \pic[below=6em of checkout, text width=4.5cm] {entity={entity}{Entity}{
+                            ID: UUID, PK \\
+                            ItemID: UUID, FK \\
+                            \mbox{Checkouts: Checkout[]} % no line break
+                        }};
+                \pic[left=5em of entity] {entity={item}{Item}{
+                            ID: UUID, PK \\
+                            Title: text \\
+                            Entities: Entity[]
+                        }};
+
+                \pic[below=6em of entity] {entity={entity_file}{File for Entity}{
+                            EntityID: UUID, PK \\
+                            FileID: UUID, PK
+                        }};
+
+                \pic[left=6em of entity_file] {entity={file}{File}{
+                            ID: UUID, PK \\
+                            UploaderID: UUID, FK (User) \\
+                            Name: text \\
+                            Type: enum \\
+                            Data: byte
+                        }};
+                % Empty nodes for pathfinding
+                % https://tex.stackexchange.com/questions/286791/invisible-states-in-automata-with-tikz
+
+                % Lines
+                %\draw[one to omany] (user.east) -| ($(user1.west)!0!(checkout.west)$) |- node[below]{\footnotesize is in} (checkout.east);
+                \draw[one to many] (user.east) -- (checkout.west);
+                \draw[one to many] (entity.north) -- (checkout.south);
+                \draw[one to many] (item.east) -- (entity.west);
+                \draw[one to many] (entity.south) -- (entity_file.north);
+                \draw[one to many] (file.east) -- (entity_file.west);
+            \end{tikzpicture}
+
+            %\caption{ERD of the proposed system}
+
+        \end{framed}
+        \label{fig:wrapfig}
+    \end{wrapfigure}
+
+    \noindent \\ On the right-hand side is the entity relationship
+    diagram (ERD) for the proposed solution. There are five entities
+    in the database and the ERD shows the relationships between them.
+
+    \paragraph{Referential integrity}
+
+    \paragraph{Normalisation}
+
+
+
+\end{dummyenv}
 
 \end{document}

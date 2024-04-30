@@ -19,6 +19,7 @@
 \usepackage{zi4} % listings: Nice font
 \usepackage{array} % for \begin{tabular}{ | p{'width'} | } (https://www.overleaf.com/learn/latex/Tables)
 \usepackage{wrapfig} % Image wrapping around text, https://www.overleaf.com/learn/latex/Positioning_images_and_tables#Wrapping_text_around_a_figure
+\usepackage{enumitem} % a,b,c in enumerate top layer https://tex.stackexchange.com/questions/129951/enumerate-tag-using-the-alphabet-instead-of-numbers
 
 % Generic frame
 % https://tex.stackexchange.com/questions/193789/wrapfig-frame-around-image-and-caption
@@ -226,7 +227,18 @@ so won't be a "true" mobile app, more of a website on the home screen.
 \subsubsection{Success requirements}
 \subfile{sections/analysis/requirements/success}
 
+
+\pagebreak
+
 \section{Design}
+
+\subsection{Standards}
+\subfile{sections/design/standards}
+
+\subsection{Libraries}
+\subfile{sections/design/libraries}
+
+\subsection{User Interface Design}
 
 \begin{comment}
 design: for each page/screen:
@@ -243,8 +255,6 @@ then break down each component of the design page.
 sentance or two on what it does and why (justify it being there)
 
 \end{comment}
-
-\subsection{User Interface Design}
 
 \subsubsection{Usability Features}
 \subfile{sections/design/usability}
