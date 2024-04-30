@@ -18,6 +18,17 @@
 \usepackage{color} % listings: Code coloring
 \usepackage{zi4} % listings: Nice font
 \usepackage{array} % for \begin{tabular}{ | p{'width'} | } (https://www.overleaf.com/learn/latex/Tables)
+\usepackage{wrapfig} % Image wrapping around text, https://www.overleaf.com/learn/latex/Positioning_images_and_tables#Wrapping_text_around_a_figure
+
+% Generic frame
+% https://tex.stackexchange.com/questions/193789/wrapfig-frame-around-image-and-caption
+\usepackage{framed} % inline frames
+\usepackage{caption} % caption
+
+% Graphic frame
+% https://texblog.org/2014/02/20/figure-with-border-in-latex/
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
 
 \usepackage[british]{datetime2} % load before gitinfo2 to customize
 \usepackage[mark=false,grumpy=true]{gitinfo2}
@@ -57,6 +68,7 @@
 
 % TiKz style defines for modular breakdown
 \tikzstyle{mb_node} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black]
+\tikzstyle{mb_node_small} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
 \tikzstyle{line} = [thick,-,>=stealth]
 
 
@@ -110,6 +122,9 @@
     tabsize=4,
     captionpos=b
 }
+
+% Create a dummy environment to isolate wrapfig(s)
+\newenvironment{dummyenv}{}{}
 
 \input{language_defs.tex}
 \input{erd_defs.tex}
@@ -270,6 +285,9 @@ sentance or two on what it does and why (justify it being there)
 \subsection{First Iteration | Initial Backend and Database}
 \subfile{sections/implementation/first_iteration.tex}
 
+\pagebreak
+\subsection{Second Iteration | Initial Frontend and user interface work}
+\subfile{sections/implementation/second_iteration}
 
 \pagebreak
 

@@ -2,19 +2,304 @@
 
 \begin{document}
 
-\subsubsection{Frontend Application - Screens}
+\begin{comment}
+% home child
+\node (home_details) [mb_node, below of=home, xshift=2.5cm] {System information};
+\node (home_stats) [mb_node, below of=home_details, xshift=-0.4cm] {Usage statistics};
+
+% item child
+\node (item_photo) [mb_node, below of=item, xshift=2cm] {Photo(s) card};
+\node (item_check) [mb_node, below of=item_photo] {Check in/out};
+\node (item_entity) [mb_node, below of=item_check] {Entity list};
+\node (item_history) [mb_node, below of=item_entity] {Entity history};
+
+% entity child
+\node (entity_check) [mb_node, below of=entity, xshift=2cm] {Check in/out};
+\node (entity_history) [mb_node, below of=entity_check] {History};
+
+\end{comment}
+
+\subsubsection{Frontend screens (pages)}
 
 \begin{tikzpicture}[node distance=2cm]
     % objects
-    \node (root) [mb_node] {Application};
-    \node (scan) [mb_node, below of=root] {Scan};
-    \node (home) [mb_node, left of=scan, xshift=-2cm] {Home Screen};
-    \node (item) [mb_node, right of=scan, xshift=2cm] {Item};
+    \node (root) [mb_node, align=center] {
+        Frontend\\
+        Application\\
+        Screens
+    };
+    \node (entity) [mb_node, right of=root, xshift=2cm] {Entity};
+    \node (scan) [mb_node, above of=entity] {Scan};
+    \node (home) [mb_node, above of=scan] {Home Screen};
+    \node (user) [mb_node, below of=entity] {User};
+    \node (item) [mb_node, below of=user] {Item};
 
     % lines between objects
-    \draw [line] (root) -- (scan);
-    \draw [line] (root) -- (home);
-    \draw [line] (root) -- (item);
+    \draw [line] (root) -- (scan.west);
+    \draw [line] (root) -- (home.west);
+    \draw [line] (root) -- (entity.west);
+    \draw [line] (root) -- (user.west);
+    \draw [line] (root) -- (item.west);
 \end{tikzpicture}
+
+\pagebreak
+
+\subsubsection{Backend}
+
+\begin{tikzpicture}[node distance=2cm]
+    % objects
+    \node (root) [mb_node] {Main};
+
+    \node (graphql) [mb_node, right of=root, xshift=2cm] {2. GraphQL API};
+    \node (database) [mb_node, above of=graphql, yshift=2cm] {1. Database};
+    \node (actions) [mb_node, below of=graphql, yshift=-2cm] {3. Handlers};
+
+    % align for \\ 
+    % https://tex.stackexchange.com/questions/31096/how-can-i-use-linebreak-inside-a-node-in-tikz
+    \node (database_explain) [
+        mb_node,
+        right of=database,
+        align=left,
+        xshift=4.5cm,
+    ] {
+        The database module will be responsible\\
+        for interacting with and managing the\\
+        database. It's functions will include\\
+        creating tables, adding, removing and\\
+        updating data, as well as searching\\
+        through the database.
+    };
+
+    \node (graphql_explain) [
+        mb_node,
+        right of=graphql,
+        align=left,
+        xshift=4.5cm
+    ] {
+        The api module will receive requests\\
+        from the client and will be responsible\\
+        for serving the request and calling the\\
+        correct action function. The module will\\
+        also check that requests to authorized\\
+        routes have valid credentials before \\
+        fulfilling the request.
+    };
+
+    \node (actions_explain) [
+        mb_node,
+        right of=actions,
+        align=left,
+        xshift=4.3cm,
+    ] {
+        The actions module will consist of the\\
+        functions that fulfil each request. It\\
+        will also be responsible for validating\\
+        each request and handling errors\\
+        appropriately.
+    };
+
+    % lines between objects
+    \draw [line] (root) -- (database);
+    \draw [line] (root) -- (graphql);
+    \draw [line] (root) -- (actions);
+
+    \draw [line] (database) -- (database_explain);
+    \draw [line] (graphql) -- (graphql_explain);
+    \draw [line] (actions) -- (actions_explain);
+
+
+\end{tikzpicture}
+
+\paragraph{Database\\}
+
+\begin{tikzpicture}[node distance=2cm]
+    \node (root) [mb_node] {1. Database};
+
+    \node (connection) [mb_node, below of=root, xshift=-6cm] {Connection};
+    \node (migration) [mb_node, below of=root, xshift=-2cm] {Migration};
+    \node (searching) [mb_node, below of=root, xshift=2cm] {Searching};
+    \node (updating) [mb_node, below of=root, xshift=6cm] {Updating};
+
+    % lines between objects
+    \draw [line] (root) -- (connection);
+    \draw [line] (root) -- (migration);
+    \draw [line] (root) -- (searching);
+    \draw [line] (root) -- (updating);
+
+\end{tikzpicture}
+
+\noindent \\ The first sub-module is the \textbf{database} module. This module
+is responsible for interacting with and managing the database, in this
+case an instance of PostgreSQL running on the same server as the backend.
+I am making use of \underline{abstraction} in this module to
+abstract away complex database calls into easier to understand
+functions. These functions fall into four categories:
+
+\begin{enumerate}
+    \item \textbf{Connection} will control the connection from the
+          backend service to the PostgreSQL database instance. It will be in charge
+          of reading \underline{environment variables} to determine
+          the address, port and authentication settings of the PostgreSQL
+          instance and will attempt to make a connection. Once connected,
+          it should maintain the connection until the program is terminated,
+          upon which it should finish any pending actions for the database
+          and \underline{gracefully} close the connection.
+
+    \item \textbf{Migration} will control the tables and schema of the
+          database, as well as setting any constraints such as
+          primary/foreign keys, nullable fields and the field type.
+          It should handle creating any missing tables in order to conform
+          with section 2.4.1 as well as creating fields based on the
+          classes/structs defined in section 2.4.2.
+
+    \item \textbf{Searching} will be an abstracted function that should
+          provide an easy way to search through the database, using table fields
+          such as ID and eg. FirstName/LastName. It should handle constructing
+          and executing a relevant SQL statement to find the requested object.
+
+    \item \textbf{Updating} will enable the program to update an existing
+          object in the database, overwriting the old object in-place without creating
+          an additional copy. It should be an abstracted function that takes the updated
+          struct (class) as a parameter and updates the corresponding entry in the database.
+
+\end{enumerate}
+
+\paragraph{GraphQL API\\}
+
+\begin{tikzpicture}[node distance=2cm]
+    \node (root) [mb_node] {2. GraphQL API};
+
+    \node (operation) [mb_node, right of=root, xshift=2cm] {Operation};
+    \node (auth) [mb_node, above of=operation, yshift=2cm] {Authentication};
+    \node (validation) [mb_node, below of=operation, yshift=-1cm] {Validation};
+
+    % Authentication children
+    \node (auth_middleware) [mb_node, right of=auth, xshift=2cm, yshift=2cm] {Auth. middleware};
+    \node (auth_routes) [mb_node, right of=auth, xshift=2cm, align=center] {
+        Auth. routes\\
+        (mutations)
+    };
+    \node (logout) [mb_node, right of=auth_routes, xshift=2cm] {Logout};
+    \node (login) [mb_node, above of=logout] {Login};
+    \node (signup) [mb_node, below of=logout] {Sign up};
+
+
+    % Operation children
+    \node (query) [mb_node, right of=operation, yshift=1cm, xshift=2cm, align=center] {
+        Query\\
+        (read operation)
+    };
+
+    \node (mutation) [mb_node, below of=query, align=center] {
+        Mutation\\
+        (write operation,\\
+        function)
+    };
+    % \node (handler) [mb_node, right of=query, xshift=2cm, yshift=-1cm] {Request Handler};
+
+    % Validation children
+    \node (error) [mb_node, right of=validation, xshift=2cm] {Error handling};
+
+    % lines
+    \draw [line] (root) -- (auth);
+    \draw [line] (root) -- (operation);
+    \draw [line] (root) -- (validation);
+
+    % auth lines
+    \draw [line] (auth) -- (auth_middleware);
+    \draw [line] (auth) -- (auth_routes);
+    \draw [line] (auth_routes) -- (login);
+    \draw [line] (auth_routes) -- (logout);
+    \draw [line] (auth_routes) -- (signup);
+
+    % operation lines
+    \draw [line] (operation) -- (query);
+    \draw [line] (operation) -- (mutation);
+
+    %\draw [line] (query) -- (handler);
+    %\draw [line] (mutation) -- (handler);
+
+    % validation lines
+    \draw [line] (validation) -- (error);
+
+\end{tikzpicture}
+
+\noindent \\ The second sub-module is the \textbf{GraphQL API} module.
+This module will hold all functions related to the operation of the
+graphQL API, with the exception of the request handlers themselves.
+The request handlers have been \underline{split} into a separate
+sub-module so that they can be used without having to invoke them
+via GraphQL.
+
+\noindent \\ The functions in this module fall into three categories:
+
+\begin{enumerate}
+    \item \textbf{Authentication} will handle calls to the three
+          authentication routes, as well as registering a middleware function.
+          \begin{enumerate}
+              \item Authentication middleware\\
+                    This middleware will ensure that requests to "authenticated"
+                    routes (routes requiring authorization) are accompanied by a
+                    valid authentication token. This algorithm is thoroughly
+                    documented in \underline{Section 2.3.1}.
+
+              \item Authentication routes\\
+                    These routes will serve as a method for a client
+                    to "log-in" to the system. To log-in, client will send
+                    credentials which will be validated on the server. If
+                    the credentials are valid the client will be issued
+                    two tokens, an access token and a refresh token.
+                    (TODO: explain in 2.0.0? and poss algorithm section?)
+          \end{enumerate}
+
+    \item \textbf{Operation} will handle all other GraphQL requests,
+          such as a request to fetch user information.
+          There are two types of requests in GraphQL which each require
+          a different type of handler, queries and mutations.\\
+          (TODO: explain in 2.0.0? post link).
+          \begin{enumerate}
+              \item Query\\
+                    \resizebox{\textwidth}{!}{
+                        \begin{tikzpicture}[node distance=2cm]
+                            \node (query) [mb_node, align=center] {Query\\(read operation)};
+                            % operation query children
+                            % center 
+                            \node (query_items) [mb_node_small, below of=query] {Get items};
+                            % above
+                            \node (query_file) [mb_node_small, left of=query_items, xshift=-0.5cm] {Get files};
+                            \node (query_entity) [mb_node_small, left of=query_file, xshift=-0.5cm] {Get entities};
+                            \node (query_checkout) [mb_node_small, left of=query_entity, xshift=-1cm] {Get checkouts};
+                            % below
+                            \node (query_users) [mb_node_small, right of=query_items, xshift=0.5cm] {Get users};
+                            \node (query_me) [mb_node_small, right of=query_users, xshift=0.5cm] {Get my user};
+                            \node (query_refresh) [mb_node_small, right of=query_me, xshift=1.5cm] {Get refresh token};
+                            % lines
+                            \draw [line] (query) -- (query_items.north);
+                            \draw [line] (query) -- (query_file.north);
+                            \draw [line] (query) -- (query_entity.north);
+                            \draw [line] (query) -- (query_checkout.north);
+                            \draw [line] (query) -- (query_users.north);
+                            \draw [line] (query) -- (query_me.north);
+                            \draw [line] (query) -- (query_refresh.north);
+                        \end{tikzpicture}}
+
+              \item Mutation\\
+                    \resizebox{\textwidth}{!}{
+                        \begin{tikzpicture}[node distance=2cm]
+                            \node (mutation) [mb_node, align=center] {Mutation\\(write operation, function)};
+                            % operation mutation children
+                            \node (mutation_item) [mb_node, below of=mutation, xshift=2.5cm] {Create/modify item};
+                            \node (mutation_user) [mb_node, right of=mutation_item, xshift=2.5cm] {Create/modify user};
+                            \node (mutation_entity) [mb_node, left of=mutation_item, xshift=-2.5cm] {Create/modify entity};
+                            \node (mutation_checkout) [mb_node, left of=mutation_entity, xshift=-3cm] {Create/modify checkout};
+                            %lines
+                            \draw [line] (mutation) -- (mutation_item.north);
+                            \draw [line] (mutation) -- (mutation_user.north);
+                            \draw [line] (mutation) -- (mutation_entity.north);
+                            \draw [line] (mutation) -- (mutation_checkout.north);
+                        \end{tikzpicture}}
+          \end{enumerate}
+    \item \textbf{Validation}
+\end{enumerate}
 
 \end{document}
