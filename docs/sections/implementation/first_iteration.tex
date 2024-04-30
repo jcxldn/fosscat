@@ -3,7 +3,7 @@
 \begin{document}
 
 \begin{comment}
-\subsubsection{Introduction OLD}
+\subsection{Introduction OLD}
 
 \noindent\\ The first thing I decided to work on was user account creation. This would involve using GraphQL to receive data about the new user, generating the user ID, and then placing that data in a database.
 After doing some research (should I talk about the different options?) I decided to use the following three libraries for my project:
@@ -23,7 +23,7 @@ After doing some research (should I talk about the different options?) I decided
 
 \end{comment}
 
-\subsubsection{Introduction}
+\subsection{Introduction}
 
 This is the first iteration of my system. My aim for this iteration is to create the initial backend service for the application.
 This service will provide an interface for the frontend to talk to the database via an API.
@@ -51,7 +51,7 @@ allows the caller to insert new data or modify existing data on the server. It i
 \lstinline{PATCH} or \lstinline{DELETE} request as used in a REST API.
 
 
-\subsubsection{Web Server Setup}
+\subsection{Web Server Setup}
 
 GraphQL, like RESTful APIs, is usually accessed over HTTP. To achieve this, I first needed to create a basic HTTP server in Go.
 Go's standard library does in fact provide functions ot create a HTTP server, and that is what I used first.
@@ -99,7 +99,7 @@ I then register routes for both GraphiQL (\lstinline{"/"}) and the GraphQL serve
 
 \noindent \\ GraphiQL is a webpage that ships with GraphQL servers that allows for easy testing. It provides a web-based interface to interact with the attached GraphQL server. It is similar in function to programs like Altair which I will be using later on in this iteration to test the functionality of my code.
 
-\subsubsection{User account creation}
+\subsection{User account creation}
 
 The first feature I decided to work on was user account creation. This would involve asking the user for an email address, name and password, before validating it and inserting it into the database.
 In addition, at a later stage, validation must be performed in order to ensure that:
@@ -250,7 +250,7 @@ For example, if I call the function with:\\
 
 \noindent \\ We can see that the user is created successfully, added to the database, and the specified fields (line 12 onwards in the query) are returned to the client.
 
-\subsubsection{Problems encountered when moving to PostgreSQL}
+\subsection{Problems encountered when moving to PostgreSQL}
 
 \noindent At this stage, with most of the core functionality implemented, I decided to switch back to PostgreSQL. However, when doing this I encountered two problems:
 
@@ -458,15 +458,15 @@ POLISH END
 
 \noindent \\ This query returned successfully and the user was created without any errors.
 
-\subsubsection{Adding foreign keys for lists}
+\subsection{Adding foreign keys for lists}
 
-\subsubsection{Issues with nested queries (queries using multiple tables)}
+\subsection{Issues with nested queries (queries using multiple tables)}
 
-\subsubsection{Adding the remaining queries}
+\subsection{Adding the remaining queries}
 
 CreateCheckout validation
 
-\subsubsection{Testing}
+\subsection{Testing}
 
 \subparagraph{Test Plan}
 
@@ -689,7 +689,7 @@ func CreateItem(db *gorm.DB, input model.NewItem) (*structs.Item, error) {
 
 \subparagraph{Fixing error XYZ}
 
-\subsubsection{Evaluation}
+\subsection{Evaluation}
 
 \noindent In this iteration, I have successfully written code that can create a database, create the necessary tables to store data, and exposes functions to create and store data in the database.
 

@@ -10,7 +10,7 @@ output states, all are simple to represent with a flowchart or pseudocode.
 of my algorithms have, I will instead show a single error action and will document the
 various error conditions / states as I implement them in the development stage.
 
-\subsubsection{Authorization Middleware}
+\subsection{Authorization Middleware}
 
 \paragraph{Background}
 
@@ -118,7 +118,7 @@ can be defined \textit{once} in the codebase and automatically executed before e
 
 \pagebreak
 
-\subsubsection{Uploading Files - Request Handler}
+\subsection{Uploading Files - Request Handler}
 
 \paragraph{Background}
 
@@ -136,7 +136,9 @@ server. The client should set a form field to the contents of the file. This alg
 request by checking authorization as noted above and then call another algorithm to process the file(s) to
 be uploaded.
 
-\paragraph{Algorithm\\}
+\paragraph{Algorithm}
+
+\paragraph{} % newline
 
 \begin{tikzpicture}[node distance=2cm]
 
@@ -177,7 +179,7 @@ be uploaded.
 \noindent \\ This algorithm exists to faciliate the implementation of sucess criteria objective 2a.
 I have chosen to split off file processing to another algorithm, detailed below.
 
-\subsubsection{Uploading Files - File Processing}
+\subsection{Uploading Files - File Processing}
 
 \paragraph{Background}
 
@@ -197,7 +199,9 @@ Since neither this algorithm or the two sub-algorithms noted above have been ful
 I have omitted both error handling and specific implementation details (which I do not yet know) from the
 pseudocode.
 
-\paragraph{Algorithm\\}
+\paragraph{Algorithm}
+
+\paragraph{} % newline
 
 \begin{lstlisting}
 function processFiles(files: byte[])

@@ -2,7 +2,7 @@
 
 \begin{document}
 
-\subsubsection{Introduction}
+\subsection{Introduction}
 
 In this iteration I will start working on the frontend, or the client application. The client
 application will talk to the backend service I created in the previous iteration and will
@@ -30,7 +30,7 @@ It acts as an \textbf{abstraction layer} providing a generic interface to access
 our dependencies, notably the Apollo GraphQL client.\
 \end{comment}
 
-\subsubsection{Prototyping using the 'Expo Go' application}
+\subsection{Prototyping using the 'Expo Go' application}
 
 Expo Go is a sandbox used to execute an Expo project without having to build it to a native application.
 Expo Go can be installed from app-stores and connects to a server located
@@ -46,7 +46,7 @@ However, it is important to note that Expo Go does have it's limitations.
 Namely, any dependencies requiring additional native code will not work in Expo Go.
 I will need to be aware of this during development of this and future frontend iterations.
 
-\subsubsection{Creating an Expo project}
+\subsection{Creating an Expo project}
 
 There are two requirements to consider before creating an Expo project.
 The first requirement is to install Node.js, the second to decide which Expo SDK version
@@ -165,7 +165,7 @@ by using curly brackets. In conclusion:
         \end{enumerate}
 \end{enumerate}
 
-% \subsubsection{Integrating the Apollo GraphQL client for backend communication}
+% \subsection{Integrating the Apollo GraphQL client for backend communication}
 
 \begin{dummyenv}
   \begin{wrapfigure}{r}[25pt]{0.4\textwidth}
@@ -218,7 +218,7 @@ by using curly brackets. In conclusion:
 
   \paragraph{} % newline otherwise tikz doesn't show up
 
-  \subsubsection{React Components}
+  \subsection{React Components}
 
   \noindent React Components allow the programmer to split up the React tree.
 
@@ -275,7 +275,7 @@ causing the children to render.
 known as the root node, is rendered first.
 
 
-\subsubsection{Researching React hooks and context}
+\subsection{Researching React hooks and context}
 
 
 As mentioned previously, the client (frontend component) and server (backend component)
@@ -314,7 +314,7 @@ In order to achieve this, I needed to learn about two React features:
         \end{itemize}
 \end{itemize}
 
-\paragraph{React Context\\}
+\paragraph{React Context}
 
 \noindent \\ React Context would allow me to initialize Apollo Client once,
 and share the instance between all child objects. This would be useful as
@@ -370,18 +370,18 @@ Lines 13-17 define the default values of the functions and variables,
 setting them all to null. The values will be set when the context
 is added to the node tree (rendered inside a component)
 
-\subsubsection{Setting up a Authentication Provider}
+\subsection{Setting up a Authentication Provider}
 
 \noindent \\ In order to use the \lstinline{AuthContext} I had
 created, I would need to create a React Component that contained it,
 so that it would be a part of the React Tree.
 
-%\paragraph{Nesting React Components\\}
+%\subsubsection{Nesting React Components\\}
 
 
 
 \begin{comment}
-\paragraph{Configuring Apollo Client to talk to the backend component}
+\subsubsection{Configuring Apollo Client to talk to the backend component}
 
 
 \begin{lstlisting}[language=typescript]

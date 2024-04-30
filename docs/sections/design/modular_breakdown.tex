@@ -19,7 +19,7 @@
 
 \end{comment}
 
-\subsubsection{Decomposing the problem through the use of top-down design}
+\subsection{Decomposing the problem through the use of top-down design}
 
 \noindent \\ This section will provide an overview of the proposed solution,
 making use of a "top-down" approach. This is the process of breaking down the proposed
@@ -32,7 +32,7 @@ outlining what modules of the system exist, their functions, and how they intera
 with other modules of the system. For the frontend module, I have split each "screen" or page into it's
 own module.
 
-\subsubsection{Frontend screens (pages)}
+\subsection{Frontend screens (pages)}
 
 \begin{tikzpicture}[node distance=2cm]
     % objects
@@ -57,7 +57,7 @@ own module.
 
 \pagebreak
 
-\subsubsection{Backend Modules}
+\subsection{Backend Modules}
 
 \begin{tikzpicture}[node distance=2cm]
     % objects
@@ -120,7 +120,9 @@ own module.
 
 \end{tikzpicture}
 
-\paragraph{Database Module\\}
+\paragraph{Database Module}
+
+\paragraph{} % newline
 
 \begin{tikzpicture}[node distance=2cm]
     \node (root) [mb_node] {1. Database};
@@ -174,7 +176,9 @@ functions. These functions fall into four categories:
 
 \end{enumerate}
 
-\paragraph{GraphQL API Module\\}
+\paragraph{GraphQL API Module}
+
+\paragraph{} % newline
 
 \begin{tikzpicture}[node distance=2cm]
     \node (root) [mb_node] {2. GraphQL API};
@@ -325,7 +329,9 @@ via GraphQL.
           the structure and rules of the GraphQL API.
 \end{enumerate}
 
-\paragraph{Handler Module\\}
+\paragraph{Handler Module}
+
+\paragraph{} % newline
 
 \noindent \\ The final sub-module is the Handler module. This module consists of
 the functions that perform the actions required to fulfil a request.

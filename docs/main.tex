@@ -1,6 +1,6 @@
 % Incorporates https://gist.github.com/FelipeCortez/10729134
 
-\documentclass[11pt,a4paper]{article}
+\documentclass[11pt,a4paper]{report}
 
 % Package imports
 \usepackage{titlesec}
@@ -127,6 +127,11 @@
 % Create a dummy environment to isolate wrapfig(s)
 \newenvironment{dummyenv}{}{}
 
+% Enable subsubsection in toc (numbered)
+% we are using report so we also get chapter.
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
 \input{language_defs.tex}
 \input{erd_defs.tex}
 \input{sections/code_defs.tex}
@@ -141,26 +146,26 @@
 
 \pagebreak
 
-\section{Analysis}
+\chapter{Analysis}
 
 % Background
-\subsection{Problem Identification}
+\section{Problem Identification}
 
-\subsubsection{Problem Description}
+\subsection{Problem Description}
 \subfile{sections/analysis/problemIdentification/problemDescription}
 
-\subsubsection{Stakeholders}
+\subsection{Stakeholders}
 \subfile{sections/analysis/problemIdentification/stakeholders}
 
-\subsubsection{Computational Methods}
+\subsection{Computational Methods}
 \subfile{sections/analysis/problemIdentification/computational_methods}
 
-\subsection{Investigation}
+\section{Investigation}
 
-\subsubsection{Preparation for interview}
+\subsection{Preparation for interview}
 \subfile{sections/analysis/investigation/prep}
 
-\subsubsection{Interviews}
+\subsection{Interviews}
 \subfile{sections/analysis/investigation/interviews}
 
 \begin{comment}
@@ -172,7 +177,7 @@ answer
 brief summary
 \end{comment}
 
-\subsubsection{Summary of interviews}
+\subsection{Summary of interviews}
 \subfile{sections/analysis/investigation/summary}
 
 \begin{comment}
@@ -184,20 +189,20 @@ should include / should not include / etc.
 
 \pagebreak
 
-\subsection{Research}
+\section{Research}
 
 
-\subsubsection{Existing similar solutions}
+\subsection{Existing similar solutions}
 \subfile{sections/analysis/research/existing}
 
 \pagebreak
 
-\subsubsection{Features to be incorporated into solution}
+\subsection{Features to be incorporated into solution}
 \subfile{sections/analysis/research/features}
 
 \begin{comment}
 
-\subsubsection{Limitations of the solution}
+\subsection{Limitations of the solution}
 limitations:
 
 - time
@@ -209,36 +214,36 @@ limitations:
 so won't be a "true" mobile app, more of a website on the home screen.
 \end{comment}
 
-\subsubsection{Feedback from stakeholders}
+\subsection{Feedback from stakeholders}
 
-\subsection{Requirements}
+\section{Requirements}
 
-\subsubsection{Stakeholder requirements}
+\subsection{Stakeholder requirements}
 \label{sec:stakeholderRequirements}
 \subfile{sections/analysis/requirements/stakeholder}
 
 \pagebreak
 
-\subsubsection{Software and hardware requirements}
+\subsection{Software and hardware requirements}
 \subfile{sections/analysis/requirements/software_hardware}
 
 \pagebreak
 
-\subsubsection{Success requirements}
+\subsection{Success requirements}
 \subfile{sections/analysis/requirements/success}
 
 
 \pagebreak
 
-\section{Design}
+\chapter{Design}
 
-\subsection{Standards}
+\section{Standards}
 \subfile{sections/design/standards}
 
-\subsection{Libraries}
+\section{Libraries}
 \subfile{sections/design/libraries}
 
-\subsection{User Interface Design}
+\section{User Interface Design}
 
 \begin{comment}
 design: for each page/screen:
@@ -256,56 +261,56 @@ sentance or two on what it does and why (justify it being there)
 
 \end{comment}
 
-\subsubsection{Usability Features}
+\subsection{Usability Features}
 \subfile{sections/design/usability}
 
-\subsubsection{Feedback from stakeholder}
+\subsection{Feedback from stakeholder}
 
-\subsection{Modular breakdown}
+\section{Modular breakdown}
 \subfile{sections/design/modular_breakdown}
 
 \pagebreak
-\subsection{Algorithms}
+\section{Algorithms}
 \subfile{sections/design/algorithms}
 
 \pagebreak
-\subsection{Data Dictionary}
+\section{Data Dictionary}
 
-\subsubsection{Database Design}
+\subsection{Database Design}
 \subfile{sections/design/database}
 
 \pagebreak
-\subsubsection{Classes}
+\subsection{Classes}
 \subfile{sections/design/classes}
 
-\subsection{Inputs and outputs}
+\section{Inputs and outputs}
 
-\subsection{Validation}
+\section{Validation}
 
-\subsection{Testing}
+\section{Testing}
 
-\subsubsection{Methods}
+\subsection{Methods}
 
-\subsubsection{Test Plan}
+\subsection{Test Plan}
 
 \pagebreak
 
-\section{Implementation}
+\chapter{Implementation}
 
-\subsection{First Iteration | Initial Backend and Database}
+\section{First Iteration | Initial Backend and Database}
 \subfile{sections/implementation/first_iteration.tex}
 
 \pagebreak
-\subsection{Second Iteration | Initial Frontend and user interface work}
+\section{Second Iteration | Initial Frontend and user interface work}
 \subfile{sections/implementation/second_iteration}
 
 \pagebreak
 
-\section{Testing}
+\chapter{Testing}
 
-\section{Evaluation}
+\chapter{Evaluation}
 
-\section{Code Listings}
+\chapter{Code Listings}
 \subfile{sections/code.tex} % \document 
 
 \end{document}
