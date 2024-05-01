@@ -1,0 +1,298 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\section{Summary of requirements met}
+
+\begin{longtable}{ | >{\raggedright}p{0.8\textwidth} | >{\raggedright\arraybackslash}p{0.2\textwidth} | }
+    \hline
+    \textbf{SMART Objective}                                      & \textbf{Has it been met?} \\
+    \hline
+    1. To produce a solution capable of persistently
+    cataloguing library books and other assets for a school.
+                                                                  & Partially (backend works) \\
+    \hline
+    2. To produce an intuitive and easy to use solution
+                                                                  & No                        \\
+    \hline
+    2a. To produce a solution that returns friendly, understandable errors when
+    an error occurs                                               & Yes                       \\
+    \hline
+    2b. To produce a solution that supports uploading thumbnail images for items
+    stored in the system.                                         & Partially (unfinished UI) \\
+    \hline
+    3. To produce a solution that features a fully searchable catalogue
+                                                                  & No (time constraints)     \\
+    \hline
+    4. To produce a solution including a server component which stores data and
+    manages access to the system                                  & Yes                       \\
+    \hline
+    5. To produce a solution containing a user interface that can be accessed via a
+    mobile device                                                 & Yes (although limited)    \\
+    \hline
+    6. To produce a solution that is capable of efficiently storing data about multiple
+    copies of an item, such as multiple copies of the same book   & Yes                       \\
+    \hline
+    7. To produce a solution capable of supporting multiple users & Yes                       \\
+    \hline
+    7a. To produce a solution that can handle multiple users interacting with the
+    system simultaneously                                         & Yes                       \\
+    \hline
+    7b. To produce a solution that supports multiple distinct user accounts,
+    providing a secure authentication system to manage access     & Yes*                      \\
+    \hline
+    8. To produce a solution that has the ability to "check out" items to a specific user,
+    viewable from the user interface.                             & Partially (unfinished UI) \\
+    \hline
+\end{longtable}
+
+\section{Evaluation of requirements}
+
+\subsection{SMART Objective 1}
+
+\textit{To produce a solution capable of persistently cataloguing
+    library books and other assets for a school.}
+
+\noindent \\ \textbf{SMART Objective Met?:} Partially
+
+\begin{comment}
+1. Describe what objective was
+2. Justify with tests
+3. Summary if you feel it did it.
+\end{comment}
+
+\noindent \\ This objective was the core objective of the solution,
+as having a working solution was a key in order to be able to meet
+my stakeholder's requirements.
+
+%\noindent \\ TODO: [testing] to back up.
+
+\noindent \\ I believe that I greatly underestimated the amount of work required
+to create a working "frontend" mobile application. While I do have
+experience with Expo, React and React Native, my lack of thorough planning
+for the frontend screens during the design section made me unsure which UI elements
+to include in the implementation as I did not specify this in adequate detail.
+I believe that this contributed to me getting stuck when implementing the frontend in
+subsequent iterations.
+
+\noindent \\ Going forward I would revisit the design section to improve Section 2.3
+(User Interface Design) as this the weakest part of my plan. I should have made better use
+of decomposition to split the various "screens" into smaller, more well-defined chunks.
+As can be seen in \textit{Section 2.4.2} (Frontend Screens), while I did split the problem
+into individual screens, as well as plotting a rough user interface mockup in
+\textit{Section 2.3} (User Interface Design), I did not plan the interface, specifically
+which exact UI elements should be used, in sufficient detail to implement the solution
+effectively. This was compounded by the fact that React, and by extension React Native,
+is very component heavy, as opposed to simpler interface tools such as Tkinter.
+I believe that if I had sufficiently planned what UI elements should have been used
+in the Design section, that I would not have gotten stuck pondering what elements to use
+and would not have ended up with a half-finished frontend.
+
+% This was because I only noted
+%a rough user interface as opposed to planning every detail which may have made it easier
+%to implement in Section 3.
+
+% wasn't sure what elements needed
+
+
+\subsection{SMART Objective 2}
+
+\textit{To produce an intuitive and easy to use solution.}
+
+\noindent \\ \textbf{SMART Objective Met?:} No
+
+\noindent \\ I have decided that this SMART objective has not been met due to the lack of a
+finished frontend application. While the backend has been completed to a resonable standard,
+with all functionality being adequately tested, the same cannot be said for the frontend
+application.
+
+\subparagraph{Why was the solution not intuitive and easy to use?}
+
+\noindent \\\\ While I did manage to adhere to and implement all three of my usability
+features (\textit{Section 2.3.1}), I feel that the solution is not intuitive as, in it's
+current (unfinished) state, it is not clear how the user should navigate through the
+frontend application. When I was initially designing this solution, I pondered having
+tutorial screens similar to those of big-brand apps like YouTube and Spotify, before
+scrapping the idea as I was unsure about where to even start implementing such a feature.
+
+\noindent \\ To that end, given the limited and segmented functionality of the program, (segmented as
+while features such as image uploading are implemented in the client the feature is hidden
+in a debug menu and is not fully implemented into the user-facing interface) I cannot
+in good conscience call the current solution intuitive and easy to use.
+
+\subsubsection{SMART Objective 2a}
+
+\textit{To produce a solution that returns friendly, understandable errors when
+    an error occurs}
+
+\noindent \\ \textbf{SMART Objective Met?:} Yes
+
+\noindent \\ I have chosen to mark this sub-objective as completed as the backend
+component of the solution has extensive error handling, and does indeed return
+user-friendly, understandable errors to any client accessing it through GraphQL.
+In addition, the function handlers themselves (\textit{Section 2.4.3.3 - Handler Module})
+have error handling and are responsible for generating the human-readable error message
+if something unexpected occurs, meaning that even if a handler was invoked directly,
+for example if the system was to be extended or modified, this sub-objective would still be fulfilled.
+
+\subsubsection{SMART Objective 2b}
+
+\textit{To produce a solution that supports uploading thumbnail images for items
+    stored in the system.}
+
+\noindent \\ \textbf{SMART Objective Met?:} Partially
+
+\noindent \\ As was touched on the evaluation of SMART Objective 1, while image uploading
+is implemented in both the backend and frontend, the only way to access it from the frontend
+is via a debug menu accessed from the About screen. Due to this, I must note that this SMART
+objective was only partially met.
+
+\noindent \\ In order to meet this SMART objective in a future iteration of the frontend,
+the Item/Entity page(s) would need to be hooked up to the code written in \lstinline{ImageUploadPage}
+(debug page). There already exists UI elements in these pages for images, albeit currently
+containing placeholder imagery. However, an easy way to programatically change the images
+displayed and place them on a carosuel was implemented, along with an "upload image" button
+which was placed at the end of the carosuel, as is the standard in other applications, although
+it should be noted that the icon for this button is intersecting with the top of the parent
+component on Android devices. This issue does not occur on iOS where the icon is in the center,
+both horizontally and vertically, of the parent component.
+
+\subsection{SMART Objective 3}
+
+\textit{To produce a solution that features a fully searchable catalogue.}
+
+\noindent \\ \textbf{SMART Objective Met?:} No
+
+\noindent \\ This SMART objective was not completed due to time constaints.
+As can be gathered from previous objective summaries as well as the incomplete
+implementation stage, the frontend application was never finished.
+As noted in the Design section, specifically in SMART objective 4 below,
+work on the frontend was done in parallel with work in the backend, taking
+an iterative approach to development. This means that the feature required in order
+to satisfy this SMART objective was never implemented into the backend component
+as the frontend component never progressed far enough into development to have a functional
+"Home" screen, where it would have made sense and would have been intuitive to include
+this feature.
+
+\noindent \\ In order to meet this SMART objective, the "Home" screen would first need to be
+properly implemented. After this is done it would be a sensible time to implement searching
+functionality on the backend. While searching \textbf{could} technically be accomplished
+already by using queries such as \lstinline[language=graphql]|items {}| and \lstinline[language=graphql]|enitities {}| to return
+all items and entities respectively, it would be bandwidth inefficient not to mention computationally
+expensive to fetch all respective entries and transmit them over the network. A more sensible
+approach would be to implement a mutation (or query paramater) that allowed for searching
+the results. In order for this to be implemented effectively, so that it continues to perform
+well if the solution was scaled up to include more items/entities, the paramater, or search key
+should be passed to GORM so that it can be included in the SQL query, assuming that adequate
+validation is performed before this step to avoid SQL injection.
+
+\subsection{SMART Objective 4}
+
+\textit{To produce a solution including a server component which stores data and
+    manages access to the system.}
+
+\noindent \\ \textbf{SMART Objective Met?: Yes}
+
+\noindent \\ I have decided to mark this SMART objective as completed as the server component
+of the solution is in a more than usable state. The server component contains all essential features
+requested by the stakeholders as well as featuring unit tests with differing types of data input
+such as expected data, erroneous data and invalid data. In addition, the server component
+persistently stores data in a PostgreSQL database and contains a user management module
+that handles user account creation, login, issuance of tokens, as well as access to
+so-called "authenticated" routes, that is to say routes that require the caller to be logged in.
+
+\subsection{SMART Objective 5}
+
+\textit{ To produce a solution containing a user interface that can be
+    accessed via a mobile device.}
+
+\noindent \\ \textbf{SMART Objective Met?: Yes (technically)}
+
+\noindent \\ This SMART objective has technically been met as the solution does in fact
+contain a frontend component with a user interface accessible on a mobile device.
+However, while the user can log in to the system using the mobile application the user
+cannot do much else.
+
+\subsection{SMART Objective 6}
+
+\textit{To produce a solution that is capable of efficiently storing data about
+    multiple copies of an item, such as multiple copies of the same book}
+
+\noindent \\ \textbf{SMART Objective Met?: Yes}
+
+\noindent \\ This SMART objective has been met as the solution has been
+architected in such a manner as to make this possible, and the necessary
+features implemented.
+
+\subsection{SMART Objective 7}
+
+\textit{To produce a solution capable of supporting multiple users}
+
+\noindent \\ \textbf{SMART Objective Met?: Yes}
+
+\noindent \\ The solution is working as designed, multiple users
+are fully supported on the system with the authentication middleware working
+as designed.
+
+\subsubsection{SMART Objective 7a}
+
+\textit{To produce a solution that can handle multiple users interacting
+    with the system simultaneously.}
+
+\noindent \\ \textbf{SMART Objective Met?: Yes}
+
+\noindent \\ The solution is working as intended; the system has
+the concept of multiple user accounts which can access the system
+independently of each other.
+
+
+\subsubsection{SMART Objective 7b}
+% BUG: takes multiple attempts to log in
+
+\textit{To produce a solution that supports multiple distinct user
+    accounts, providing a secure authentication system to manage access}
+
+\noindent \\ \textbf{SMART Objective Met?: Yes* (explained below)}
+
+\noindent \\ This SMART objective has been fulfilled since the necessary
+features have been implemented. In addition, an industry standard authentication system
+has been designed and implemented, including a corresponding implementation
+on the frontend. However, the frontend requries multiple attempts to run it's
+login code correctly.
+
+
+\subsection{SMART Objective 8}
+
+\textit{To produce a solution that has the ability to "check out" items to a
+    specific user, viewable from the user interface.}
+
+\noindent \\ \textbf{SMART Objective Met?: Partially}
+
+\noindent \\ This feature is implemented in the backend with stub, non-functionality
+UI elements in the frontend. Therefore this objective has only been partially met.
+
+%\section{Summary of implemented usability features}
+
+\begin{comment}
+1. High contrast UI
+2. Dark theme
+3. No audio cues
+\end{comment}
+
+%\section{Considerations}
+
+%\subsection{Maintenance for the developed solution}
+%\subsection{Limitations of the developed solution}
+
+%\section{Future development of the solution}
+
+\section{Conclusion}
+
+\noindent \\ In conclusion, this exercise was a useful learning exercise to learn about the problems
+that overambitious projects face, and to learn about feature creep and it's effect on a project.
+
+\noindent \\ In addition, I learnt a great deal about how to effectively plan a project, even if I did learn
+some of that through making mistakes. I am glad to have learned from this experience despite
+the suboptimal outcome.
+
+\end{document}

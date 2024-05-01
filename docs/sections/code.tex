@@ -7,6 +7,9 @@
 
 \section{Backend}
 
+\includecode[go]{../../backend/authResolver/resolver.go}
+\includecode[go]{../../backend/authResolver/return.go}
+
 \includecode[go]{../../backend/database/checkout_test.go}
 \includecode[go]{../../backend/database/checkout.go}
 \includecode[go]{../../backend/database/database.go}
@@ -23,6 +26,7 @@
 
 \includecode[go]{../../backend/graph/resolver/checkout.go}
 \includecode[go]{../../backend/graph/resolver/entity.go}
+\includecode[go]{../../backend/graph/resolver/file.go}
 \includecode[go]{../../backend/graph/resolver/item.go}
 \includecode[go]{../../backend/graph/resolver/mutation.go}
 \includecode[go]{../../backend/graph/resolver/query.go}
@@ -31,6 +35,7 @@
 
 \includecode[graphql]{../../backend/graph/schema/checkout.gql}
 \includecode[graphql]{../../backend/graph/schema/entity.gql}
+\includecode[graphql]{../../backend/graph/schema/file.gql}
 \includecode[graphql]{../../backend/graph/schema/item.gql}
 \includecode[graphql]{../../backend/graph/schema/loginResponse.gql}
 \includecode[graphql]{../../backend/graph/schema/mutation.gql}
@@ -41,38 +46,56 @@
 
 \includecode[go]{../../backend/structs/checkout.go}
 \includecode[go]{../../backend/structs/entity.go}
+\includecode[go]{../../backend/structs/file.go}
+\includecode[go]{../../backend/structs/fileTypes.go}
 \includecode[go]{../../backend/structs/item.go}
 \includecode[go]{../../backend/structs/user.go}
 
 
 \includecode[go]{../../backend/test/common/database.go}
 \includecode[go]{../../backend/test/common/entity.go}
+\includecode[go]{../../backend/test/common/gin.go}
 \includecode[go]{../../backend/test/common/user.go}
 
 \includecode[go]{../../backend/util/jwt/ecdsa.go}
 \includecode[go]{../../backend/util/jwt/jwt_test.go}
 \includecode[go]{../../backend/util/jwt/jwt.go}
 
+\includecode[go]{../../backend/util/login/login.go}
+
+\includecode[go]{../../backend/util/filetype.go}
 \includecode[go]{../../backend/util/get_test.go}
 \includecode[go]{../../backend/util/get.go}
 \includecode[go]{../../backend/util/time.go}
 \includecode[go]{../../backend/util/uuid.go}
 
+\includecode[go]{../../backend/auth_middleware_test.go}
+\includecode[go]{../../backend/auth_middleware.go}
 \includecode[go]{../../backend/server.go}
 \includecode[go]{../../backend/tools.go}
 
 
 \section{Frontend}
 
+
+\includecode[ts]{../../frontend/app/(app)/debug/imageUpload.tsx}
+
+\includecode[ts]{../../frontend/app/(app)/item/[item].tsx}
+
 % tsx looks odd currently
 \includecode[ts]{../../frontend/app/(app)/scan/_layout.tsx}
 \includecode[ts]{../../frontend/app/(app)/scan/camera.tsx}
 \includecode[ts]{../../frontend/app/(app)/scan/result.tsx}
 \includecode[ts]{../../frontend/app/(app)/_layout.tsx}
+\includecode[ts]{../../frontend/app/(app)/about.tsx}
 \includecode[ts]{../../frontend/app/(app)/index.tsx}
 
 \includecode[ts]{../../frontend/app/_layout.tsx}
 \includecode[ts]{../../frontend/app/login.tsx}
+
+
+\includecode[ts]{../../frontend/components/item/ItemCheckInOutButtons.tsx}
+\includecode[ts]{../../frontend/components/item/ItemPictures.tsx}
 
 \includecode[ts]{../../frontend/components/ApolloClientProvider.tsx}
 \includecode[ts]{../../frontend/components/AuthenticationContext.tsx}
@@ -83,7 +106,11 @@
 \includecode[ts]{../../frontend/constants/Colors.ts}
 
 \includecode[ts]{../../frontend/gql/mutations/login.ts}
+\includecode[ts]{../../frontend/gql/mutations/loginRefresh.ts}
 
+\includecode[ts]{../../frontend/gql/queries/refreshToken.ts}
+
+\includecode[ts]{../../frontend/util/jwt.ts}
 \includecode[ts]{../../frontend/util/useStorageState.ts}
 
 

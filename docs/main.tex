@@ -20,6 +20,8 @@
 \usepackage{array} % for \begin{tabular}{ | p{'width'} | } (https://www.overleaf.com/learn/latex/Tables)
 \usepackage{wrapfig} % Image wrapping around text, https://www.overleaf.com/learn/latex/Positioning_images_and_tables#Wrapping_text_around_a_figure
 \usepackage{enumitem} % a,b,c in enumerate top layer https://tex.stackexchange.com/questions/129951/enumerate-tag-using-the-alphabet-instead-of-numbers
+\usepackage[T1]{fontenc} % <, > https://latex.org/forum/viewtopic.php?t=22078
+\usepackage{longtable} % multi page table
 
 % Generic frame
 % https://tex.stackexchange.com/questions/193789/wrapfig-frame-around-image-and-caption
@@ -131,6 +133,22 @@
 % we are using report so we also get chapter.
 \setcounter{tocdepth}{3}
 \setcounter{secnumdepth}{3}
+
+% Suppress newline after number in \chapter
+% https://latex.org/forum/viewtopic.php?t=11650
+\titleformat{\chapter}% reformat chapter headings
+    [hang]% like section, with number on same line
+    {\Huge\bfseries}% formatting applied to whole
+    {\thechapter}% Chapter number
+    {0.5em}% space between # and title
+    {}% formatting applied just to title
+
+% Start new chapter on same page
+% https://tex.stackexchange.com/questions/24066/start-new-chapter-on-same-page
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\chapter}{\if@openright\cleardoublepage\else\clearpage\fi}{}{}{}
+\makeatother
 
 \input{language_defs.tex}
 \input{erd_defs.tex}
@@ -283,15 +301,15 @@ sentance or two on what it does and why (justify it being there)
 \subsection{Classes}
 \subfile{sections/design/classes}
 
-\section{Inputs and outputs}
+%\section{Inputs and outputs}
 
-\section{Validation}
+%\section{Validation}
 
-\section{Testing}
+%\section{Testing}
 
-\subsection{Methods}
+%\subsection{Methods}
 
-\subsection{Test Plan}
+%\subsection{Test Plan}
 
 \pagebreak
 
@@ -301,16 +319,23 @@ sentance or two on what it does and why (justify it being there)
 \subfile{sections/implementation/first_iteration.tex}
 
 \pagebreak
-\section{Second Iteration | Initial Frontend and user interface work}
+%\section{Second Iteration | Initial Frontend and user interface work}
+\section{Second Iteration | Creating an Expo project and setting up Apollo}
 \subfile{sections/implementation/second_iteration}
 
 \pagebreak
 
-\chapter{Testing}
+%\chapter{Testing}
+%\subfile{sections/testing}
+
+%\pagebreak
 
 \chapter{Evaluation}
+\subfile{sections/evaluation}
+
+\pagebreak
 
 \chapter{Code Listings}
-\subfile{sections/code.tex} % \document 
+\subfile{sections/code} % \document 
 
 \end{document}

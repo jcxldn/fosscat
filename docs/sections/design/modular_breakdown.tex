@@ -46,6 +46,7 @@ own module.
     \node (home) [mb_node, above of=scan] {Home Screen};
     \node (user) [mb_node, below of=entity] {User};
     \node (item) [mb_node, below of=user] {Item};
+    % TODO: add about?
 
     % lines between objects
     \draw [line] (root) -- (scan.west);
@@ -120,9 +121,7 @@ own module.
 
 \end{tikzpicture}
 
-\paragraph{Database Module}
-
-\paragraph{} % newline
+\subsubsection{Database Module}
 
 \begin{tikzpicture}[node distance=2cm]
     \node (root) [mb_node] {1. Database};
@@ -176,9 +175,7 @@ functions. These functions fall into four categories:
 
 \end{enumerate}
 
-\paragraph{GraphQL API Module}
-
-\paragraph{} % newline
+\subsubsection{GraphQL API Module}
 
 \begin{tikzpicture}[node distance=2cm]
     \node (root) [mb_node] {2. GraphQL API};
@@ -329,9 +326,7 @@ via GraphQL.
           the structure and rules of the GraphQL API.
 \end{enumerate}
 
-\paragraph{Handler Module}
-
-\paragraph{} % newline
+\subsubsection{Handler Module}
 
 \noindent \\ The final sub-module is the Handler module. This module consists of
 the functions that perform the actions required to fulfil a request.

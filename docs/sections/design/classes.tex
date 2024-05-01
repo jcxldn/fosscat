@@ -5,7 +5,205 @@
 \noindent This section will describe and justify the proposed classes to be used in the solution.
 These classes will be represented using UML (Unified Modelling Language) diagrams.
 
+
+\subsubsection{Frontend}
+
+\noindent TypeScript, the language being used for the frontend,
+is an object oriented language. Therefore I can make use of
+traditional OOP principles in my solution.
+
+\begin{comment}
+TODO: finish and add? 010524
+
+These are:
+
+% remove this?
+\begin{enumerate}
+    \item \textbf{Abstraction}\\
+          The process of hiding data that is not directly relevant.
+          A function that operates on a class should not have to be
+          concerned with the inner workings of the class, instead
+          that detail is abstracted away into public functions exposed
+          by the class.
+    \item \textbf{Encapsulation}\\
+          A process of placing data and supplemental functions
+          that perform operations on the data in the same object.
+          Complexities of the object's implementation such as private
+          variables are abstracted away and the object only exposes public
+          functions to get, set, or modify the data.
+
+    \item \textbf{Inheritance}
+\end{enumerate}
+\end{comment}
+
+
+% \raggedright to fix large spacing between words. (https://tex.stackexchange.com/a/676495)
+\noindent \begin{longtable}{ | >{\raggedright}p{0.6\textwidth} | >{\raggedright\arraybackslash}p{0.4\textwidth} | }
+    \hline
+    \textbf{Class UML} & \textbf{Description}                                            \\
+    \hline
+    % Main class UML
+    \begin{center}
+        \begin{tikzpicture}
+            \umlclass{Main}
+            {
+                \underline{Public} \\
+
+                constructor(access\_token, refresh\_token) \\\\
+
+                static async login(): Promise<Main> \\\\
+
+                async getUserById(id): Promise<User> \\
+                async getCheckoutById(id): Promise<Checkout> \\
+                async getEntityById(id): Promise<Entity> \\
+                async getFileById(id): Promise<File> \\
+                async getItemById(id): Promise<Item> \\\\
+
+                async getAllUsers(): Promise<User[]> \\
+                async getAllCheckouts(): Promise<Checkout[]> \\
+                async getAllEntities(): Promise<Entity[]> \\
+                async getAllFiles(): Promise<File[]> \\
+                async getAllItems(): Promise<Item[]> \\\\
+
+                async modifyCheckout(checkout): Promise<Checkout> \\
+                async modifyEntity(entity): Promise<Entity> \\
+                async modifyItem(item): Promise<Item> \\\\
+
+                async createCheckout(newCheckout): Promise<void> \\
+                async createEntity(newEntity): Promise<void> \\
+                async createItem(newItem): Promise<void> \\\\
+
+                static async createUser(newUser): Promise<void>
+            }{}
+        \end{tikzpicture}
+    \end{center}
+    % Main class description
+                       & The "Main" class is the starting point for interacting with the
+    backend service. It should manage authentication, as well as allow for calls to the
+    backend service to fetch, modify or remove data. Authentication-wise,
+    the class should ensure that upon any invocation of an asynchronous
+    function that a valid access token is available, requesting a new token
+    if one is not available or has expired.
+    The static login function should handle authenticating the user and should
+    return an instance of Main when the user successfully logs in, allowing the user
+    to make authenticated requests using the instance defined instance functions.        \\
+    \hline
+    % User class UML
+    \begin{center}
+        \begin{tikzpicture}
+            \umlclass{User}
+            {
+                \underline{Private}\\
+                id: UUID \\
+                firstName: string \\
+                lastName: string \\
+                email: string \\
+            }{
+                \underline{Public}
+                async getId(): Promise<UUID> \\
+                async getFirstName(): Promise<string> \\
+                async getLastName(): Promise<string> \\
+                async getEmail(): Promise<string> \\
+                async getAllCheckouts(): Promise<Checkout[]> \\
+                async getCheckoutById(id): Promise<Checkout>
+            }{}
+        \end{tikzpicture}
+    \end{center}
+    % User class description
+                       &                                                                 \\
+    \hline
+    % Checkout class UML
+    \begin{center}
+        \begin{tikzpicture}
+            \umlclass{Checkout}
+            {
+                \underline{Private}\\
+                id: UUID \\
+                user: User\\
+                takeDate: Date\\
+                returnDate: Date
+            }{
+                \underline{Public}
+                async getId(): Promise<UUID> \\
+                async getUser(): Promise<User> \\
+                async getTakeDate(): Promise<Date> \\
+                async getReturnDate(): Promise<Date>
+            }{}
+        \end{tikzpicture}
+    \end{center}
+    % Checkout class description
+                       &                                                                 \\
+    \hline
+    % Entity class UML
+    \begin{center}
+        \begin{tikzpicture}
+            \umlclass{Entity}
+            {
+                \underline{Private}\\
+                id: UUID \\
+                checkouts: Checkout[]
+            }{
+                \underline{Public}
+                async getId(): Promise<UUID> \\
+                async getCheckouts(): Promise<Checkout[]> \\
+                async getCheckoutById(id): Promise<Checkout>
+            }{}
+        \end{tikzpicture}
+    \end{center}
+    % Entity class description
+                       &                                                                 \\
+    \hline
+    % Item class UML
+    \begin{center}
+        \begin{tikzpicture}
+            \umlclass{Item}
+            {
+                \underline{Private}\\
+                id: UUID\\
+                title: string\\
+                entities: Entity[]
+            }{
+                \underline{Public}
+                async getId(): Promise<UUID> \\
+                async getTitle(): Promise<string> \\
+                async getEntities(): Promise<Entity[]> \\
+                async getEntityById(id): Promise<Entity>
+            }{}
+        \end{tikzpicture}
+    \end{center}
+    % Item class description
+                       &                                                                 \\
+    \hline
+    % File class UML
+    \begin{center}
+        \begin{tikzpicture}
+            \umlclass{File}
+            {
+                \underline{Private}\\
+                id: UUID \\
+                uploader: User\\
+                name: string\\
+                data: ArrayBuffer
+            }{
+                \underline{Public}
+                async getId(): Promise<UUID> \\
+                async getUploader(): Promise<User> \\
+                async getName(): Promise<string> \\
+                async getData(): Promise<ArrayBuffer>
+            }{}
+        \end{tikzpicture}
+    \end{center}
+    % File class description
+                       &                                                                 \\
+    \hline
+\end{longtable}
+
+
 % \paragraph{Backend (Server Application)}
+
+\pagebreak
+
+\subsubsection{Backend}
 
 \noindent Go, the language I plan to use for the backend, does not have classes.
 Instead, go uses structs and types, which can have methods attached to them, in a similar way
@@ -16,7 +214,7 @@ GORM primary or foreign keys. \\
 % \noindent I will also not be using any methods on these structs, with the \textit{exception of the constructor}. \\
 
 % \raggedright to fix large spacing between words. (https://tex.stackexchange.com/a/676495)
-\noindent \begin{tabular}{ | >{\raggedright}p{0.5\textwidth} | >{\raggedright\arraybackslash}p{0.5\textwidth} | }
+\noindent \begin{tabular}{ | >{\raggedright}p{0.3\textwidth} | >{\raggedright\arraybackslash}p{0.7\textwidth} | }
     \hline
     \textbf{Class UML} & \textbf{Description} \\
     \hline
@@ -33,7 +231,7 @@ GORM primary or foreign keys. \\
         \end{tikzpicture}
     \end{center}
     % User class description
-                       & TBD                  \\
+                       &                      \\
     \hline
     % Checkout class UML
     \begin{center}
@@ -49,7 +247,7 @@ GORM primary or foreign keys. \\
         \end{tikzpicture}
     \end{center}
     % Checkout class description
-                       & TBD                  \\
+                       &                      \\
     \hline
     % Entity class UML
     \begin{center}
@@ -62,7 +260,7 @@ GORM primary or foreign keys. \\
         \end{tikzpicture}
     \end{center}
     % Entity class description
-                       & TBD                  \\
+                       &                      \\
     \hline
     % Item class UML
     \begin{center}
@@ -75,7 +273,7 @@ GORM primary or foreign keys. \\
         \end{tikzpicture}
     \end{center}
     % Item class description
-                       & TBD                  \\
+                       &                      \\
     \hline
 \end{tabular}
 

@@ -1,0 +1,39 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\noindent I will now conduct two types of testing: tests against the success requirements as
+well as usability testing. For each test I will try include three types
+of inputs:
+
+\begin{enumerate}
+    \item \textbf{Expected inputs} - Inputs that are correct for the given input/field.
+    \item \textbf{Erroneous inputs} - Inputs that are not correct but can still be inputted
+          for the given input/field. Validation should be performed on these inputs and an error
+          should be returned by the application stating that the value was not what was expected.
+    \item \textbf{Invalid inputs} - Inputs that are not valid for the given input/field.
+          For example, passing plain text to a GraphQL mutation that expects numeric input.
+          These types of inputs should be caught by the GraphQL schema (for requests issued via
+          GraphQL)
+\end{enumerate}
+
+\section{Testing against the success requirements}
+
+\noindent Testing will now be performed in order to determine if the success requirements,
+detailed in \textit{Section 1.4.3}, have been fulfilled. The testing
+will not be performed in the same order as the SMART objectives were defined. Instead, the
+order will roughly follow the pattern in which a user would use the program ie. logging in
+before attempting to fetch authenticated routes.
+
+\subsection{SMART Objective 7}
+
+\textit{To produce a solution capable of supporting multiple users.}
+
+\subsubsection{Test 1}
+
+\subparagraph{Test Description}
+\subparagraph{Input data}
+\subparagraph{Expected result}
+\subparagraph{Actual result}
+
+\end{document}

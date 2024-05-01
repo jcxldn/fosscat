@@ -4,7 +4,7 @@
 
 \subsection{Introduction}
 
-In this iteration I will start working on the frontend, or the client application. The client
+In this iteration I will start work on the frontend, or the client application. The client
 application will talk to the backend service I created in the previous iteration and will
 provide the client with an intuitive user interface through which they can interact with the
 backend service and by extension the database connected to it.
@@ -13,7 +13,15 @@ backend service and by extension the database connected to it.
 will communicate using GraphQL. The client application itself will make use of
 React Native and Expo.
 
-\noindent \\ React Native is an open-source user interface (UI) framework created by
+\noindent \\ My goal for this iteration is to create an Expo project
+and then install and configure Apollo, the GraphQL client I will be
+using. I have chosen to make this it's own iteration as a I need to
+become familiar with a number of concepts before I can start programming.
+I will try and document these concepts here as I learn more about them.
+
+\subparagraph{Definitions}
+
+\noindent \\\\ React Native is an open-source user interface (UI) framework created by
 Facebook which allows developers to easily write native applications using
 the high-level JavaScript and TypeScript languages. This is opposed to the conventional method
 of writing applications for these platforms where different apps would need to be programmed
@@ -41,7 +49,7 @@ the Expo SDK and React Native are written in a compiled language such as Java (A
 Expo Go works by providing a barebones application with the required native code already compiled,
 so a server can simply host the remaining interpreted JavaScript code.
 
-\noindent \\ For this iteration, I will use Expo Go for quick prototyping.
+\noindent \\ For now, I will use Expo Go for quick prototyping.
 However, it is important to note that Expo Go does have it's limitations.
 Namely, any dependencies requiring additional native code will not work in Expo Go.
 I will need to be aware of this during development of this and future frontend iterations.
@@ -92,6 +100,8 @@ such as an initial home page (or route).
 
 \noindent \\ This command sets up and creates an Expo project, including installing dependencies such as
 React, React Native and TypeScript.
+
+\pagebreak
 
 % Dummy env to escape wrapfig
 \begin{dummyenv}
@@ -218,6 +228,8 @@ by using curly brackets. In conclusion:
 
   \paragraph{} % newline otherwise tikz doesn't show up
 
+  \pagebreak
+
   \subsection{React Components}
 
   \noindent React Components allow the programmer to split up the React tree.
@@ -314,11 +326,11 @@ In order to achieve this, I needed to learn about two React features:
         \end{itemize}
 \end{itemize}
 
-\paragraph{React Context}
+\subsubsection{React Context}
 
-\noindent \\ React Context would allow me to initialize Apollo Client once,
-and share the instance between all child objects. This would be useful as
-all objects in React including the different screens in an application share a common
+\noindent \\ Using React context would allow me to initialize Apollo Client once,
+and share the instance between all child components. This would be useful as
+all components in React including the different screens in an application share a common
 root component at the top of the tree. If I was to initialise Apollo Client
 before the navigation component (from \lstinline{expo-router}) I would be able to access
 the client from any screen in the application. This was the approach I chose to take.
@@ -370,15 +382,209 @@ Lines 13-17 define the default values of the functions and variables,
 setting them all to null. The values will be set when the context
 is added to the node tree (rendered inside a component)
 
+\subsubsection{React Hooks}
+
+React hooks have certain \textbf{rules} that must be observed
+in order for them to function correctly. After some research,
+I determined that these rules were:
+
+\begin{enumerate}
+  \item Hooks \textbf{cannot} be called inside:
+        \begin{enumerate}
+          \item loops
+          \item if statements
+          \item functions nested inside a component
+        \end{enumerate}
+  \item \textit{Instead}, hooks must always be called at the top of a React
+        component or function.
+  \item In addition, all hooks must be called before the first
+        \textbf{return} statement.
+\end{enumerate}
+
 \subsection{Setting up a Authentication Provider}
 
 \noindent \\ In order to use the \lstinline{AuthContext} I had
 created, I would need to create a React Component that contained it,
-so that it would be a part of the React Tree.
+so that it would be a part of the React Tree. I chose to call this
+component "AuthenticationProvider", as it provides the React context
+necessary to call the previously defined authentication functions.
+
+\noindent \\ Below is my initial code for the Authentication Provider:
+
+\begin{lstlisting}[language=typescript, numbers=left, framesep=6pt]
+  export function AuthSessionProvider(props: React.PropsWithChildren) {
+    
+    const [[isAccessJwtLoading, accessJwt], setAccess] = useStorageState("access")
+    const [[isRefreshJwtLoading, refreshJwt], setRefresh] = useStorageState("refresh")
+  
+    const { client, createClient } = useApolloClient();
+  
+    const [login, { data, loading, error }] = useMutation<LoginData>(LOGIN);
+    const [getRefreshToken, refr] = useLazyQuery(REFRESH_TOKEN);
+  
+    // React state is not available on the first render, so render a placeholder on the first render
+    // On subsequent renders, react state will have finished loading.
+    // Required for login processes to work, otherwise jwts are blank -> isexpiredjwt fails -> always goes to login screen
+  
+    // Return lines must be after all hooks.
+    if (isAccessJwtLoading || isRefreshJwtLoading) {
+      return <Text>Waiting for tokens to be fetched...</Text>
+    }
+  
+    if (client) {
+      return (
+        <AuthContext.Provider value={{
+          login: async (email: string, password: string) => {
+            // call login for Testing
+            await login({ variables: { email, password } })
+          },
+          logout: () => {
+            // To be implemented
+          },
+          getCreds: async () => {
+            // To be implemented
+          },
+          access: {
+            jwt: accessJwt,
+            isLoading: isAccessJwtLoading
+          },
+          refresh: {
+            jwt: refreshJwt,
+            isLoading: isRefreshJwtLoading
+          }
+        }}>
+          {props.children}
+        </AuthContext.Provider>
+      )
+    } else {
+      return <Text>Apollo client not available</Text>
+    }
+  }
+\end{lstlisting}
+
+\noindent \\ On lines 3-4, I call a React hook provided by Expo,
+\lstinline{useStorageState}, to setup a persistent store to place
+tokens in. This function returns three variables:
+
+\begin{enumerate}
+  \item A boolean, \lstinline{is[..]JwtLoading} which is set to true
+        when the store has finished loading
+
+  \item The token itself, \lstinline{[..]jwt}, a string.
+
+  \item A function to set the token value.
+\end{enumerate}
+
+
+\noindent \\ Next, in lines 6-9, I call hooks to firstly setup Apollo
+and then define both a login mutation and a query to retrieve a refresh
+token.
+
+\noindent \\ Now that all hooks have been called (see \underline{3.2.5.2, Rules of Hooks}), as noted in
+the code comments, we can return a placeholder value until the stores
+become available. Once the stores (as well as apollo's client)
+are available, we can return a component with the previously-defined
+AuthContext as it's child, as well as any prop children.
+
+\subsubsection{Testing}
+
+\noindent \\ In order to ensure that this component works correctly,
+it should be adequately tested before moving on. In order to achieve
+this, I created a simple "login" screen with inputs for username
+and password which are then passed to \lstinline{login()}.
+The test passes if the call to login has the following result:
+\begin{enumerate}
+  \item No errors are produced on the client application
+  \item The server returns a successful login
+        (response \lstinline{login.sucess == true})
+\end{enumerate}
+
+\noindent \\ This login screen will be reused in a future iteration,
+but the preliminary code is listed below. The \lstinline{LoginPage}
+component was nested inside of the \lstinline{<AuthSessionProvider/>}
+component outlined above.
+
+\begin{lstlisting}[language=typescript]
+  const LoginPage = () => {
+
+    const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
+
+    const [showEmailPassError, setShowEmailPassError] = React.useState(false)
+
+    // Get login function from Authentication Provider context
+    const { login } = useSession();
+
+    return (
+        <>
+            <Stack.Screen options={{ title: "Login" }} />
+            <View style={styles.container}>
+                <Text style={styles.title}>Login</Text>
+                {showEmailPassError ? <InvalidEmailPassword /> : <></>}
+                <View style={styles.itemContainer}>
+                    <TextInput
+                        label="Email"
+                        value={email}
+                        onChangeText={text => setEmail(text)}
+                    />
+                </View>
+                <View style={styles.itemContainer}>
+                    <TextInput
+                        label="Password"
+                        value={password}
+                        onChangeText={text => setPassword(text)}
+                    />
+                </View>
+                <Button
+                    onPress={async () => {
+
+                        // Call login from AuthenticationProvider
+                        const res = await login(email, password)
+
+                        if (!res?.login.success) {
+                            // Login was not sucessful
+                            setShowEmailPassError(true)
+                        } else {
+                            // Login was a success, redirect to homepage.
+                            router.replace('/')
+                        }
+                    }}>
+                    Login
+                </Button>
+            </View>
+        </>
+    )
+}
+\end{lstlisting}
+
+\subparagraph{Test Results}
+
+\noindent \\ Upon running the test, the following errors were observed
+on the client:
+
+\begin{lstlisting}
+  Access to fetch at http://[..]/graphql has been blocked by CORS policy:
+  No 'Access-Control-Allow-Origin' header is present on the requested resource.
+\end{lstlisting}
+\begin{lstlisting}
+  Uncaught (in promise)
+  ApolloError: Failed to fetch
+\end{lstlisting}
+
+\noindent \\ These errors occurred because of a missing header in the response
+from the server, something which I had overlooked to add. Luckily it was a simple fix,
+requiring only a small change on the backend. I simply added this line to
+the backend's main function:
+
+\begin{lstlisting}[language=Go]
+  r.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{"Content-Type"},
+	}))
+\end{lstlisting}
+
 
 %\subsubsection{Nesting React Components\\}
-
-
 
 \begin{comment}
 \subsubsection{Configuring Apollo Client to talk to the backend component}

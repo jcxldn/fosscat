@@ -1,8 +1,8 @@
 \documentclass[../../main.tex]{subfiles}
 
-\usepackage{lipsum}
-
 \begin{document}
+
+\paragraph{} % spacing
 
 % Dummy env to escape wrapfig
 \begin{dummyenv}
@@ -60,22 +60,53 @@
                 \draw[one to many] (file.east) -- (entity_file.west);
             \end{tikzpicture}
 
-            %\caption{ERD of the proposed system}
+            \caption{ERD of the proposed system}
 
         \end{framed}
         \label{fig:wrapfig}
     \end{wrapfigure}
 
-    \noindent \\ On the right-hand side is the entity relationship
+    \noindent \\ For the database, I have proposed the use of
+    PostgreSQL, more information about which is available in
+    \textit{Section 1.4.2.4} - \\
+    \textit{Server Container Software Requirements}.
+
+    \noindent \\ PostgreSQL is an implementation of an object-relational
+    database. This means that it has support for features like
+    \textbf{referential integrity} as well using an object-oriented
+    design.
+
+    \subparagraph{Entity Relationship Diagram}
+
+    \noindent \\\\ On the right-hand side is the entity relationship
     diagram (ERD) for the proposed solution. There are five entities
     in the database and the ERD shows the relationships between them.
 
-    \paragraph{Referential integrity}
+    \subparagraph{Referential integrity}
 
-    \paragraph{Normalisation}
-
-
+    \noindent \\\\ Referential integrity is a process that ensures
+    consistency between related tables in a relational database
+    by preventing inconsistencies from appearing in said database.
+    This is done by preventing invalid records from being added
+    to the database, for
 
 \end{dummyenv}
+
+\noindent example if a foreign key field was not either
+null or a valid primary key from a related table.
+\noindent \\ If this condition was
+to occur, an error would be raised by the database system.
+This helps to maintain data integrity and prevent
+orphaned records, where a record with a foreign key attribute
+references an invalid table for it's primary key.
+
+\subparagraph{Normalisation}
+
+\noindent \\ Normalisation is the process of organising a database
+to reduce data duplication, improve data accuracy (by reducing update
+/deletion anomalies) and to ensure consistency. This is done by applying
+a set of rules which must be fulfilled in order for a database to be
+considered normalised. Normalisation also helps to make SQL queries
+simpler, which makes them execute more efficiently.
 
 \end{document}

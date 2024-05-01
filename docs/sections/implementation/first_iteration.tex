@@ -468,14 +468,14 @@ CreateCheckout validation
 
 \subsection{Testing}
 
-\subparagraph{Test Plan}
+\subsubsection{Test Plan}
 
 \noindent \\ My plan for testing this iteration was to create \underline{unit tests} for my project. Unit tests are an automated set of tests designed to ensure that the tested application works correctly.
 
 \noindent \\ After some research, I decided to use the \underline{testify} testing framework, which is a toolkit with assertions and mocking support that works well with standard go functions.
 I also decided that it would be beneficial to have a testing database, so I decided to create a script that spins up an ephemeral (short-lasting) database container using the \textit{testcontainers} package. This database will only run for the duration of the test suite.
 
-\noindent \\ A snippet of this script is included below: (should I just remove this from the writeup? not *really* needed)
+\noindent \\ A snippet of this script is included below:
 
 \begin{lstlisting}[language=Go]
 // excerpt of backend/test/common/database.go
@@ -572,7 +572,7 @@ For example, for \textbf{Checkouts} I created tests for:
 \noindent TODO. Rewrite this I am repeating myself quite a bit.
 
 
-\subparagraph{Test Results}
+\subsubsection{Test Results}
 
 \noindent \\ My unit testing uncovered \underline{four problems}:
 
@@ -585,7 +585,7 @@ For example, for \textbf{Checkouts} I created tests for:
 
 
 
-\paragraph{Errors encountered during testing}
+%\subsubsection{Errors encountered during testing}
 
 \subparagraph{Issues with user creation}
 
